@@ -2,6 +2,8 @@ package fr.excilys.domainClasses;
 
 public class Company {
 
+    private int id;
+
     private String name;
 
     public String getName() {
@@ -12,4 +14,11 @@ public class Company {
 	this.name = name;
     }
 
+    public int getId() {
+	return id;
+    }
+
+    public void setId(int id) {
+	this.id = id;
+    }
 }

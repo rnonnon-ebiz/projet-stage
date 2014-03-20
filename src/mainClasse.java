@@ -1,11 +1,13 @@
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
 
+import fr.excilys.dao.ComputerDao;
 import fr.excilys.dao.ConnectionManager;
 import fr.excilys.dao.IConnectionManager;
+import fr.excilys.domainClasses.Company;
 import fr.excilys.domainClasses.Computer;
 
 public class mainClasse {
@@ -22,15 +24,28 @@ public class mainClasse {
 		System.out.println(res.getString("name"));
 	    }
 
-	} catch (SQLException e) {
+	}
+	catch (SQLException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
 	Computer computer = new Computer();
-	Field[] fields = computer.getClass().getDeclaredFields();
-	System.out.println(fields.length);
-	for (int i = 0; i < fields.length; ++i) {
-	    System.out.println(i + " : " + fields[i].getType());
+	Company comp = new Company();
+	comp.setId(10);
+
+	computer.setName("TOTO_COMPUTER");
+	computer.setIntroducedDate(new Date());
+	computer.setDiscontinuedDate(new Date());
+	computer.setCompany(comp);
+
+	ComputerDao cpDao = ComputerDao.getInstance();
+	try {
+	    cpDao.create(computer);
 	}
+	catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+
     }
 }

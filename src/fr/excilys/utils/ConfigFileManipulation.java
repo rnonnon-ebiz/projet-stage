@@ -12,10 +12,12 @@ public class ConfigFileManipulation {
 	    // Read propertie file
 	    FileInputStream file = new FileInputStream(fileName);
 	    prop.load(file);
-	} catch (IOException e) {
+	}
+	catch (IOException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
 	return prop;
     }
+
 }
