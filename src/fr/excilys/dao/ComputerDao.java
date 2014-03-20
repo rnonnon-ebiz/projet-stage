@@ -28,8 +28,8 @@ public class ComputerDao extends AbstractCRUDManager<Computer> {
 	int id;
 	System.out.println(query);
 	stm.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
-	id = stm.getGeneratedKeys().getInt(0);
-	computer.setId(id);
+	// id = stm.getGeneratedKeys().getInt(0);
+	// computer.setId(id);
     }
 
     private String generateInsertQuery(Computer computer) {
@@ -37,13 +37,13 @@ public class ComputerDao extends AbstractCRUDManager<Computer> {
 	query.append("INSERT INTO computer ");
 	query.append(" ( name , introduced , discontinued , company_id ) VALUES ('");
 	query.append(computer.getName());
-	query.append("' , ");
+	query.append("' , FROM_UNIXTIME(");
 	query.append(DateUtils.convertDateToSql(computer.getIntroducedDate())
-		.toString());
-	query.append(" , ");
+		.getTime());
+	query.append(") , FROM_UNIXTIME(");
 	query.append(DateUtils.convertDateToSql(computer.getDiscontinuedDate())
-		.toString());
-	query.append(" , ");
+		.getTime());
+	query.append(") , ");
 	query.append(computer.getCompany().getId());
 	query.append(" )");
 	return query.toString();

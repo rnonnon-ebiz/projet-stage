@@ -33,7 +33,7 @@ public class mainClasse {
 	Company comp = new Company();
 	comp.setId(10);
 
-	computer.setName("TOTO_COMPUTER");
+	computer.setName("TOTO_COMPUTER2222");
 	computer.setIntroducedDate(new Date());
 	computer.setDiscontinuedDate(new Date());
 	computer.setCompany(comp);
