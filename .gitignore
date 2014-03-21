@@ -1,1 +1,17 @@
 /build
+
+mysql-connector-java-5.1.29/
+
+.classpath
+.project
+1-schema.sql
+2-entries.sql
+README.md
+README
+
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear

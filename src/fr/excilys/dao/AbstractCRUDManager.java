@@ -3,7 +3,10 @@
  */
 package fr.excilys.dao;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * @author rnonnon
@@ -13,6 +16,30 @@ public abstract class AbstractCRUDManager<T> implements ICRUDManager<T> {
 
     protected IConnectionManager connectionManager = ConnectionManager
 	    .getInstance();
+
+    protected ResultSet res;
+
+    protected Statement stm;
+
+    protected Connection beforeOperation() {
+	Connection connection = connectionManager.getConnection();
+	return connection;
+    }
+
+    protected void closeSafe(Object o) {
+	try {
+	    o.getClass().getMethod("close").invoke(o);
+	}
+	catch (Exception e) {
+	    e.printStackTrace();
+	}
+    }
+
+    protected void afterOperation() {
+	connectionManager.closeConnection();
+	closeSafe(res);
+	closeSafe(stm);
+    }
 
     @Override
     public abstract void create(final T object) throws SQLException;

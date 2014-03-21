@@ -1,7 +1,6 @@
 package fr.excilys.dao;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -22,16 +21,76 @@ public class ComputerDao extends AbstractCRUDManager<Computer> {
     }
 
     @Override
-    public void create(Computer computer) throws SQLException {
-	String query = generateInsertQuery(computer);
-	Statement stm = connection.createStatement();
-	int id;
-	ResultSet rs;
-	System.out.println(query);
-	stm.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
-	rs = stm.getGeneratedKeys();
-	if (rs.next()) {
-	    computer.setId(rs.getInt(1));
+    public void create(Computer computer) {
+	Connection connection = beforeOperation();
+	createBody(computer, connection);
+	afterOperation();
+
+    }
+
+    @Override
+    public void find(Computer computer) {
+	Connection connection = beforeOperation();
+	findBody(computer, connection);
+	afterOperation();
+    }
+
+    public Computer find(int id) throws SQLException {
+	Computer comp = new Computer();
+	comp.setId(id);
+	find(comp);
+	return comp;
+    }
+
+    @Override
+    public void update(Computer computer) throws SQLException {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void delete(Computer computer) throws SQLException {
+	// TODO Auto-generated method stub
+
+    }
+
+    public void createBody(Computer computer, Connection connection) {
+	try {
+	    String query = generateInsertQuery(computer);
+	    System.out.println(query);
+
+	    stm = connection.createStatement();
+	    stm.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
+	    res = stm.getGeneratedKeys();
+	    if (res.next()) {
+		computer.setId(res.getInt(1));
+	    }
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    public void findBody(Computer computer, Connection connection) {
+	try {
+	    String query = generateFindQuery(computer);
+	    System.out.println(query);
+
+	    stm = connection.createStatement();
+	    res = stm.executeQuery(query);
+	    if (res.next()) {
+		computer.setDiscontinuedDate(res.getDate("discontinued"));
+		computer.setIntroducedDate(res.getDate("introduced"));
+		computer.setName(res.getString("name"));
+		int idCompany = res.getInt("company_id");
+		Company company = new Company();
+		company.setId(idCompany);
+		CompanyDAO.getInstance().find(company);
+		computer.setCompany(company);
+	    }
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
 	}
     }
 
@@ -50,51 +109,14 @@ public class ComputerDao extends AbstractCRUDManager<Computer> {
 	return query.toString();
     }
 
-    @Override
-    public void find(Computer computer) throws SQLException {
-	String query = genericFindQuery("computer", computer.getId());// generateFindQuery(computer);
-	System.out.println(query);
-	ResultSet res;
-	Statement stm = connection.createStatement();
-	res = stm.executeQuery(query);
-	if (res.next()) {
-	    computer.setDiscontinuedDate(res.getDate("discontinued"));
-	    computer.setIntroducedDate(res.getDate("introduced"));
-	    computer.setName(res.getString("name"));
-	    int idCompany = res.getInt("company_id");
-	    Company company = new Company();
-	    company.setId(idCompany);
-	    CompanyDAO.getInstance().find(company);
-	    computer.setCompany(company);
-	}
-    }
-
-    public Computer find(int id) throws SQLException {
-	Computer comp = new Computer();
-	comp.setId(id);
-	find(comp);
-	return comp;
-    }
-
     private String generateFindQuery(Computer computer) {
 	StringBuffer query = new StringBuffer();
-	query.append("SELECT o FROM ");
-	query.append("computer");
-	query.append(" WHERE o.id = ");
+	query.append("SELECT * FROM ");
+	query.append("computer cr JOIN company cy");
+	query.append(" WHERE cr.id = ");
 	query.append(computer.getId());
+	query.append(" AND cy.id = cr.company_id");
 	return query.toString();
-    }
-
-    @Override
-    public void update(Computer computer) throws SQLException {
-	// TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void delete(Computer computer) throws SQLException {
-	// TODO Auto-generated method stub
-
     }
 
 }

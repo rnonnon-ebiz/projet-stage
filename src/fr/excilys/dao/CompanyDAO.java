@@ -1,15 +1,11 @@
 package fr.excilys.dao;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import fr.excilys.domainClasses.Company;
 
 public class CompanyDAO extends AbstractCRUDManager<Company> {
-
-    private Connection connection = connectionManager.getConnection();
 
     private static final CompanyDAO companyDAO = new CompanyDAO();
 
@@ -26,16 +22,36 @@ public class CompanyDAO extends AbstractCRUDManager<Company> {
 
     }
 
-    @Override
-    public void find(Company company) throws SQLException {
-	String query = genericFindQuery("company", company.getId());
-	System.out.println(query);
-	ResultSet res;
-	Statement stm = connection.createStatement();
-	res = stm.executeQuery(query);
-	if (res.next()) {
-	    company.setName(res.getString("name"));
+    public void findBody(Company company, Connection connection) {
+	try {
+	    String query = generateFindQuery(company);
+	    System.out.println(query);
+
+	    stm = connection.createStatement();
+	    res = stm.executeQuery(query);
+	    if (res.next()) {
+		company.setName(res.getString("name"));
+	    }
 	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    @Override
+    public void find(Company company) {
+	Connection connection = beforeOperation();
+	findBody(company, connection);
+	afterOperation();
+    }
+
+    private String generateFindQuery(Company company) {
+	StringBuffer query = new StringBuffer();
+	query.append("SELECT * FROM ");
+	query.append("company cy");
+	query.append(" WHERE cy.id = ");
+	query.append(company.getId());
+	return query.toString();
     }
 
     public Company find(int id) throws SQLException {
