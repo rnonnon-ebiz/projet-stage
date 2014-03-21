@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.excilys.dao;
+package fr.stage.dao;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -9,8 +9,8 @@ import java.util.Properties;
 
 import com.mysql.jdbc.Connection;
 
-import fr.excilys.utils.ConfigFileManipulation;
-import fr.excilys.utils.Introspection;
+import fr.stage.utils.ConfigFileManipulation;
+import fr.stage.utils.Introspection;
 
 /**
  * @author rnonnon

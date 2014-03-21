@@ -1,4 +1,4 @@
-package fr.excilys.utils;
+package fr.stage.utils;
 
 import java.io.FileInputStream;
 import java.io.IOException;

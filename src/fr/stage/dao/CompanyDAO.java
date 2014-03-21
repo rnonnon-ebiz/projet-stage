@@ -1,10 +1,10 @@
-package fr.excilys.dao;
+package fr.stage.dao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import fr.excilys.domainClasses.Company;
+import fr.stage.domainClasses.Company;
 
 public class CompanyDAO extends AbstractDAO<Company> {
 

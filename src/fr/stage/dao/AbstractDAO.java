@@ -1,13 +1,16 @@
 /**
  * 
  */
-package fr.excilys.dao;
+package fr.stage.dao;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import fr.excilys.utils.Introspection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.stage.utils.Introspection;
 
 /**
  * @author rnonnon
@@ -35,6 +38,8 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
 
     @Override
     public void create(T object) {
+	Logger logger = LoggerFactory.getLogger(this.getClass());
+	logger.info("Hello World");
 	Connection connection = beforeOperation();
 	createBody(object, connection);
 	afterOperation();

@@ -1,4 +1,4 @@
-package fr.excilys.utils;
+package fr.stage.utils;
 
 public class Introspection {
 

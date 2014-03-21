@@ -4,13 +4,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 
-import service.ServiceDAO;
-import fr.excilys.dao.CompanyDAO;
-import fr.excilys.dao.ComputerDAO;
-import fr.excilys.dao.ConnectionManager;
-import fr.excilys.dao.IConnectionManager;
-import fr.excilys.domainClasses.Company;
-import fr.excilys.domainClasses.Computer;
+import fr.stage.dao.CompanyDAO;
+import fr.stage.dao.ComputerDAO;
+import fr.stage.dao.ConnectionManager;
+import fr.stage.dao.IConnectionManager;
+import fr.stage.domainClasses.Company;
+import fr.stage.domainClasses.Computer;
+import fr.stage.service.ServiceDAO;
 
 public class mainClasse {
 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.excilys.dao;
+package fr.stage.dao;
 
 import java.sql.SQLException;
 

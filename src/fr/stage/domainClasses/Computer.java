@@ -1,4 +1,4 @@
-package fr.excilys.domainClasses;
+package fr.stage.domainClasses;
 
 import java.util.Date;
 

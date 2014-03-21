@@ -1,12 +1,12 @@
-package fr.excilys.dao;
+package fr.stage.dao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import fr.excilys.domainClasses.Company;
-import fr.excilys.domainClasses.Computer;
-import fr.excilys.utils.DateUtils;
+import fr.stage.domainClasses.Company;
+import fr.stage.domainClasses.Computer;
+import fr.stage.utils.DateUtils;
 
 public class ComputerDAO extends AbstractDAO<Computer> {
 

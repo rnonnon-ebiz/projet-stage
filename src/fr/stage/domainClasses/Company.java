@@ -1,4 +1,4 @@
-package fr.excilys.domainClasses;
+package fr.stage.domainClasses;
 
 public class Company {
 

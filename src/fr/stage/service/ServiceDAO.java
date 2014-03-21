@@ -1,7 +1,7 @@
-package service;
+package fr.stage.service;
 
-import fr.excilys.dao.CompanyDAO;
-import fr.excilys.dao.ComputerDAO;
+import fr.stage.dao.CompanyDAO;
+import fr.stage.dao.ComputerDAO;
 
 public class ServiceDAO {
 

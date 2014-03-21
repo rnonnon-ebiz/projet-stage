@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.excilys.dao;
+package fr.stage.dao;
 
 import com.mysql.jdbc.Connection;
 
