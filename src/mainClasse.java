@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 
+import fr.excilys.dao.CompanyDAO;
 import fr.excilys.dao.ComputerDao;
 import fr.excilys.dao.ConnectionManager;
 import fr.excilys.dao.IConnectionManager;
@@ -35,15 +36,16 @@ public class mainClasse {
 	}
 	Computer computer = new Computer();
 	Company comp = new Company();
-	comp.setId(1);// APPLE
+	comp.setName("totoCompany");
 
-	computer.setName("TOTO_COMPUTER4");
-	computer.setIntroducedDate(new Date());
+	computer.setName("TOTO_COMPUTER5");
+	// computer.setIntroducedDate(new Date());
 	computer.setDiscontinuedDate(new Date());
 	computer.setCompany(comp);
 
 	ComputerDao cpDao = ComputerDao.getInstance();
 	try {
+	    CompanyDAO.getInstance().create(comp);
 	    cpDao.create(computer);
 	    System.out.println(computer.getId());
 	    Computer compFind = new Computer();
@@ -52,6 +54,9 @@ public class mainClasse {
 	    System.out.println(compFind);
 	    Computer computerFind2 = cpDao.find(2);
 	    System.out.println(computerFind2);
+	    cpDao.delete(616);
+
+	    // CompanyDAO.getInstance().delete(company);
 	}
 	catch (SQLException e) {
 	    // TODO Auto-generated catch block

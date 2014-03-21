@@ -10,6 +10,7 @@ import java.util.Properties;
 import com.mysql.jdbc.Connection;
 
 import fr.excilys.utils.ConfigFileManipulation;
+import fr.excilys.utils.Introspection;
 
 /**
  * @author rnonnon
@@ -39,7 +40,8 @@ public class ConnectionManager implements IConnectionManager {
 	    // create connection
 	    this.connection = (Connection) DriverManager.getConnection(
 		    this.properties.getProperty("url"), properties);
-	} catch (SQLException | ClassNotFoundException e) {
+	}
+	catch (SQLException | ClassNotFoundException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
@@ -56,7 +58,8 @@ public class ConnectionManager implements IConnectionManager {
 		this.connection = (Connection) DriverManager.getConnection(
 			this.properties.getProperty("url"), properties);
 	    }
-	} catch (SQLException e) {
+	}
+	catch (SQLException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
@@ -65,12 +68,7 @@ public class ConnectionManager implements IConnectionManager {
 
     @Override
     public void closeConnection() {
-	try {
-	    connection.close();
-	} catch (SQLException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
+	Introspection.closeSafe(connection);
     }
 
 }

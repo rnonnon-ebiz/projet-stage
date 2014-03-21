@@ -5,8 +5,9 @@ package fr.excilys.dao;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
+
+import fr.excilys.utils.Introspection;
 
 /**
  * @author rnonnon
@@ -26,78 +27,47 @@ public abstract class AbstractCRUDManager<T> implements ICRUDManager<T> {
 	return connection;
     }
 
-    protected void closeSafe(Object o) {
-	try {
-	    o.getClass().getMethod("close").invoke(o);
-	}
-	catch (Exception e) {
-	    e.printStackTrace();
-	}
-    }
-
     protected void afterOperation() {
 	connectionManager.closeConnection();
-	closeSafe(res);
-	closeSafe(stm);
+	Introspection.closeSafe(res);
+	Introspection.closeSafe(stm);
     }
 
     @Override
-    public abstract void create(final T object) throws SQLException;
+    public void create(T object) {
+	Connection connection = beforeOperation();
+	createBody(object, connection);
+	afterOperation();
+    }
 
     @Override
-    public abstract void find(final T object) throws SQLException;
-
-    // @Override
-    // public T find(final T object) {
-    // return find(object, "id");
-    // }
-
-    // public T find(final T object, String idField) {
-    // StringBuffer query = new StringBuffer();
-    //
-    // String objectClassName = object.getClass().getName();
-    // final Field[] fields = object.getClass().getDeclaredFields();
-    // int idIndex = getIndexOf(idField, fields);
-    // Method[] methods = object.getClass().getMethods();
-    // isGetter(methods[0]);
-    //
-    // //2 cases
-    // //if "id" attribute found -> search on id
-    // if(idIndex != -1){
-    // query.append("SELECT o FROM ");
-    // query.append(objectClassName);
-    // query.append(" WHERE o.id = ");
-    // query.append(object.)
-    // }
-    // //if not -> search on all attributes
-    // else{
-    //
-    // }
-    // return null;
-    // }
-    //
-    // private int getIndexOf(String name, Field[] fields) {
-    // int index = 0;
-    // boolean found = false;
-    // while ((index < fields.length) && !found) {
-    // if (fields[index].getName().equals(name)) {
-    // found = true;
-    // }
-    // else {
-    // ++index;
-    // }
-    // }
-    // if (!found) {
-    // index = -1;
-    // }
-    // return index;
-    // }
+    public void find(final T object) {
+	Connection connection = beforeOperation();
+	findBody(object, connection);
+	afterOperation();
+    }
 
     @Override
-    public abstract void update(final T object) throws SQLException;
+    public void update(final T object) {
+	Connection connection = beforeOperation();
+	updateBody(object, connection);
+	afterOperation();
+    }
 
     @Override
-    public abstract void delete(final T object) throws SQLException;
+    public void delete(final T object) {
+	Connection connection = beforeOperation();
+	deleteBody(object, connection);
+	afterOperation();
+    }
+
+    protected abstract void createBody(T object, Connection connection);
+
+    protected abstract void findBody(T object, Connection connection);
+
+    protected abstract void updateBody(T object, Connection connection);
+
+    protected abstract void deleteBody(T object, Connection connection);
 
     public <idType> String genericFindQuery(String className, idType id) {
 	StringBuffer query = new StringBuffer();

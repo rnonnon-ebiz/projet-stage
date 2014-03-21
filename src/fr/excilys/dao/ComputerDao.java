@@ -6,6 +6,7 @@ import java.sql.Statement;
 
 import fr.excilys.domainClasses.Company;
 import fr.excilys.domainClasses.Computer;
+import fr.excilys.utils.DateUtils;
 
 public class ComputerDao extends AbstractCRUDManager<Computer> {
 
@@ -20,21 +21,6 @@ public class ComputerDao extends AbstractCRUDManager<Computer> {
 	return computerDao;
     }
 
-    @Override
-    public void create(Computer computer) {
-	Connection connection = beforeOperation();
-	createBody(computer, connection);
-	afterOperation();
-
-    }
-
-    @Override
-    public void find(Computer computer) {
-	Connection connection = beforeOperation();
-	findBody(computer, connection);
-	afterOperation();
-    }
-
     public Computer find(int id) throws SQLException {
 	Computer comp = new Computer();
 	comp.setId(id);
@@ -42,19 +28,16 @@ public class ComputerDao extends AbstractCRUDManager<Computer> {
 	return comp;
     }
 
-    @Override
-    public void update(Computer computer) throws SQLException {
-	// TODO Auto-generated method stub
-
+    public void delete(int id) throws SQLException {
+	Connection connection = beforeOperation();
+	Computer comp = new Computer();
+	comp.setId(id);
+	deleteBody(comp, connection);
+	afterOperation();
     }
 
     @Override
-    public void delete(Computer computer) throws SQLException {
-	// TODO Auto-generated method stub
-
-    }
-
-    public void createBody(Computer computer, Connection connection) {
+    protected void createBody(Computer computer, Connection connection) {
 	try {
 	    String query = generateInsertQuery(computer);
 	    System.out.println(query);
@@ -71,7 +54,8 @@ public class ComputerDao extends AbstractCRUDManager<Computer> {
 	}
     }
 
-    public void findBody(Computer computer, Connection connection) {
+    @Override
+    protected void findBody(Computer computer, Connection connection) {
 	try {
 	    String query = generateFindQuery(computer);
 	    System.out.println(query);
@@ -94,16 +78,37 @@ public class ComputerDao extends AbstractCRUDManager<Computer> {
 	}
     }
 
+    @Override
+    protected void updateBody(Computer object, Connection connection) {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected void deleteBody(Computer computer, Connection connection) {
+	try {
+	    String query = generateDeleteQuery(computer);
+	    System.out.println(query);
+
+	    stm = connection.createStatement();
+	    stm.executeUpdate(query);
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+    }
+
     private String generateInsertQuery(Computer computer) {
 	StringBuffer query = new StringBuffer();
 	query.append("INSERT INTO computer ");
 	query.append(" ( name , introduced , discontinued , company_id ) VALUES ('");
 	query.append(computer.getName());
-	query.append("' , FROM_UNIXTIME(");
-	query.append(computer.getIntroducedDate().getTime());
-	query.append(") , FROM_UNIXTIME(");
-	query.append(computer.getDiscontinuedDate().getTime());
-	query.append(") , ");
+	query.append("'");
+	query.append(DateUtils.convertDateToSQLString(",",
+		computer.getIntroducedDate(), "", "NULL"));
+	query.append(DateUtils.convertDateToSQLString(",",
+		computer.getDiscontinuedDate(), "", "NULL"));
+	query.append(" , ");
 	query.append(computer.getCompany().getId());
 	query.append(" )");
 	return query.toString();
@@ -119,4 +124,12 @@ public class ComputerDao extends AbstractCRUDManager<Computer> {
 	return query.toString();
     }
 
+    private String generateDeleteQuery(Computer computer) {
+	StringBuffer query = new StringBuffer();
+	query.append("DELETE FROM ");
+	query.append("computer");
+	query.append(" WHERE id = ");
+	query.append(computer.getId());
+	return query.toString();
+    }
 }

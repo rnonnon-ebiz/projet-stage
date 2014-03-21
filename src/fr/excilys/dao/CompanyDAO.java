@@ -2,6 +2,7 @@ package fr.excilys.dao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import fr.excilys.domainClasses.Company;
 
@@ -16,13 +17,33 @@ public class CompanyDAO extends AbstractCRUDManager<Company> {
 	return companyDAO;
     }
 
-    @Override
-    public void create(Company company) throws SQLException {
-	// TODO Auto-generated method stub
-
+    public Company find(int id) throws SQLException {
+	Company comp = new Company();
+	comp.setId(id);
+	find(comp);
+	return comp;
     }
 
-    public void findBody(Company company, Connection connection) {
+    @Override
+    protected void createBody(Company company, Connection connection) {
+	try {
+	    String query = generateInsertQuery(company);
+	    System.out.println(query);
+
+	    stm = connection.createStatement();
+	    stm.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
+	    res = stm.getGeneratedKeys();
+	    if (res.next()) {
+		company.setId(res.getInt(1));
+	    }
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    @Override
+    protected void findBody(Company company, Connection connection) {
 	try {
 	    String query = generateFindQuery(company);
 	    System.out.println(query);
@@ -39,10 +60,41 @@ public class CompanyDAO extends AbstractCRUDManager<Company> {
     }
 
     @Override
-    public void find(Company company) {
-	Connection connection = beforeOperation();
-	findBody(company, connection);
-	afterOperation();
+    protected void updateBody(Company object, Connection connection) {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected void deleteBody(Company company, Connection connection) {
+	try {
+	    String query = generateDeleteQuery(company);
+	    System.out.println(query);
+
+	    stm = connection.createStatement();
+	    stm.executeUpdate(query);
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
+    }
+
+    private String generateInsertQuery(Company company) {
+	StringBuffer query = new StringBuffer();
+	query.append("INSERT INTO company ");
+	query.append(" ( name) VALUES ('");
+	query.append(company.getName());
+	query.append("')");
+	return query.toString();
+    }
+
+    private String generateDeleteQuery(Company company) {
+	StringBuffer query = new StringBuffer();
+	query.append("DELETE FROM ");
+	query.append("computer");
+	query.append(" WHERE id = ");
+	query.append(company.getId());
+	return query.toString();
     }
 
     private String generateFindQuery(Company company) {
@@ -52,25 +104,6 @@ public class CompanyDAO extends AbstractCRUDManager<Company> {
 	query.append(" WHERE cy.id = ");
 	query.append(company.getId());
 	return query.toString();
-    }
-
-    public Company find(int id) throws SQLException {
-	Company comp = new Company();
-	comp.setId(id);
-	find(comp);
-	return comp;
-    }
-
-    @Override
-    public void update(Company company) throws SQLException {
-	// TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void delete(Company company) throws SQLException {
-	// TODO Auto-generated method stub
-
     }
 
 }
