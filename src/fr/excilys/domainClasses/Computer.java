@@ -54,4 +54,11 @@ public class Computer {
 	this.id = id;
     }
 
+    @Override
+    public String toString() {
+	return "Computer [id=" + id + ", name=" + name + ", introducedDate="
+		+ introducedDate + ", discontinuedDate=" + discontinuedDate
+		+ ", company=" + company + "]";
+    }
+
 }

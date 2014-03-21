@@ -10,6 +10,10 @@ import fr.excilys.dao.IConnectionManager;
 import fr.excilys.domainClasses.Company;
 import fr.excilys.domainClasses.Computer;
 
+/*
+ * TO Do : In DAOComputer :     Traiter le cas d'une compagnie NULL
+ * 				Voir pour faire de la cascade
+ */
 public class mainClasse {
 
     public static void main(String[] args) {
@@ -31,9 +35,9 @@ public class mainClasse {
 	}
 	Computer computer = new Computer();
 	Company comp = new Company();
-	comp.setId(10);
+	comp.setId(1);// APPLE
 
-	computer.setName("TOTO_COMPUTER2222");
+	computer.setName("TOTO_COMPUTER4");
 	computer.setIntroducedDate(new Date());
 	computer.setDiscontinuedDate(new Date());
 	computer.setCompany(comp);
@@ -41,6 +45,11 @@ public class mainClasse {
 	ComputerDao cpDao = ComputerDao.getInstance();
 	try {
 	    cpDao.create(computer);
+	    System.out.println(computer.getId());
+	    Computer compFind = new Computer();
+	    compFind.setId(1);
+	    cpDao.find(compFind);
+	    System.out.println(compFind);
 	}
 	catch (SQLException e) {
 	    // TODO Auto-generated catch block

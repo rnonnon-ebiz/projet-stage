@@ -72,11 +72,11 @@ public abstract class AbstractCRUDManager<T> implements ICRUDManager<T> {
     @Override
     public abstract void delete(final T object) throws SQLException;
 
-    public <idType> String genericFindQuery(final Class classObject, idType id) {
+    public <idType> String genericFindQuery(String className, idType id) {
 	StringBuffer query = new StringBuffer();
-	query.append("SELECT o FROM");
-	query.append(classObject.getName());
-	query.append(" WHERE o.id = ");
+	query.append("SELECT * FROM ");
+	query.append(className);
+	query.append(" WHERE id = ");
 	query.append(id);
 	return query.toString();
     }
