@@ -50,6 +50,8 @@ public class mainClasse {
 	    compFind.setId(1);
 	    cpDao.find(compFind);
 	    System.out.println(compFind);
+	    Computer computerFind2 = cpDao.find(2);
+	    System.out.println(computerFind2);
 	}
 	catch (SQLException e) {
 	    // TODO Auto-generated catch block

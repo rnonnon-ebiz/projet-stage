@@ -69,6 +69,13 @@ public class ComputerDao extends AbstractCRUDManager<Computer> {
 	}
     }
 
+    public Computer find(int id) throws SQLException {
+	Computer comp = new Computer();
+	comp.setId(id);
+	find(comp);
+	return comp;
+    }
+
     private String generateFindQuery(Computer computer) {
 	StringBuffer query = new StringBuffer();
 	query.append("SELECT o FROM ");

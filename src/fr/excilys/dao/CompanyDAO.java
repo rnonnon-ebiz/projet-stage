@@ -38,6 +38,13 @@ public class CompanyDAO extends AbstractCRUDManager<Company> {
 	}
     }
 
+    public Company find(int id) throws SQLException {
+	Company comp = new Company();
+	comp.setId(id);
+	find(comp);
+	return comp;
+    }
+
     @Override
     public void update(Company company) throws SQLException {
 	// TODO Auto-generated method stub
