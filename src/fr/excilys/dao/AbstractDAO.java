@@ -13,7 +13,7 @@ import fr.excilys.utils.Introspection;
  * @author rnonnon
  * 
  */
-public abstract class AbstractCRUDManager<T> implements ICRUDManager<T> {
+public abstract class AbstractDAO<T> implements ICRUDManager<T> {
 
     protected IConnectionManager connectionManager = ConnectionManager
 	    .getInstance();

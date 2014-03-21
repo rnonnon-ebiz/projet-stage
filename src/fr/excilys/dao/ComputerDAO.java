@@ -8,16 +8,14 @@ import fr.excilys.domainClasses.Company;
 import fr.excilys.domainClasses.Computer;
 import fr.excilys.utils.DateUtils;
 
-public class ComputerDao extends AbstractCRUDManager<Computer> {
+public class ComputerDAO extends AbstractDAO<Computer> {
 
-    private Connection connection = connectionManager.getConnection();
+    private static final ComputerDAO computerDao = new ComputerDAO();
 
-    private static final ComputerDao computerDao = new ComputerDao();
-
-    private ComputerDao() {
+    private ComputerDAO() {
     }
 
-    public static ComputerDao getInstance() {
+    public static ComputerDAO getInstance() {
 	return computerDao;
     }
 
@@ -109,7 +107,12 @@ public class ComputerDao extends AbstractCRUDManager<Computer> {
 	query.append(DateUtils.convertDateToSQLString(",",
 		computer.getDiscontinuedDate(), "", "NULL"));
 	query.append(" , ");
-	query.append(computer.getCompany().getId());
+	if (computer.getCompany() == null) {
+	    query.append("NULL");
+	}
+	else {
+	    query.append(computer.getCompany().getId());
+	}
 	query.append(" )");
 	return query.toString();
     }

@@ -4,17 +4,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 
+import service.ServiceDAO;
 import fr.excilys.dao.CompanyDAO;
-import fr.excilys.dao.ComputerDao;
+import fr.excilys.dao.ComputerDAO;
 import fr.excilys.dao.ConnectionManager;
 import fr.excilys.dao.IConnectionManager;
 import fr.excilys.domainClasses.Company;
 import fr.excilys.domainClasses.Computer;
 
-/*
- * TO Do : In DAOComputer :     Traiter le cas d'une compagnie NULL
- * 				Voir pour faire de la cascade
- */
 public class mainClasse {
 
     public static void main(String[] args) {
@@ -41,20 +38,21 @@ public class mainClasse {
 	computer.setName("TOTO_COMPUTER5");
 	// computer.setIntroducedDate(new Date());
 	computer.setDiscontinuedDate(new Date());
-	computer.setCompany(comp);
+	// computer.setCompany(comp);
 
-	ComputerDao cpDao = ComputerDao.getInstance();
+	ComputerDAO computerDAO = ServiceDAO.getComputerDAOInstance();
+	CompanyDAO companyDAO = ServiceDAO.getCompanyDAOInstance();
 	try {
-	    CompanyDAO.getInstance().create(comp);
-	    cpDao.create(computer);
+	    companyDAO.create(comp);
+	    computerDAO.create(computer);
 	    System.out.println(computer.getId());
 	    Computer compFind = new Computer();
 	    compFind.setId(1);
-	    cpDao.find(compFind);
+	    computerDAO.find(compFind);
 	    System.out.println(compFind);
-	    Computer computerFind2 = cpDao.find(2);
+	    Computer computerFind2 = computerDAO.find(2);
 	    System.out.println(computerFind2);
-	    cpDao.delete(616);
+	    computerDAO.delete(616);
 
 	    // CompanyDAO.getInstance().delete(company);
 	}

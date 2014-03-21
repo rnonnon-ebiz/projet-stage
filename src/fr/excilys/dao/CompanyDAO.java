@@ -6,7 +6,7 @@ import java.sql.Statement;
 
 import fr.excilys.domainClasses.Company;
 
-public class CompanyDAO extends AbstractCRUDManager<Company> {
+public class CompanyDAO extends AbstractDAO<Company> {
 
     private static final CompanyDAO companyDAO = new CompanyDAO();
 
