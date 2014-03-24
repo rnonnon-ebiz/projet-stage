@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/rnonnon/Documents/Stage/libs/mysql-connector-java-5.1.29-bin.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Utils"/>
+	<classpathentry kind="lib" path="/home/rnonnon/Documents/Stage/libs/slf4j-simple-1.7.6.jar"/>
+	<classpathentry kind="lib" path="/home/rnonnon/Documents/Stage/libs/slf4j-api-1.7.6.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
