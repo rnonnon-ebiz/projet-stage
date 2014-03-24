@@ -14,6 +14,34 @@ public class Computer {
 
     private Company company;
 
+    public Computer() {
+	super();
+	id = 0;
+	name = "";
+	introducedDate = null;
+	discontinuedDate = null;
+    }
+
+    public Computer(String name, Date introducedDate, Date discontinuedDate,
+	    Company company) {
+	super();
+	this.id = 0;
+	this.name = name;
+	this.introducedDate = introducedDate;
+	this.discontinuedDate = discontinuedDate;
+	this.company = company;
+    }
+
+    public Computer(int id, String name, Date introducedDate,
+	    Date discontinuedDate, Company company) {
+	super();
+	this.id = id;
+	this.name = name;
+	this.introducedDate = introducedDate;
+	this.discontinuedDate = discontinuedDate;
+	this.company = company;
+    }
+
     public String getName() {
 	return name;
     }

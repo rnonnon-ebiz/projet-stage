@@ -6,6 +6,24 @@ public class Company {
 
     private String name;
 
+    public Company() {
+	super();
+	this.id = 0;
+	this.name = "";
+    }
+
+    public Company(String name) {
+	super();
+	this.id = 0;
+	this.name = name;
+    }
+
+    public Company(int id, String name) {
+	super();
+	this.id = id;
+	this.name = name;
+    }
+
     public String getName() {
 	return name;
     }

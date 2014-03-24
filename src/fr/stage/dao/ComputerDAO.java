@@ -3,6 +3,8 @@ package fr.stage.dao;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import fr.stage.domainClasses.Company;
 import fr.stage.domainClasses.Computer;
@@ -11,6 +13,8 @@ import fr.stage.utils.DateUtils;
 public class ComputerDAO extends AbstractDAO<Computer> {
 
     private static final ComputerDAO computerDao = new ComputerDAO();
+
+    public static final String FIND_ALL_QUERY = "SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName FROM computer cr JOIN company cy ON cr.company_id = cy.id";
 
     private ComputerDAO() {
     }
@@ -24,6 +28,13 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	comp.setId(id);
 	find(comp);
 	return comp;
+    }
+
+    public List<Computer> findAll() throws SQLException {
+	Connection connection = beforeOperation();
+	List<Computer> results = findAllBody(connection);
+	afterOperation();
+	return results;
     }
 
     public void delete(int id) throws SQLException {
@@ -62,13 +73,13 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	    stm = connection.createStatement();
 	    res = stm.executeQuery(query);
 	    if (res.next()) {
+		computer.setName(res.getString("computerName"));
 		computer.setDiscontinuedDate(res.getDate("discontinued"));
 		computer.setIntroducedDate(res.getDate("introduced"));
-		computer.setName(res.getString("name"));
-		int idCompany = res.getInt("company_id");
+
 		Company company = new Company();
-		company.setId(idCompany);
-		CompanyDAO.getInstance().find(company);
+		company.setId(res.getInt("company_id"));
+		company.setName(res.getString("companyName"));
 		computer.setCompany(company);
 	    }
 	}
@@ -76,6 +87,36 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	    logger.error("Failed to find {}", computer, e);
 	    e.printStackTrace();
 	}
+    }
+
+    protected List<Computer> findAllBody(Connection connection) {
+	List<Computer> results = new ArrayList<Computer>();
+	try {
+	    System.out.println(FIND_ALL_QUERY);
+
+	    stm = connection.createStatement();
+	    res = stm.executeQuery(FIND_ALL_QUERY);
+	    while (res.next()) {
+		Computer computer = new Computer();
+		int idCompany;
+		computer.setId(res.getInt("computerId"));
+		computer.setDiscontinuedDate(res.getDate("discontinued"));
+		computer.setIntroducedDate(res.getDate("introduced"));
+		computer.setName(res.getString("computerName"));
+		idCompany = res.getInt("company_id");
+		// Generate Company
+		Company company = new Company();
+		company.setId(idCompany);
+		company.setName(res.getString("companyName"));
+		computer.setCompany(company);
+		results.add(computer);
+	    }
+	}
+	catch (SQLException e) {
+	    logger.error("Failed to findAll", e);
+	    e.printStackTrace();
+	}
+	return results;
     }
 
     @Override
@@ -122,11 +163,10 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 
     private String generateFindQuery(Computer computer) {
 	StringBuffer query = new StringBuffer();
-	query.append("SELECT * FROM ");
+	query.append("SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName FROM ");
 	query.append("computer cr JOIN company cy");
-	query.append(" WHERE cr.id = ");
+	query.append(" ON cy.id = cr.company_id WHERE cr.id = ");
 	query.append(computer.getId());
-	query.append(" AND cy.id = cr.company_id");
 	return query.toString();
     }
 

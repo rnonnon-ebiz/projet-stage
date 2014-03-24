@@ -3,6 +3,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
+import java.util.List;
 
 import fr.stage.dao.CompanyDAO;
 import fr.stage.dao.ComputerDAO;
@@ -53,7 +54,10 @@ public class mainClasse {
 	    Computer computerFind2 = computerDAO.find(2);
 	    System.out.println(computerFind2);
 	    computerDAO.delete(616);
-
+	    List<Computer> computers = computerDAO.findAll();
+	    for (Computer c : computers) {
+		System.out.println(c);
+	    }
 	    // CompanyDAO.getInstance().delete(company);
 	}
 	catch (SQLException e) {
