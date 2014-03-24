@@ -48,6 +48,7 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	    }
 	}
 	catch (SQLException e) {
+	    logger.error("Failed to create {}", computer, e);
 	    e.printStackTrace();
 	}
     }
@@ -72,12 +73,13 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	    }
 	}
 	catch (SQLException e) {
+	    logger.error("Failed to find {}", computer, e);
 	    e.printStackTrace();
 	}
     }
 
     @Override
-    protected void updateBody(Computer object, Connection connection) {
+    protected void updateBody(Computer computer, Connection connection) {
 	// TODO Auto-generated method stub
 
     }
@@ -92,6 +94,7 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	    stm.executeUpdate(query);
 	}
 	catch (SQLException e) {
+	    logger.error("Failed to delete {}", computer, e);
 	    e.printStackTrace();
 	}
     }

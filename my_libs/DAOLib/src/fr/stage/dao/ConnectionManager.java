@@ -7,6 +7,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.mysql.jdbc.Connection;
 
 import fr.stage.utils.ConfigFileManipulation;
@@ -28,6 +31,8 @@ public class ConnectionManager implements IConnectionManager {
 
     private final static IConnectionManager connectionManager = new ConnectionManager();
 
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private ConnectionManager() {
 	properties = ConfigFileManipulation
 		.readConfFileAndFill(CONFIG_FILE_NAME);
@@ -35,14 +40,18 @@ public class ConnectionManager implements IConnectionManager {
     }
 
     private void init() {
+	logger.info("Init ConnectionManager");
 	try {
+	    logger.info("Loading driver");
 	    Class.forName(DRIVER_NAME);
+	    logger.info("Driver loaded");
 	    // create connection
 	    this.connection = (Connection) DriverManager.getConnection(
 		    this.properties.getProperty("url"), properties);
+	    logger.info("Connection Ready");
 	}
 	catch (SQLException | ClassNotFoundException e) {
-	    // TODO Auto-generated catch block
+	    logger.error("ERROR Connection Not Ready ");
 	    e.printStackTrace();
 	}
     }

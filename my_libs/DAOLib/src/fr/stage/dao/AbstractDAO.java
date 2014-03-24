@@ -25,6 +25,8 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
 
     protected Statement stm;
 
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+
     protected Connection beforeOperation() {
 	Connection connection = connectionManager.getConnection();
 	return connection;
@@ -38,11 +40,11 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
 
     @Override
     public void create(T object) {
-	Logger logger = LoggerFactory.getLogger(this.getClass());
-	logger.info("Hello World");
+	logger.info("Start create {}", object);
 	Connection connection = beforeOperation();
 	createBody(object, connection);
 	afterOperation();
+	logger.info("End Create {}", object);
     }
 
     @Override
@@ -54,16 +56,20 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
 
     @Override
     public void update(final T object) {
+	logger.info("Start update {}", object);
 	Connection connection = beforeOperation();
 	updateBody(object, connection);
 	afterOperation();
+	logger.info("End update {}", object);
     }
 
     @Override
     public void delete(final T object) {
+	logger.info("Start delete {}", object);
 	Connection connection = beforeOperation();
 	deleteBody(object, connection);
 	afterOperation();
+	logger.info("End delete {}", object);
     }
 
     protected abstract void createBody(T object, Connection connection);

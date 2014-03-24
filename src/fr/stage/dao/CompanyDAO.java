@@ -38,6 +38,7 @@ public class CompanyDAO extends AbstractDAO<Company> {
 	    }
 	}
 	catch (SQLException e) {
+	    logger.error("Failed to create {}", company, e);
 	    e.printStackTrace();
 	}
     }
@@ -55,6 +56,7 @@ public class CompanyDAO extends AbstractDAO<Company> {
 	    }
 	}
 	catch (SQLException e) {
+	    logger.error("Failed to find {}", company, e);
 	    e.printStackTrace();
 	}
     }
@@ -75,6 +77,7 @@ public class CompanyDAO extends AbstractDAO<Company> {
 	    stm.executeUpdate(query);
 	}
 	catch (SQLException e) {
+	    logger.error("Failed to delete {}", company, e);
 	    e.printStackTrace();
 	}
     }
