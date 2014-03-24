@@ -1,19 +1,21 @@
 <jsp:include page="include/header.jsp" />
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <section id="main">
-	<h1 id="homeTitle">456 Computers found</h1>
+	<h1 id="homeTitle">${computersList.size()} Computers found</h1>
 	<div id="actions">
-		<form action="" method="GET">
+		<form action="dashboard" method="GET">
 			<input type="search" id="searchbox" name="search"
 				value="" placeholder="Search name">
 			<input type="submit" id="searchsubmit"
 				value="Filter by name"
-				class="btn primary">
+				class="btn btn-default">
 		</form>
-		<a class="btn success" id="add" href="addComputer">Add Computer</a>
+		<a href="addComputer" class="btn btn-success">Add Computer</a>
 	</div>
 
-		<table class="computers zebra-striped">
+		<table class="computers table table-bordered table-hover">
 			<thead>
 				<tr>
 					<!-- Variable declarations for passing labels as parameters -->
@@ -27,25 +29,14 @@
 				</tr>
 			</thead>
 			<tbody>
-
-				<tr>
-					<td><a href="#" onclick="">ThinkPad T420</a></td>
-					<td>2011-01-01</td>
-					<td>2013-03-04</td>
-					<td>Lenovo</td>
-				</tr>
-				<tr>
-					<td><a href="#">Precision 3500</a></td>
-					<td>2010-05-07</td>
-					<td>2012-06-01</td>
-					<td>Dell</td>
-				</tr>
-				<tr>
-					<td><a href="#">Macbook Air</a></td>
-					<td>2005-05-09</td>
-					<td>2008-06-06</td>
-					<td>Apple</td>
-				</tr>
+				<c:forEach var="computer" items="${computersList}"> 
+					<tr>
+						<td><a href="#" onclick="">${computer.getName()}</a></td>
+						<td>${computer.getIntroducedDate()}</td>
+						<td>${computer.getDiscontinuedDate()}</td>
+						<td>${computer.getCompany().getName()}</td>
+					</tr>
+				</c:forEach>
 			</tbody>
 		</table>
 </section>

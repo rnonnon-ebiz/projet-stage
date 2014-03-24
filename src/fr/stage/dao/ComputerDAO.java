@@ -14,7 +14,7 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 
     private static final ComputerDAO computerDao = new ComputerDAO();
 
-    public static final String FIND_ALL_QUERY = "SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName FROM computer cr JOIN company cy ON cr.company_id = cy.id";
+    public static final String FIND_ALL_QUERY = "SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName FROM computer cr LEFT JOIN company cy ON cr.company_id = cy.id ";
 
     private ComputerDAO() {
     }
@@ -31,8 +31,13 @@ public class ComputerDAO extends AbstractDAO<Computer> {
     }
 
     public List<Computer> findAll() throws SQLException {
+	return findAll("");
+    }
+
+    public List<Computer> findAll(String condition) throws SQLException {
 	Connection connection = beforeOperation();
-	List<Computer> results = findAllBody(connection);
+	String query = FIND_ALL_QUERY + condition;
+	List<Computer> results = findAllBody(query, connection);
 	afterOperation();
 	return results;
     }
@@ -89,13 +94,13 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	}
     }
 
-    protected List<Computer> findAllBody(Connection connection) {
+    protected List<Computer> findAllBody(String query, Connection connection) {
 	List<Computer> results = new ArrayList<Computer>();
 	try {
-	    System.out.println(FIND_ALL_QUERY);
+	    System.out.println(query);
 
 	    stm = connection.createStatement();
-	    res = stm.executeQuery(FIND_ALL_QUERY);
+	    res = stm.executeQuery(query);
 	    while (res.next()) {
 		Computer computer = new Computer();
 		int idCompany;
