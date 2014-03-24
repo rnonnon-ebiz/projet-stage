@@ -35,8 +35,8 @@
 			</select>
 		</div>
 		<div class="actions">
-			<input type="submit" value="Add" class="btn primary">
-			or <a href="dashboard" class="btn">Cancel</a>
+			<input type="submit" value="Add" class="btn btn-success">
+			or <a href="dashboard" class="btn btn-danger">Cancel</a>
 		</div>
 	</form>
 </section>
