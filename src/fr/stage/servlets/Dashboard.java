@@ -9,17 +9,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class AddComputer
+ * Servlet implementation class Dashboard
  */
-@WebServlet("/addComputer")
-public class AddComputer extends HttpServlet {
+@WebServlet("/dashboard")
+public class Dashboard extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public AddComputer() {
+    public Dashboard() {
 	super();
 	// TODO Auto-generated constructor stub
     }
@@ -31,7 +31,7 @@ public class AddComputer extends HttpServlet {
     protected void doGet(HttpServletRequest request,
 	    HttpServletResponse response) throws ServletException, IOException {
 	this.getServletContext()
-		.getRequestDispatcher(ServletUtils.PAGE_URI + "addComputer.jsp")
+		.getRequestDispatcher(ServletUtils.PAGE_URI + "dashboard.jsp")
 		.forward(request, response);
     }
 
@@ -42,7 +42,7 @@ public class AddComputer extends HttpServlet {
     protected void doPost(HttpServletRequest request,
 	    HttpServletResponse response) throws ServletException, IOException {
 	this.getServletContext()
-		.getRequestDispatcher(ServletUtils.PAGE_URI + "addComputer.jsp")
+		.getRequestDispatcher(ServletUtils.PAGE_URI + "dashboard.jsp")
 		.forward(request, response);
     }
 

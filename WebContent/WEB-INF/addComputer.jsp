@@ -3,7 +3,7 @@
 
 	<h1>Add Computer</h1>
 	
-	<form action="addComputer.jsp" method="POST">
+	<form action="addComputer" method="POST">
 		<fieldset>
 			<div class="clearfix">
 				<label for="name">Computer name:</label>
@@ -41,7 +41,7 @@
 		</fieldset>
 		<div class="actions">
 			<input type="submit" value="Add" class="btn primary">
-			or <a href="dashboard.jsp" class="btn">Cancel</a>
+			or <a href="dashboard" class="btn">Cancel</a>
 		</div>
 	</form>
 </section>

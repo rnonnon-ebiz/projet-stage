@@ -10,6 +10,14 @@
   	<url-pattern>/addComputer</url-pattern>
   </servlet-mapping>
   <servlet>
+  	<servlet-name>dashboard</servlet-name>
+  	<servlet-class>fr.stage.servlets.Dashboard</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>dashboard</servlet-name>
+  	<url-pattern>/dashboard</url-pattern>
+  </servlet-mapping>
+  <servlet>
   	<servlet-name>index</servlet-name>
   	<servlet-class>fr.stage.servlets.Index</servlet-class>
   </servlet>
