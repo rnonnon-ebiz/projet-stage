@@ -14,7 +14,6 @@
 		</form>
 		<a href="addComputer" class="btn btn-success">Add Computer</a>
 	</div>
-
 		<table class="computers table table-bordered table-hover">
 			<thead>
 				<tr>
@@ -26,6 +25,7 @@
 					<th>Discontinued Date</th>
 					<!-- Table header for Company -->
 					<th>Company</th>
+					<th>Delete</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -35,6 +35,12 @@
 						<td>${computer.getIntroducedDate()}</td>
 						<td>${computer.getDiscontinuedDate()}</td>
 						<td>${computer.getCompany().getName()}</td>
+						<td>
+							<form method="post">
+								<input type="text" class="hidden" name="computerToDelete" value="${computer.getId()}"/>
+								<input type="submit" type="button" class="btn btn-danger" value="Delete">
+							</form>
+						</td>
 					</tr>
 				</c:forEach>
 			</tbody>

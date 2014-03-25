@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.stage.dao.ComputerDAO;
 import fr.stage.domainClasses.Computer;
 import fr.stage.service.ServiceDAO;
 
@@ -91,10 +92,16 @@ public class Dashboard extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request,
 	    HttpServletResponse response) throws ServletException, IOException {
-
-	this.getServletContext()
-		.getRequestDispatcher(ServletUtils.PAGE_URI + "dashboard.jsp")
-		.forward(request, response);
+	int computerId = Integer.parseInt(request
+		.getParameter("computerToDelete"));
+	try {
+	    ComputerDAO.getInstance().delete(computerId);
+	}
+	catch (SQLException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+	response.sendRedirect("dashboard");
     }
 
 }

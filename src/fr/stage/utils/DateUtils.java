@@ -1,5 +1,6 @@
 package fr.stage.utils;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class DateUtils {
@@ -25,5 +26,29 @@ public class DateUtils {
 	}
 	result.append(after);
 	return result.toString();
+    }
+
+    public static long stringToTimestamp(String stringDate)
+	    throws NumberFormatException {
+	String[] dateSplitted = stringDate.split("-");
+	Calendar cal = Calendar.getInstance();
+	int year = Integer.parseInt(dateSplitted[0]);
+	int month = Integer.parseInt(dateSplitted[1]);
+	int day = Integer.parseInt(dateSplitted[2]);
+	cal.set(year, month, day);
+	return cal.getTimeInMillis();
+    }
+
+    public static Date stringToDate(String stringDate)
+	    throws NumberFormatException {
+	String[] dateSplitted = stringDate.split("-");
+	Calendar cal = Calendar.getInstance();
+	for (int i = 0; i < dateSplitted.length; ++i)
+	    System.out.println(i + " ; " + dateSplitted[i]);
+	int year = Integer.parseInt(dateSplitted[0]);
+	int month = Integer.parseInt(dateSplitted[1]);
+	int day = Integer.parseInt(dateSplitted[2]);
+	cal.set(year, month, day);
+	return cal.getTime();
     }
 }
