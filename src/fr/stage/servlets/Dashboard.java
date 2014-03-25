@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import fr.stage.dao.ComputerDAO;
 import fr.stage.dao.ComputerDAOPagination;
 import fr.stage.domainClasses.Computer;
-import fr.stage.service.ServiceDAO;
 
 /**
  * Servlet implementation class Dashboard
@@ -30,38 +29,74 @@ public class Dashboard extends HttpServlet {
 
     private List<Computer> computersList;
 
-    private int nComputerFound;
-
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ComputerDAOPagination computerDAOPagination;
+
+    private String conditionPagination;
+
+    private String nameFilter;
+
+    private int page;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
     public Dashboard() {
 	super();
-	nComputerFound = ServiceDAO.getComputerDAOInstance().count();
-	computerDAOPagination = new ComputerDAOPagination(LIMIT_PER_PAGE);
+	computerDAOPagination = null;
+	conditionPagination = "";
     }
 
     public void filterByName(String name) {
-	String condition = "WHERE cr.name REGEXP \"^" + name + ".*\"";
-	try {
-	    computersList = ServiceDAO.getComputerDAOInstance().findAll(
-		    condition);
-	    logger.info(computersList.size() + " computers found");
-	}
-	catch (SQLException e) {
-	    computersList = null;
-	    logger.error("ERROR DASHBOARD ", e);
-	    e.printStackTrace();
-	}
+	conditionPagination = "WHERE cr.name REGEXP \"^" + name + ".*\" ";
     }
 
     public void findAllComputer() {
-	computersList = computerDAOPagination.findAll();
-	logger.info(computersList.size() + " computers found");
+	conditionPagination = "";
+    }
+
+    public void goTo(int page) {
+	computersList = computerDAOPagination.goTo(page);
+    }
+
+    private void readRequest(HttpServletRequest request) {
+	String nameFilterParam = request.getParameter("search");
+	String pageParam = request.getParameter("page");
+	nameFilter = nameFilterParam;
+	if (nameFilterParam != null) {
+	    nameFilter = nameFilterParam;
+	}
+	else {
+	    nameFilter = (String) (request.getAttribute("searchName"));
+	}
+	if (pageParam != null) {
+	    page = Integer.parseInt(pageParam);
+	}
+	else {
+	    page = 0;
+	}
+    }
+
+    private void setRequest(HttpServletRequest request) {
+	int maxPage = computerDAOPagination.getMaxPage();
+	request.setAttribute("maxPages", maxPage - 1);
+	request.setAttribute("computersList", computersList);
+	request.setAttribute("nComputerFound",
+		computerDAOPagination.getnComputers());
+    }
+
+    private void process() {
+	StringBuilder conditionPaginationTMP = new StringBuilder();
+	if (nameFilter != null) {
+	    conditionPaginationTMP.append("WHERE cr.name REGEXP \"^");
+	    conditionPaginationTMP.append(nameFilter);
+	    conditionPaginationTMP.append(".*\" ");
+	}
+	conditionPagination = conditionPaginationTMP.toString();
+	computerDAOPagination = new ComputerDAOPagination(LIMIT_PER_PAGE, 0,
+		conditionPagination);
+	computersList = computerDAOPagination.goTo(page);
     }
 
     /**
@@ -70,18 +105,9 @@ public class Dashboard extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request,
 	    HttpServletResponse response) throws ServletException, IOException {
-	String nameFilter = request.getParameter("search");
-	logger.info(nameFilter);
-	if (nameFilter != null) {
-	    filterByName(nameFilter);
-	}
-	else {
-	    findAllComputer();
-	}
-	request.setAttribute("computersList", computersList);
-	request.setAttribute("nComputerFound", nComputerFound);
-	// Computer cp = new Computer();
-	// System.out.println(cp);
+	readRequest(request);
+	process();
+	setRequest(request);
 	this.getServletContext()
 		.getRequestDispatcher(ServletUtils.PAGE_URI + "dashboard.jsp")
 		.forward(request, response);

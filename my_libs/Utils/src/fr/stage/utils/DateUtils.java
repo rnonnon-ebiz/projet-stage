@@ -13,7 +13,7 @@ public class DateUtils {
 
     public static String convertDateToSQLString(String before, Date date,
 	    String after, String alternative) {
-	StringBuffer result = new StringBuffer();
+	StringBuilder result = new StringBuilder();
 	result.append(before);
 	if (date != null) {
 	    result.append(" FROM_UNIXTIME(");

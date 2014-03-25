@@ -14,6 +14,15 @@
 		</form>
 		<a href="addComputer" class="btn btn-success">Add Computer</a>
 	</div>
+		
+		<ul class="pagination">
+		  
+		  <c:forEach var="page" begin="0" end="${maxPages}">
+		  	<li><a href="?page=${page}">${page+1}</a></li>
+		  </c:forEach>
+		  
+		</ul>
+	
 		<table class="computers table table-bordered table-hover">
 			<thead>
 				<tr>

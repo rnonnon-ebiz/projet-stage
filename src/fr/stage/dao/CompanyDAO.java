@@ -121,7 +121,7 @@ public class CompanyDAO extends AbstractDAO<Company> {
     }
 
     private String generateInsertQuery(Company company) {
-	StringBuffer query = new StringBuffer();
+	StringBuilder query = new StringBuilder();
 	query.append("INSERT INTO company ");
 	query.append(" ( name) VALUES ('");
 	query.append(company.getName());
@@ -130,7 +130,7 @@ public class CompanyDAO extends AbstractDAO<Company> {
     }
 
     private String generateDeleteQuery(Company company) {
-	StringBuffer query = new StringBuffer();
+	StringBuilder query = new StringBuilder();
 	query.append("DELETE FROM ");
 	query.append("computer");
 	query.append(" WHERE id = ");
@@ -139,7 +139,7 @@ public class CompanyDAO extends AbstractDAO<Company> {
     }
 
     private String generateFindQuery(Company company) {
-	StringBuffer query = new StringBuffer();
+	StringBuilder query = new StringBuilder();
 	query.append("SELECT * FROM ");
 	query.append("company cy");
 	query.append(" WHERE cy.id = ");

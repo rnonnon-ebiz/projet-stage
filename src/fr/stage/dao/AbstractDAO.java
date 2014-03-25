@@ -81,7 +81,7 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
     protected abstract void deleteBody(T object, Connection connection);
 
     public <idType> String genericFindQuery(String className, idType id) {
-	StringBuffer query = new StringBuffer();
+	StringBuilder query = new StringBuilder();
 	query.append("SELECT * FROM ");
 	query.append(className);
 	query.append(" WHERE id = ");
@@ -90,7 +90,7 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
     }
 
     // public String genericInsertQuery(final T object){
-    // StringBuffer query = new StringBuffer();
+    // StringBuilder query = new StringBuilder();
     // query.append("INSERT INTO ");
     // query.append(object.getClass().getName());
     // query.append(" ( ");

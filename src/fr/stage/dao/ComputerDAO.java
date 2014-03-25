@@ -16,7 +16,7 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 
     public static final String FIND_ALL_QUERY = "SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName FROM computer cr LEFT JOIN company cy ON cr.company_id = cy.id ";
 
-    public static final String COUNT_ALL_QUERY = "SELECT COUNT(*) FROM computer";
+    public static final String COUNT_ALL_QUERY = "SELECT COUNT(*) FROM computer cr ";
 
     private ComputerDAO() {
     }
@@ -26,8 +26,12 @@ public class ComputerDAO extends AbstractDAO<Computer> {
     }
 
     public int count() {
+	return count("");
+    }
+
+    public int count(String condition) {
 	Connection connection = beforeOperation();
-	int nComputer = countBody(connection);
+	int nComputer = countBody(condition, connection);
 	afterOperation();
 	return nComputer;
     }
@@ -78,13 +82,14 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	}
     }
 
-    protected int countBody(Connection connection) {
+    protected int countBody(String condition, Connection connection) {
 	int nComputer = 0;
 	try {
-	    System.out.println(COUNT_ALL_QUERY);
+	    String query = COUNT_ALL_QUERY + condition;
+	    System.out.println(query);
 
 	    stm = connection.createStatement();
-	    res = stm.executeQuery(COUNT_ALL_QUERY);
+	    res = stm.executeQuery(query);
 	    if (res.next()) {
 		nComputer = res.getInt(1);
 	    }
@@ -173,7 +178,7 @@ public class ComputerDAO extends AbstractDAO<Computer> {
     }
 
     private String generateInsertQuery(Computer computer) {
-	StringBuffer query = new StringBuffer();
+	StringBuilder query = new StringBuilder();
 	query.append("INSERT INTO computer ");
 	query.append(" ( name , introduced , discontinued , company_id ) VALUES ('");
 	query.append(computer.getName());
@@ -194,7 +199,7 @@ public class ComputerDAO extends AbstractDAO<Computer> {
     }
 
     private String generateFindQuery(Computer computer) {
-	StringBuffer query = new StringBuffer();
+	StringBuilder query = new StringBuilder();
 	query.append("SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName FROM ");
 	query.append("computer cr JOIN company cy");
 	query.append(" ON cy.id = cr.company_id WHERE cr.id = ");
@@ -203,7 +208,7 @@ public class ComputerDAO extends AbstractDAO<Computer> {
     }
 
     private String generateDeleteQuery(Computer computer) {
-	StringBuffer query = new StringBuffer();
+	StringBuilder query = new StringBuilder();
 	query.append("DELETE FROM ");
 	query.append("computer");
 	query.append(" WHERE id = ");

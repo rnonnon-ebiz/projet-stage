@@ -21,15 +21,20 @@ public class ComputerDAOPagination {
 
     private int maxPage;
 
-    public ComputerDAOPagination(int computerPerPage, int offset) {
+    private String condition;
+
+    public ComputerDAOPagination(int computerPerPage, int offset,
+	    String condition) {
 	this.offset = offset;
 	if (computerPerPage < 0)
 	    computerPerPage = 1;
 	this.computerPerPage = computerPerPage;
-	this.nComputers = computerDAO.count();
+	this.condition = condition;
+	this.nComputers = computerDAO.count(condition);
 	this.computersList = null;
 	maxPage = (int) Math.ceil((double) (nComputers)
 		/ (double) (computerPerPage));
+
     }
 
     public ComputerDAOPagination(int computerPerPage) {
@@ -37,6 +42,7 @@ public class ComputerDAOPagination {
 	if (computerPerPage < 0)
 	    computerPerPage = 1;
 	this.computerPerPage = computerPerPage;
+	this.condition = "";
 	this.nComputers = computerDAO.count();
 	this.computersList = null;
 	maxPage = (int) Math.ceil((double) (nComputers)
@@ -45,10 +51,6 @@ public class ComputerDAOPagination {
 
     public void updatePage() {
 	actualPage = (int) ((double) (offset) / (double) (computerPerPage));
-    }
-
-    public void goTo(int page) {
-
     }
 
     public int getActualPage() {
@@ -96,13 +98,15 @@ public class ComputerDAOPagination {
     }
 
     public List<Computer> findAll() {
-	StringBuffer condition = new StringBuffer();
-	condition.append("LIMIT ");
-	condition.append(computerPerPage);
-	condition.append(" OFFSET ");
-	condition.append(offset);
+	StringBuilder conditionPagination = new StringBuilder();
+	conditionPagination.append(" ");
+	conditionPagination.append(condition);
+	conditionPagination.append(" LIMIT ");
+	conditionPagination.append(computerPerPage);
+	conditionPagination.append(" OFFSET ");
+	conditionPagination.append(offset);
 	try {
-	    computersList = computerDAO.findAll(condition.toString());
+	    computersList = computerDAO.findAll(conditionPagination.toString());
 	}
 	catch (SQLException e) {
 	    // TODO Auto-generated catch block
@@ -124,6 +128,12 @@ public class ComputerDAOPagination {
 	if (offset < 0)
 	    offset = 0;
 	updatePage();
+	return findAll();
+    }
+
+    public List<Computer> goTo(int page) {
+	this.actualPage = page;
+	this.offset = page * this.computerPerPage;
 	return findAll();
     }
 }
