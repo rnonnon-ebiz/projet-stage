@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.stage.dao.ComputerDAO;
+import fr.stage.dao.ComputerDAOPagination;
 import fr.stage.domainClasses.Computer;
 import fr.stage.service.ServiceDAO;
 
@@ -23,18 +24,25 @@ import fr.stage.service.ServiceDAO;
 @WebServlet("/dashboard")
 public class Dashboard extends HttpServlet {
 
+    private static int LIMIT_PER_PAGE = 10;
+
     private static final long serialVersionUID = 1L;
 
     private List<Computer> computersList;
 
+    private int nComputerFound;
+
     Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private ComputerDAOPagination computerDAOPagination;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
     public Dashboard() {
 	super();
-
+	nComputerFound = ServiceDAO.getComputerDAOInstance().count();
+	computerDAOPagination = new ComputerDAOPagination(LIMIT_PER_PAGE);
     }
 
     public void filterByName(String name) {
@@ -52,16 +60,8 @@ public class Dashboard extends HttpServlet {
     }
 
     public void findAllComputer() {
-	try {
-	    computersList = ServiceDAO.getComputerDAOInstance().findAll();
-	    logger.info(computersList.size() + " computers found");
-	}
-	catch (SQLException e) {
-	    computersList = null;
-
-	    logger.error("ERROR DASHBOARD ", e);
-	    e.printStackTrace();
-	}
+	computersList = computerDAOPagination.findAll();
+	logger.info(computersList.size() + " computers found");
     }
 
     /**
@@ -79,6 +79,7 @@ public class Dashboard extends HttpServlet {
 	    findAllComputer();
 	}
 	request.setAttribute("computersList", computersList);
+	request.setAttribute("nComputerFound", nComputerFound);
 	// Computer cp = new Computer();
 	// System.out.println(cp);
 	this.getServletContext()

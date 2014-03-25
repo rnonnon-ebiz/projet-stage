@@ -16,11 +16,20 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 
     public static final String FIND_ALL_QUERY = "SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName FROM computer cr LEFT JOIN company cy ON cr.company_id = cy.id ";
 
+    public static final String COUNT_ALL_QUERY = "SELECT COUNT(*) FROM computer";
+
     private ComputerDAO() {
     }
 
     public static ComputerDAO getInstance() {
 	return computerDao;
+    }
+
+    public int count() {
+	Connection connection = beforeOperation();
+	int nComputer = countBody(connection);
+	afterOperation();
+	return nComputer;
     }
 
     public Computer find(int id) throws SQLException {
@@ -67,6 +76,24 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	    logger.error("Failed to create {}", computer, e);
 	    e.printStackTrace();
 	}
+    }
+
+    protected int countBody(Connection connection) {
+	int nComputer = 0;
+	try {
+	    System.out.println(COUNT_ALL_QUERY);
+
+	    stm = connection.createStatement();
+	    res = stm.executeQuery(COUNT_ALL_QUERY);
+	    if (res.next()) {
+		nComputer = res.getInt(1);
+	    }
+	}
+	catch (SQLException e) {
+	    logger.error("Failed to count ", e);
+	    e.printStackTrace();
+	}
+	return nComputer;
     }
 
     @Override

@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <section id="main">
-	<h1 id="homeTitle">${computersList.size()} Computers found</h1>
+	<h1 id="homeTitle">${nComputerFound} Computers found</h1>
 	<div id="actions">
 		<form action="dashboard" method="GET">
 			<input type="search" id="searchbox" name="search"
