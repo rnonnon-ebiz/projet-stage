@@ -45,8 +45,10 @@
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-sm-10">
 				<div class="col-xs-2">
-					<input type="submit" value="Add" class="btn btn-success">
-					or <a href="dashboard" class="btn btn-danger">Cancel</a>
+					<button type="submit" class="btn btn-success" >
+						<span class="glyphicon glyphicon-ok"></span>Add
+					</button>
+					or <a href="dashboard" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> Cancel</a>
 				</div>	
  			</div>
 		</div>

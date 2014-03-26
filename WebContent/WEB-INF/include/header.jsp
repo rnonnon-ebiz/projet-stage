@@ -16,6 +16,7 @@
 	<script src="js/jquery-ui-1.10.4.custom.js"></script>
 	<script src="js/jquery.validate.js"></script>
 	<script src="js/additional-methods.js"></script>
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
 	
 	<script type="text/javascript">
 		$(function datePicker(){
