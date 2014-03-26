@@ -18,7 +18,7 @@ public class DateUtils {
 	result.append(before);
 	if (date != null) {
 	    result.append(" FROM_UNIXTIME(");
-	    result.append(date.getTime());
+	    result.append(date.getTime() / 1000);
 	    result.append(") ");
 	}
 	else {

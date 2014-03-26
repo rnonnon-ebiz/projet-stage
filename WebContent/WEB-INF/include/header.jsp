@@ -14,12 +14,16 @@
 	<link href="css/dark-hive/jquery-ui-1.10.4.custom.css" rel="stylesheet">
 	<script src="js/jquery-1.10.2.js"></script>
 	<script src="js/jquery-ui-1.10.4.custom.js"></script>
+	<script src="js/jquery.validate.js"></script>
+	<script src="js/additional-methods.js"></script>
+	
 	<script type="text/javascript">
 		$(function datePicker(){
 			$(".datepicker").datepicker({
 	 			dateFormat: "yy-mm-dd"});
 		});
 	</script>
+	
 </head>
 <body>
 	<nav class="navbar navbar-inverse">

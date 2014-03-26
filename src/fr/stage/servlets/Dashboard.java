@@ -2,7 +2,6 @@ package fr.stage.servlets;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,8 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.stage.dao.ComputerDAO;
-import fr.stage.dao.ComputerDAOPagination;
-import fr.stage.domainClasses.Computer;
+import fr.stage.dao.ComputerDAOPaginationFilter;
 
 /**
  * Servlet implementation class Dashboard
@@ -23,80 +21,51 @@ import fr.stage.domainClasses.Computer;
 @WebServlet("/dashboard")
 public class Dashboard extends HttpServlet {
 
-    private static int LIMIT_PER_PAGE = 10;
+    private static int LIMIT_PER_PAGE_DEF = 10;
 
     private static final long serialVersionUID = 1L;
 
-    private List<Computer> computersList;
-
     Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    private ComputerDAOPagination computerDAOPagination;
-
-    private String conditionPagination;
-
-    private String nameFilter;
-
-    private int page;
 
     /**
      * @see HttpServlet#HttpServlet()
      */
     public Dashboard() {
 	super();
-	computerDAOPagination = null;
-	conditionPagination = "";
+	logger.debug("init Dashboard");
     }
 
-    public void filterByName(String name) {
-	conditionPagination = "WHERE cr.name REGEXP \"^" + name + ".*\" ";
-    }
-
-    public void findAllComputer() {
-	conditionPagination = "";
-    }
-
-    public void goTo(int page) {
-	computersList = computerDAOPagination.goTo(page);
-    }
-
-    private void readRequest(HttpServletRequest request) {
+    private ComputerDAOPaginationFilter readRequest(HttpServletRequest request) {
 	String nameFilterParam = request.getParameter("search");
 	String pageParam = request.getParameter("page");
-	nameFilter = nameFilterParam;
+	int page;
+	String nameFilter;
 	if (nameFilterParam != null) {
 	    nameFilter = nameFilterParam;
 	}
 	else {
-	    nameFilter = (String) (request.getAttribute("searchName"));
+	    nameFilter = "";
 	}
-	if (pageParam != null) {
+	try {
 	    page = Integer.parseInt(pageParam);
 	}
-	else {
-	    page = 0;
+	catch (NullPointerException | NumberFormatException e) {
+	    page = 1;
 	}
+	ComputerDAOPaginationFilter computerDAOPaginationFilter = new ComputerDAOPaginationFilter(
+		nameFilter, LIMIT_PER_PAGE_DEF, 0);
+	int backPage = page - 1;
+	if (backPage >= computerDAOPaginationFilter.getMaxPages()
+		|| backPage < 0)
+	    backPage = 0;
+	computerDAOPaginationFilter.goTo(backPage);
+	return computerDAOPaginationFilter;
     }
 
-    private void setRequest(HttpServletRequest request) {
-	int maxPage = computerDAOPagination.getMaxPage();
-	request.setAttribute("maxPages", maxPage - 1);
-	request.setAttribute("computersList", computersList);
-	request.setAttribute("nComputerFound",
-		computerDAOPagination.getnComputers());
-    }
-
-    private void process() {
-	StringBuilder conditionPaginationTMP = new StringBuilder();
-	if (nameFilter != null) {
-	    conditionPaginationTMP.append("WHERE cr.name REGEXP \"^");
-	    conditionPaginationTMP.append(nameFilter);
-	    conditionPaginationTMP.append(".*\" ");
-	}
-	conditionPagination = conditionPaginationTMP.toString();
-	computerDAOPagination = new ComputerDAOPagination(LIMIT_PER_PAGE, 0,
-		conditionPagination);
-	computersList = computerDAOPagination.goTo(page);
+    private void setRequest(HttpServletRequest request,
+	    ComputerDAOPaginationFilter computerDAOPaginationFilter) {
+	request.setAttribute("computerDAOPaginationFilter",
+		computerDAOPaginationFilter);
     }
 
     /**
@@ -105,12 +74,22 @@ public class Dashboard extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request,
 	    HttpServletResponse response) throws ServletException, IOException {
-	readRequest(request);
-	process();
-	setRequest(request);
+	ComputerDAOPaginationFilter dao = readRequest(request);
+	setRequest(request, dao);
 	this.getServletContext()
 		.getRequestDispatcher(ServletUtils.PAGE_URI + "dashboard.jsp")
 		.forward(request, response);
+    }
+
+    private void processDelete(HttpServletRequest request) {
+	try {
+	    int computerToDelete = Integer.parseInt(request
+		    .getParameter("computerToDelete"));
+	    ComputerDAO.getInstance().delete(computerToDelete);
+	}
+	catch (NullPointerException | NumberFormatException | SQLException e) {
+
+	}
     }
 
     /**
@@ -119,16 +98,11 @@ public class Dashboard extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request,
 	    HttpServletResponse response) throws ServletException, IOException {
-	int computerId = Integer.parseInt(request
-		.getParameter("computerToDelete"));
-	try {
-	    ComputerDAO.getInstance().delete(computerId);
-	}
-	catch (SQLException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
-	response.sendRedirect("dashboard");
+	processDelete(request);
+	ComputerDAOPaginationFilter dao = readRequest(request);
+	setRequest(request, dao);
+	this.getServletContext()
+		.getRequestDispatcher(ServletUtils.PAGE_URI + "dashboard.jsp")
+		.forward(request, response);
     }
-
 }

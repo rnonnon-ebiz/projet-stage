@@ -54,11 +54,9 @@ public class AddComputer extends HttpServlet {
     }
 
     protected void fillComputer(HttpServletRequest request) {
-	String name = request.getParameter("name");
+	String name = request.getParameter("computerName");
 	String introducedDate = request.getParameter("introduced");
 	String discontinuedDate = request.getParameter("discontinued");
-	int companyId = Integer.parseInt(request.getParameter("company"));
-
 	computer.setName(name);
 	if (!introducedDate.equals("")) {
 	    try {
@@ -76,8 +74,15 @@ public class AddComputer extends HttpServlet {
 	    catch (Exception e) {
 	    }
 	}
-	Company c = new Company();
-	c.setId(companyId);
+	Company c = null;
+	try {
+	    int companyId = Integer.parseInt(request.getParameter("company"));
+	    c = new Company();
+	    c.setId(companyId);
+	}
+	catch (NumberFormatException e) {
+
+	}
 	computer.setCompany(c);
 	logger.info(computer.toString());
     }

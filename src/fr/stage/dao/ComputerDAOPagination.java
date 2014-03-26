@@ -1,11 +1,12 @@
 package fr.stage.dao;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
 
 import fr.stage.domainClasses.Computer;
 
-public class ComputerDAOPagination {
+public class ComputerDAOPagination implements Serializable {
 
     private static final ComputerDAO computerDAO = ComputerDAO.getInstance();
 
@@ -17,60 +18,59 @@ public class ComputerDAOPagination {
 
     private int nComputers;
 
-    private int actualPage;
+    private int currentPage;
 
-    private int maxPage;
+    private int maxPages;
 
     private String condition;
 
     public ComputerDAOPagination(int computerPerPage, int offset,
 	    String condition) {
-	this.offset = offset;
+	reinit(computerPerPage, offset, condition);
+    }
+
+    public ComputerDAOPagination(int computerPerPage) {
+	reinit(computerPerPage, 0, "");
+    }
+
+    public String getCondition() {
+	return condition;
+    }
+
+    public void reinit(int computerPerPage, int offset, String condition) {
+	this.offset = 0;
 	if (computerPerPage < 0)
 	    computerPerPage = 1;
 	this.computerPerPage = computerPerPage;
 	this.condition = condition;
 	this.nComputers = computerDAO.count(condition);
 	this.computersList = null;
-	maxPage = (int) Math.ceil((double) (nComputers)
-		/ (double) (computerPerPage));
-
-    }
-
-    public ComputerDAOPagination(int computerPerPage) {
-	this.offset = 0;
-	if (computerPerPage < 0)
-	    computerPerPage = 1;
-	this.computerPerPage = computerPerPage;
-	this.condition = "";
-	this.nComputers = computerDAO.count();
-	this.computersList = null;
-	maxPage = (int) Math.ceil((double) (nComputers)
+	maxPages = (int) Math.ceil((double) (nComputers)
 		/ (double) (computerPerPage));
     }
 
     public void updatePage() {
-	actualPage = (int) ((double) (offset) / (double) (computerPerPage));
+	currentPage = (int) ((double) (offset) / (double) (computerPerPage));
     }
 
-    public int getActualPage() {
-	return actualPage;
+    public int getCurrentPage() {
+	return currentPage;
     }
 
-    public int getMaxPage() {
-	return maxPage;
+    public int getFrontCurrentPage() {
+	return currentPage + 1;
     }
 
-    public void setMaxPage(int maxPage) {
-	this.maxPage = maxPage;
+    public int getMaxPages() {
+	return maxPages;
+    }
+
+    public void setMaxPages(int maxPages) {
+	this.maxPages = maxPages;
     }
 
     public int getnComputers() {
 	return nComputers;
-    }
-
-    public void setnComputers(int nComputers) {
-	this.nComputers = nComputers;
     }
 
     public int getOffset() {
@@ -132,7 +132,9 @@ public class ComputerDAOPagination {
     }
 
     public List<Computer> goTo(int page) {
-	this.actualPage = page;
+	if (page >= 0 && page < maxPages) {
+	    this.currentPage = page;
+	}
 	this.offset = page * this.computerPerPage;
 	return findAll();
     }
