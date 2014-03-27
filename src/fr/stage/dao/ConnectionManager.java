@@ -3,14 +3,13 @@
  */
 package fr.stage.dao;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.mysql.jdbc.Connection;
 
 import fr.stage.utils.Introspection;
 
@@ -28,7 +27,7 @@ public class ConnectionManager implements IConnectionManager {
 
     private Connection connection;
 
-    private final static IConnectionManager connectionManager = new ConnectionManager();
+    private final static ConnectionManager connectionManager = new ConnectionManager();
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -61,7 +60,7 @@ public class ConnectionManager implements IConnectionManager {
 	}
     }
 
-    public static IConnectionManager getInstance() {
+    public static ConnectionManager getInstance() {
 	return connectionManager;
     }
 

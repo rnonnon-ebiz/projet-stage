@@ -3,7 +3,7 @@ package fr.stage.service;
 import fr.stage.dao.CompanyDAO;
 import fr.stage.dao.ComputerDAO;
 
-public class ServiceDAO {
+public class FactoryDAO {
 
     public static ComputerDAO getComputerDAOInstance() {
 	return ComputerDAO.getInstance();

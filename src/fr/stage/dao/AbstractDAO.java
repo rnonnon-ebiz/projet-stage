@@ -4,12 +4,14 @@
 package fr.stage.dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.stage.domainClasses.Page;
 import fr.stage.utils.Introspection;
 
 /**
@@ -23,7 +25,7 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
 
     protected ResultSet res;
 
-    protected Statement stm;
+    protected PreparedStatement stm;
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -38,6 +40,15 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
 	Introspection.closeSafe(stm);
     }
 
+    public int count(String nameFilter) {
+	logger.info("Start count");
+	Connection connection = beforeOperation();
+	int total = countBody(nameFilter, connection);
+	afterOperation();
+	logger.info("End count");
+	return total;
+    }
+
     @Override
     public void create(T object) {
 	logger.info("Start create {}", object);
@@ -48,10 +59,13 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
     }
 
     @Override
-    public void find(final T object) {
+    public List<T> find(Page page) {
+	logger.info("Start find");
 	Connection connection = beforeOperation();
-	findBody(object, connection);
+	List<T> res = findBody(page, connection);
 	afterOperation();
+	logger.info("End find");
+	return res;
     }
 
     @Override
@@ -64,21 +78,23 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
     }
 
     @Override
-    public void delete(final T object) {
-	logger.info("Start delete {}", object);
+    public void delete(Long id) {
+	logger.info("Start delete {}", id);
 	Connection connection = beforeOperation();
-	deleteBody(object, connection);
+	deleteBody(id, connection);
 	afterOperation();
-	logger.info("End delete {}", object);
+	logger.info("End delete {}", id);
     }
 
     protected abstract void createBody(T object, Connection connection);
 
-    protected abstract void findBody(T object, Connection connection);
+    protected abstract List<T> findBody(Page page, Connection connection);
 
     protected abstract void updateBody(T object, Connection connection);
 
-    protected abstract void deleteBody(T object, Connection connection);
+    protected abstract void deleteBody(Long id, Connection connection);
+
+    protected abstract int countBody(String nameFilter, Connection connection);
 
     public <idType> String genericFindQuery(String className, idType id) {
 	StringBuilder query = new StringBuilder();

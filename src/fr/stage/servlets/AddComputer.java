@@ -76,7 +76,7 @@ public class AddComputer extends HttpServlet {
 	}
 	Company c = null;
 	try {
-	    int companyId = Integer.parseInt(request.getParameter("company"));
+	    Long companyId = Long.parseLong(request.getParameter("company"));
 	    c = new Company();
 	    c.setId(companyId);
 	}

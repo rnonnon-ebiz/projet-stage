@@ -1,24 +1,25 @@
 package fr.stage.domainClasses;
 
+
 public class Company {
 
-    private int id;
+    private Long id;
 
     private String name;
 
     public Company() {
 	super();
-	this.id = 0;
+	this.id = 0L;
 	this.name = "";
     }
 
     public Company(String name) {
 	super();
-	this.id = 0;
+	this.id = 0L;
 	this.name = name;
     }
 
-    public Company(int id, String name) {
+    public Company(Long id, String name) {
 	super();
 	this.id = id;
 	this.name = name;
@@ -32,17 +33,17 @@ public class Company {
 	this.name = name;
     }
 
-    public int getId() {
+    public Long getId() {
 	return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
 	this.id = id;
     }
 
     @Override
     public int hashCode() {
-	return id;
+	return id.intValue();
     }
 
     @Override

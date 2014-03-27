@@ -1,7 +1,7 @@
 package fr.stage.servlets;
 
 import java.io.IOException;
-import java.sql.SQLException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,8 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.stage.dao.ComputerDAO;
-import fr.stage.dao.ComputerDAOPaginationFilter;
+import fr.stage.domainClasses.Computer;
+import fr.stage.domainClasses.Page;
+import fr.stage.service.FactoryDAO;
 
 /**
  * Servlet implementation class Dashboard
@@ -32,40 +33,41 @@ public class Dashboard extends HttpServlet {
      */
     public Dashboard() {
 	super();
-	logger.debug("init Dashboard");
     }
 
-    private ComputerDAOPaginationFilter readRequest(HttpServletRequest request) {
+    private Page readRequest(HttpServletRequest request) {
+	Page page = new Page();
+	page.setComputerPerPage(LIMIT_PER_PAGE_DEF);
 	String nameFilterParam = request.getParameter("search");
 	String pageParam = request.getParameter("page");
-	int page;
-	String nameFilter;
 	if (nameFilterParam != null) {
-	    nameFilter = nameFilterParam;
+	    page.setNameFilter(nameFilterParam);
 	}
-	else {
-	    nameFilter = "";
-	}
+	// compute TOTAL Res + max Pages
+	int total = FactoryDAO.getComputerDAOInstance().count(
+		page.getNameFilter());
+	page.setTotalRes(total);
+	page.computeMaxPages();
+
+	// Go To
+	int goTo = 1;
 	try {
-	    page = Integer.parseInt(pageParam);
+	    goTo = Integer.parseInt(pageParam);
 	}
 	catch (NullPointerException | NumberFormatException e) {
-	    page = 1;
+	    logger.error("goTo Parse Error");
 	}
-	ComputerDAOPaginationFilter computerDAOPaginationFilter = new ComputerDAOPaginationFilter(
-		nameFilter, LIMIT_PER_PAGE_DEF, 0);
-	int backPage = page - 1;
-	if (backPage >= computerDAOPaginationFilter.getMaxPages()
-		|| backPage < 0)
-	    backPage = 0;
-	computerDAOPaginationFilter.goTo(backPage);
-	return computerDAOPaginationFilter;
+	page.setCurrentPage(goTo);
+
+	List<Computer> computersList = (List<Computer>) FactoryDAO
+		.getComputerDAOInstance().find(page);
+	page.setComputersList(computersList);
+
+	return page;
     }
 
-    private void setRequest(HttpServletRequest request,
-	    ComputerDAOPaginationFilter computerDAOPaginationFilter) {
-	request.setAttribute("computerDAOPaginationFilter",
-		computerDAOPaginationFilter);
+    private void setRequest(HttpServletRequest request, Page page) {
+	request.setAttribute("page", page);
     }
 
     /**
@@ -74,8 +76,8 @@ public class Dashboard extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request,
 	    HttpServletResponse response) throws ServletException, IOException {
-	ComputerDAOPaginationFilter dao = readRequest(request);
-	setRequest(request, dao);
+	Page page = readRequest(request);
+	setRequest(request, page);
 	this.getServletContext()
 		.getRequestDispatcher(ServletUtils.PAGE_URI + "dashboard.jsp")
 		.forward(request, response);
@@ -83,11 +85,11 @@ public class Dashboard extends HttpServlet {
 
     private void processDelete(HttpServletRequest request) {
 	try {
-	    int computerToDelete = Integer.parseInt(request
+	    Long computerToDelete = Long.parseLong(request
 		    .getParameter("computerToDelete"));
-	    ComputerDAO.getInstance().delete(computerToDelete);
+	    FactoryDAO.getComputerDAOInstance().delete(computerToDelete);
 	}
-	catch (NullPointerException | NumberFormatException | SQLException e) {
+	catch (NullPointerException | NumberFormatException e) {
 
 	}
     }
@@ -99,8 +101,8 @@ public class Dashboard extends HttpServlet {
     protected void doPost(HttpServletRequest request,
 	    HttpServletResponse response) throws ServletException, IOException {
 	processDelete(request);
-	ComputerDAOPaginationFilter dao = readRequest(request);
-	setRequest(request, dao);
+	Page page = readRequest(request);
+	setRequest(request, page);
 	this.getServletContext()
 		.getRequestDispatcher(ServletUtils.PAGE_URI + "dashboard.jsp")
 		.forward(request, response);

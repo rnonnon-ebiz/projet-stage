@@ -3,7 +3,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
-import java.util.List;
 
 import fr.stage.dao.CompanyDAO;
 import fr.stage.dao.ComputerDAO;
@@ -11,7 +10,7 @@ import fr.stage.dao.ConnectionManager;
 import fr.stage.dao.IConnectionManager;
 import fr.stage.domainClasses.Company;
 import fr.stage.domainClasses.Computer;
-import fr.stage.service.ServiceDAO;
+import fr.stage.service.FactoryDAO;
 
 public class mainClasse {
 
@@ -41,29 +40,30 @@ public class mainClasse {
 	computer.setDiscontinuedDate(new Date());
 	// computer.setCompany(comp);
 
-	ComputerDAO computerDAO = ServiceDAO.getComputerDAOInstance();
-	CompanyDAO companyDAO = ServiceDAO.getCompanyDAOInstance();
-	try {
-	    companyDAO.create(comp);
-	    computerDAO.create(computer);
-	    System.out.println(computer.getId());
-	    Computer compFind = new Computer();
-	    compFind.setId(1);
-	    computerDAO.find(compFind);
-	    System.out.println(compFind);
-	    Computer computerFind2 = computerDAO.find(2);
-	    System.out.println(computerFind2);
-	    computerDAO.delete(616);
-	    List<Computer> computers = computerDAO.findAll();
-	    for (Computer c : computers) {
-		System.out.println(c);
-	    }
-	    // CompanyDAO.getInstance().delete(company);
-	}
-	catch (SQLException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
+	ComputerDAO computerDAO = FactoryDAO.getComputerDAOInstance();
+	CompanyDAO companyDAO = FactoryDAO.getCompanyDAOInstance();
+	// try {
+	// companyDAO.create(comp);
+	// computerDAO.create(computer);
+	// System.out.println(computer.getId());
+	// Computer compFind = new Computer();
+	// compFind.setId(1);
+	// computerDAO.find(compFind);
+	// System.out.println(compFind);
+	// Computer computerFind2 = computerDAO.find(2);
+	// System.out.println(computerFind2);
+	// computerDAO.delete(616);
+	// List<Computer> computers = computerDAO.findList(ComputerDAO
+	// .findAllParameters());
+	// for (Computer c : computers) {
+	// System.out.println(c);
+	// }
+	// // CompanyDAO.getInstance().delete(company);
+	// }
+	// catch (SQLException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
 
     }
 }

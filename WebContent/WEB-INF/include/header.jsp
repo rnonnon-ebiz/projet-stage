@@ -13,9 +13,9 @@
 	<link href="css/main.css" rel="stylesheet" media="screen"/>
 	<link href="css/dark-hive/jquery-ui-1.10.4.custom.css" rel="stylesheet">
 	<script src="js/jquery-1.10.2.js"></script>
-	<script src="js/jquery-ui-1.10.4.custom.js"></script>
-	<script src="js/jquery.validate.js"></script>
-	<script src="js/additional-methods.js"></script>
+	<script src="js/jquery-ui-1.10.4.custom.min.js"></script>
+	<script src="js/jquery.validate.min.js"></script>
+	<script src="js/additional-methods.min.js"></script>
 	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
 	
 	<script type="text/javascript">

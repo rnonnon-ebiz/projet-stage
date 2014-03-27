@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Computer {
 
-    private int id;
+    private Long id;
 
     private String name;
 
@@ -16,7 +16,7 @@ public class Computer {
 
     public Computer() {
 	super();
-	id = 0;
+	id = 0L;
 	name = "";
 	introducedDate = null;
 	discontinuedDate = null;
@@ -25,14 +25,14 @@ public class Computer {
     public Computer(String name, Date introducedDate, Date discontinuedDate,
 	    Company company) {
 	super();
-	this.id = 0;
+	this.id = 0L;
 	this.name = name;
 	this.introducedDate = introducedDate;
 	this.discontinuedDate = discontinuedDate;
 	this.company = company;
     }
 
-    public Computer(int id, String name, Date introducedDate,
+    public Computer(Long id, String name, Date introducedDate,
 	    Date discontinuedDate, Company company) {
 	super();
 	this.id = id;
@@ -74,17 +74,17 @@ public class Computer {
 	this.company = company;
     }
 
-    public int getId() {
+    public Long getId() {
 	return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
 	this.id = id;
     }
 
     @Override
     public int hashCode() {
-	return id % 20;
+	return id.intValue() % 20;
     }
 
     @Override

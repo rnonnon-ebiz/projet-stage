@@ -4,7 +4,7 @@
 <%@ taglib tagdir="/WEB-INF/tags/" prefix="perso" %>
 
 <section id="main">
-	<h1 id="homeTitle">${computerDAOPaginationFilter.getnComputers()} Computers found</h1>
+	<h1 id="homeTitle">${page.getTotalRes()} Computers found</h1>
 	
 	<div id="actions">
 		<form action="dashboard" method="GET">
@@ -18,7 +18,7 @@
 		<a href="addComputer" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span> Add Computer</a>
 	</div>
 	
-		<perso:pagination search="${computerDAOPaginationFilter.getFilterName()}" currentPage="${computerDAOPaginationFilter.getFrontCurrentPage()}" maxPages="${computerDAOPaginationFilter.getMaxPages()}" />
+		<perso:pagination search="${page.getNameFilter()}" currentPage="${page.getFrontCurrentPage()}" maxPages="${page.getMaxPages()}" />
 		<div class="row">
 			<table class="computers table table-bordered table-hover">
 				<thead>
@@ -32,7 +32,7 @@
 						<th class="col-md-1">Delete</th>
 				</thead>
 				<tbody>
-					<c:forEach var="computer" items="${computerDAOPaginationFilter.getComputersList()}"> 
+					<c:forEach var="computer" items="${page.getComputersList()}"> 
 						<perso:computerRow computer="${computer}"></perso:computerRow>
 					</c:forEach>
 				</tbody>
