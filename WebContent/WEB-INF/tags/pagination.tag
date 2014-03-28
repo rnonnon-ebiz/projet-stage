@@ -2,20 +2,20 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<%@ attribute name="currentPage" required="true" %>
-<%@ attribute name="maxPages" required="true" %>
-<%@ attribute name="search" required="true" %>
+<%@ attribute name="page" required="true" type="fr.stage.domainClasses.Page" %>
 
 		<ul class="pagination">
-		  <li><a href="?page=${currentPage-1}&search=${search}">&laquo;</a></li>
-			  <c:forEach var="page" begin="1" end="${currentPage-1}">
-			  	<li><a href="?page=${page}&search=${search}" >${page}</a></li>
+		  <li><a href="?page=${page.getFrontCurrentPage()-1}&search=${page.getNameFilter()}&orderBy=${page.getOrderBy()}">&laquo;</a></li>
+		  
+			  <c:forEach var="pageNumber" begin="1" end="${page.getFrontCurrentPage()-1}">
+			  	<li><a href="?page=${pageNumber}&search=${page.getNameFilter()}&orderBy=${page.getOrderBy()}" >${pageNumber}</a></li>
 			  </c:forEach>
 			  
-			  <li class="active"><a>${currentPage}<span class="sr-only">(current)</span></a></li>
+			  <li class="active"><a>${page.getFrontCurrentPage()}<span class="sr-only">(current)</span></a></li>
 			  
-			  <c:forEach var="page" begin="${currentPage+1}" end="${maxPages}">
-			  	<li><a href="?page=${page}&search=${search}" >${page}</a></li>
+			  <c:forEach var="pageNumber" begin="${page.getFrontCurrentPage()+1}" end="${page.getMaxPages()}">
+			  	<li><a href="?page=${pageNumber}&search=${page.getNameFilter()}&orderBy=${page.getOrderBy()}" >${pageNumber}</a></li>
 			  </c:forEach>
-		  <li><a href="?page=${currentPage+1}&search=${search}">&raquo;</a></li>
+			  
+		  <li><a href="?page=${page.getFrontCurrentPage()+1}&search=${page.getNameFilter()}">&raquo;</a></li>
 		</ul>

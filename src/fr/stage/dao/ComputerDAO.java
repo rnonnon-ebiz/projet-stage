@@ -17,6 +17,10 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 
     public static final String FIND_ALL_QUERY = "SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName FROM computer cr LEFT JOIN company cy ON cr.company_id = cy.id ";
 
+    public static final String UPDATE_QUERY = "UPDATE computer SET name = ?,  introduced = FROM_UNIXTIME(?) , discontinued = FROM_UNIXTIME(?), company_id = ? WHERE id = ?";
+
+    public static final String INSERT_QUERY = "INSERT INTO computer  ( name , introduced , discontinued , company_id ) VALUES (? , FROM_UNIXTIME(?) , FROM_UNIXTIME(?) , ?)";
+
     // public static final String COUNT_ALL_QUERY =
     // "SELECT COUNT(*) FROM computer cr ";
 
@@ -83,6 +87,42 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	}
     }
 
+    public Computer find(long id) {
+	logger.info("Start find {}", id);
+	Connection connection = beforeOperation();
+	Computer res = findBody(id, connection);
+	afterOperation();
+	logger.info("End find {}", id);
+	return res;
+    }
+
+    protected Computer findBody(long id, Connection connection) {
+	Computer computer = new Computer();
+	try {
+	    String query = "SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName FROM computer cr LEFT JOIN company cy ON cy.id = cr.company_id WHERE cr.id = ?";
+	    stm = connection.prepareStatement(query);
+	    stm.setLong(1, id);
+	    logger.info(stm.toString());
+	    res = stm.executeQuery();
+	    if (res.next()) {
+		computer.setId(res.getLong("computerId"));
+		computer.setName(res.getString("computerName"));
+		computer.setDiscontinuedDate(res.getDate("discontinued"));
+		computer.setIntroducedDate(res.getDate("introduced"));
+
+		Company company = new Company();
+		company.setId(res.getLong("company_id"));
+		company.setName(res.getString("companyName"));
+		computer.setCompany(company);
+	    }
+	}
+	catch (SQLException e) {
+	    logger.error("Failed to find", e);
+	    e.printStackTrace();
+	}
+	return computer;
+    }
+
     @Override
     protected List<Computer> findBody(Page page, Connection connection) {
 	List<Computer> computersList = new ArrayList<Computer>();
@@ -112,14 +152,38 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 
     @Override
     protected void updateBody(Computer computer, Connection connection) {
-	// TODO Auto-generated method stub
+	try {
+	    stm = connection.prepareStatement(UPDATE_QUERY);
+	    stm.setString(1, computer.getName());
+	    if (computer.getIntroducedDate() != null) {
+		stm.setLong(2, computer.getIntroducedDate().getTime() / 1000L);
+	    }
+	    else
+		stm.setNull(2, Types.NULL);
 
+	    if (computer.getDiscontinuedDate() != null) {
+		stm.setLong(3, computer.getDiscontinuedDate().getTime() / 1000L);
+	    }
+	    else
+		stm.setNull(3, Types.NULL);
+
+	    if (computer.getCompany() != null)
+		stm.setLong(4, computer.getCompany().getId());
+	    else
+		stm.setNull(4, Types.NULL);
+	    stm.setLong(5, computer.getId());
+	    logger.info(stm.toString());
+	    stm.executeUpdate();
+	}
+	catch (SQLException e) {
+	    logger.error("Failed to update {}", computer, e);
+	    e.printStackTrace();
+	}
     }
 
     private void generateInsertPrepareStatement(Computer computer,
 	    Connection connection) throws SQLException {
-	String query = generateInsertQuery(computer);
-	stm = connection.prepareStatement(query,
+	stm = connection.prepareStatement(INSERT_QUERY,
 		Statement.RETURN_GENERATED_KEYS);
 	stm.setString(1, computer.getName());
 
@@ -141,27 +205,6 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	    stm.setNull(4, Types.NULL);
 
 	logger.info(stm.toString());
-    }
-
-    private String generateInsertQuery(Computer computer) {
-	StringBuilder query = new StringBuilder();
-	query.append("INSERT INTO computer ");
-	query.append("( name , introduced , discontinued , company_id ) VALUES (? , ? , ? , ?)");
-	// query.append(computer.getName());
-	// query.append("'");
-	// query.append(DateUtils.convertDateToSQLString(",",
-	// computer.getIntroducedDate(), "", "NULL"));
-	// query.append(DateUtils.convertDateToSQLString(",",
-	// computer.getDiscontinuedDate(), "", "NULL"));
-	// query.append(" , ");
-	// if (computer.getCompany() == null) {
-	// query.append("NULL");
-	// }
-	// else {
-	// query.append(computer.getCompany().getId());
-	// }
-	// query.append(" )");
-	return query.toString();
     }
 
     private String generateCountQuery() {
@@ -208,7 +251,41 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	query.append(" WHERE cr.name like ?");
 	query.append(" OR cy.name like ?");
 	// ORDER BY
-
+	int orderBy = page.getOrderBy();
+	switch (orderBy) {
+	case 0:// Name
+	       // ASC
+	    query.append("ORDER BY computerName ASC");
+	    break;
+	case 1:// Name
+	       // DESC
+	    query.append("ORDER BY computerName DESC");
+	    break;
+	case 2:// Introduced
+	       // ASC
+	    query.append("ORDER BY cr.introduced ASC");
+	    break;
+	case 3:// Introduced
+	       // DESC
+	    query.append("ORDER BY cr.introduced DESC");
+	    break;
+	case 4:// discontinued
+	       // ASC
+	    query.append("ORDER BY cr.discontinued ASC");
+	    break;
+	case 5:// discontinued
+	       // DESC
+	    query.append("ORDER BY cr.discontinued DESC");
+	    break;
+	case 6:// companyName
+	       // ASC
+	    query.append("ORDER BY companyName ASC");
+	    break;
+	case 7:// companyName
+	       // DESC
+	    query.append("ORDER BY companyName DESC");
+	    break;
+	}
 	// LIMIT
 	int limit = page.getComputerPerPage();
 	if (limit > 0) {

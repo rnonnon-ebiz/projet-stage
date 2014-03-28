@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import fr.stage.utils.ServletUtils;
+
 /**
  * Servlet implementation class Index
  */

@@ -2,14 +2,19 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <section id="main">
 
-	<h1>Add Computer</h1>
+	<div class="page-header">
+		<h1><c:out value="${computer.getId() == 0 ? 'Add Computer' : 'Edit Computer' }"/></h1>
+	</div>
 	
 	<form class="form-horizontal " id="addComputerForm" action="addComputer" method="POST">
+	
+		<input type="text" value="${computer.getId()}" class="hidden" name="computerId"/>
+		
 		<div class="form-group">
 			<label class="col-sm-2 control-label" for="name">Computer name:</label>
 			<div class="col-sm-10">
 				<div class="col-xs-2">
-					<input type="text" class="form-control computerName" placeholder="Enter name" name="computerName"/>
+					<input type="text" class="form-control computerName" placeholder="Enter name" name="computerName" value="${computer.getName()}"/>
 				</div>
 			</div>
 		</div>
@@ -17,7 +22,7 @@
 			<label class="col-sm-2 control-label" for="introduced">Introduced date:</label>
 			<div class="col-sm-10">
 				<div class="col-xs-2">
-					<input type="text"  class="form-control col-xs-2 datepicker" placeholder="Click to select" name="introduced"/>
+					<input type="text"  class="form-control col-xs-2 datepicker" placeholder="Click to select" name="introduced" value="${computer.getIntroducedDate()}"/>
 				</div>
 			</div>
 		</div>
@@ -25,7 +30,7 @@
 			<label class="col-sm-2 control-label" for="discontinued">Discontinued date:</label>
 			<div class="col-sm-10">
 				<div class="col-xs-2">
-					<input type="text" class="form-control datepicker" placeholder="Click to select" name="discontinued"/>
+					<input type="text" class="form-control datepicker" placeholder="Click to select" name="discontinued" value="${computer.getDiscontinuedDate()}"/>
 				</div>
 			</div>
 		</div>
@@ -34,9 +39,28 @@
 			<div class="col-sm-10">
 				<div class="col-xs-2">
 					<select class="form-control" name="company">
-						<option value="null">--</option>
+						
+<!-- 						<option value="null">--</option> -->
+<%-- 						<c:forEach var="company" items="${companiesList}"> --%>
+<%-- 							<option value="${company.getId()}">${company.getName()}</option> --%>
+<%-- 						</c:forEach> --%>
+						<c:choose>
+							<c:when test="${computer.getCompany() == null}">
+								<option value="null" selected="selected">--</option>
+							</c:when>
+							<c:when test="${computer.getCompany() != null}">
+								<option value="null">--</option>
+							</c:when>
+						</c:choose>
 						<c:forEach var="company" items="${companiesList}">
-							<option value="${company.getId()}">${company.getName()}</option>
+							<c:choose>
+								<c:when test="${computer.getCompany().getId() == company.getId()}">
+									<option selected="selected" value="${company.getId()}">${company.getName()}</option>
+								</c:when>
+								<c:when test="${computer.getCompany().getId() != company.getId()}">
+									<option value="${company.getId()}">${company.getName()}</option>
+								</c:when>
+							</c:choose>
 						</c:forEach>
 					</select>
 				</div>
@@ -46,10 +70,10 @@
 			<div class="col-sm-offset-2 col-sm-10">
 				<div class="col-xs-2">
 					<button type="submit" class="btn btn-success" >
-						<span class="glyphicon glyphicon-ok"></span>Add
+						<span class="glyphicon glyphicon-ok"></span><c:out value="${computer.getId() == 0 ? ' Add' : ' Edit' }"/>
 					</button>
 					or <a href="dashboard" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> Cancel</a>
-				</div>	
+				</div>
  			</div>
 		</div>
 	</form>

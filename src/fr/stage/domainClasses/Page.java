@@ -16,6 +16,16 @@ public class Page {
 
     private int totalRes;
 
+    private byte orderBy;
+
+    public byte getOrderBy() {
+	return orderBy;
+    }
+
+    public void setOrderBy(byte orderBy) {
+	this.orderBy = orderBy;
+    }
+
     public int getComputerPerPage() {
 	return computerPerPage;
     }

@@ -15,10 +15,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.stage.dao.CompanyDAO;
-import fr.stage.dao.ComputerDAO;
 import fr.stage.domainClasses.Company;
 import fr.stage.domainClasses.Computer;
+import fr.stage.service.FactoryDAO;
 import fr.stage.utils.DateUtils;
+import fr.stage.utils.ServletUtils;
 
 /**
  * Servlet implementation class AddComputer
@@ -27,8 +28,6 @@ import fr.stage.utils.DateUtils;
 public class AddComputer extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
-
-    private Computer computer;
 
     private List<Company> companiesList;
 
@@ -44,7 +43,6 @@ public class AddComputer extends HttpServlet {
     }
 
     private void initServ() {
-	computer = new Computer();
 	try {
 	    companiesList = CompanyDAO.getInstance().findAll();
 	}
@@ -53,12 +51,14 @@ public class AddComputer extends HttpServlet {
 	}
     }
 
-    protected void fillComputer(HttpServletRequest request) {
+    protected Computer fillComputer(HttpServletRequest request) {
+	logger.debug("Fill Computer");
+	Computer computer = new Computer();
 	String name = request.getParameter("computerName");
 	String introducedDate = request.getParameter("introduced");
 	String discontinuedDate = request.getParameter("discontinued");
 	computer.setName(name);
-	if (!introducedDate.equals("")) {
+	if (!"".equals(introducedDate)) {
 	    try {
 		Date introduced = DateUtils.stringToDate(introducedDate);
 		computer.setIntroducedDate(introduced);
@@ -66,7 +66,7 @@ public class AddComputer extends HttpServlet {
 	    catch (Exception e) {
 	    }
 	}
-	if (!discontinuedDate.equals("")) {
+	if (!"".equals(discontinuedDate)) {
 	    try {
 		Date discontinued = DateUtils.stringToDate(discontinuedDate);
 		computer.setDiscontinuedDate(discontinued);
@@ -83,8 +83,17 @@ public class AddComputer extends HttpServlet {
 	catch (NumberFormatException e) {
 
 	}
+	try {
+	    Long computerId = Long
+		    .parseLong(request.getParameter("computerId"));
+	    computer.setId(computerId);
+	}
+	catch (NumberFormatException e) {
+
+	}
 	computer.setCompany(c);
 	logger.info(computer.toString());
+	return computer;
     }
 
     /**
@@ -93,7 +102,18 @@ public class AddComputer extends HttpServlet {
      */
     protected void doGet(HttpServletRequest request,
 	    HttpServletResponse response) throws ServletException, IOException {
+	logger.info("HERE   ");
+	logger.info("Do GET");
+	Computer computer = (Computer) request.getAttribute("computer");
+	if (computer == null) {
+	    computer = new Computer();
+	}
+	else {
+	    logger.info("Update : " + computer.toString());
+	}
+	request.setAttribute("computer", computer);
 	request.setAttribute("companiesList", companiesList);
+	logger.debug("End Do GET");
 	this.getServletContext()
 		.getRequestDispatcher(ServletUtils.PAGE_URI + "addComputer.jsp")
 		.forward(request, response);
@@ -106,8 +126,13 @@ public class AddComputer extends HttpServlet {
     protected void doPost(HttpServletRequest request,
 	    HttpServletResponse response) throws ServletException, IOException {
 	request.setAttribute("companiesList", companiesList);
-	fillComputer(request);
-	ComputerDAO.getInstance().create(computer);
+	Computer computer = fillComputer(request);
+	if (computer.getId() == 0) {
+	    FactoryDAO.getComputerDAOInstance().create(computer);
+	}
+	else {
+	    FactoryDAO.getComputerDAOInstance().update(computer);
+	}
 	response.sendRedirect("dashboard");
     }
 

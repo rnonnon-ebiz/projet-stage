@@ -1,5 +1,8 @@
 package fr.stage.utils;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -41,14 +44,15 @@ public class DateUtils {
 
     public static Date stringToDate(String stringDate)
 	    throws NumberFormatException {
-	String[] dateSplitted = stringDate.split("-");
-	Calendar cal = Calendar.getInstance();
-	for (int i = 0; i < dateSplitted.length; ++i)
-	    System.out.println(i + " ; " + dateSplitted[i]);
-	int year = Integer.parseInt(dateSplitted[0]);
-	int month = Integer.parseInt(dateSplitted[1]);
-	int day = Integer.parseInt(dateSplitted[2]);
-	cal.set(year, month, day);
-	return cal.getTime();
+	DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+	Date d = null;
+	try {
+	    d = format.parse(stringDate);
+	}
+	catch (ParseException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+	return d;
     }
 }
