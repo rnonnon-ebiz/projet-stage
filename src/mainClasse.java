@@ -42,6 +42,7 @@ public class mainClasse {
 
 	ComputerDAO computerDAO = FactoryDAO.getComputerDAOInstance();
 	CompanyDAO companyDAO = FactoryDAO.getCompanyDAOInstance();
+
 	// try {
 	// companyDAO.create(comp);
 	// computerDAO.create(computer);

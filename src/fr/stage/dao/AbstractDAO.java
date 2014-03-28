@@ -6,6 +6,7 @@ package fr.stage.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -43,60 +44,95 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
     }
 
     public int count(String nameFilter) {
-	logger.info("Start count");
+	logger.debug("Start count");
 	Connection connection = beforeOperation();
-	int total = countBody(nameFilter, connection);
+	int total = 0;
+	try {
+	    total = countBody(nameFilter, connection);
+	}
+	catch (SQLException e) {
+
+	}
 	afterOperation(connection);
-	logger.info("End count");
+	logger.debug("End count");
 	return total;
     }
 
     @Override
     public void create(T object) {
-	logger.info("Start create {}", object);
+	logger.debug("Start create {}", object);
 	Connection connection = beforeOperation();
-	createBody(object, connection);
+	try {
+	    createBody(object, connection);
+	    LogDAO.logInfo("INSERT " + object.toString());
+	}
+	catch (SQLException e) {
+	    LogDAO.logError("INSERT " + object.toString());
+	}
 	afterOperation(connection);
-	logger.info("End Create {}", object);
+	logger.debug("End Create {}", object);
     }
 
     @Override
     public List<T> find(Page page) {
-	logger.info("Start find");
+	logger.debug("Start find");
 	Connection connection = beforeOperation();
-	List<T> res = findBody(page, connection);
+	List<T> res = null;
+	try {
+	    res = findBody(page, connection);
+	}
+	catch (SQLException e) {
+
+	}
 	afterOperation(connection);
-	logger.info("End find");
+	logger.debug("End find");
 	return res;
     }
 
     @Override
     public void update(final T object) {
-	logger.info("Start update {}", object);
+	logger.debug("Start update {}", object);
 	Connection connection = beforeOperation();
-	updateBody(object, connection);
+	try {
+	    updateBody(object, connection);
+	    LogDAO.logInfo("UPDATE  " + object.toString());
+	}
+	catch (SQLException e) {
+	    LogDAO.logError("UPDATE " + object.toString());
+	}
 	afterOperation(connection);
-	logger.info("End update {}", object);
+	logger.debug("End update {}", object);
     }
 
     @Override
     public void delete(Long id) {
-	logger.info("Start delete {}", id);
+	logger.debug("Start delete {}", id);
 	Connection connection = beforeOperation();
-	deleteBody(id, connection);
+	try {
+	    deleteBody(id, connection);
+	    LogDAO.logInfo("DELETE " + id);
+	}
+	catch (SQLException e) {
+	    LogDAO.logError("DELETE " + id);
+	}
 	afterOperation(connection);
-	logger.info("End delete {}", id);
+	logger.debug("End delete {}", id);
     }
 
-    protected abstract void createBody(T object, Connection connection);
+    protected abstract void createBody(T object, Connection connection)
+	    throws SQLException;
 
-    protected abstract List<T> findBody(Page page, Connection connection);
+    protected abstract List<T> findBody(Page page, Connection connection)
+	    throws SQLException;
 
-    protected abstract void updateBody(T object, Connection connection);
+    protected abstract void updateBody(T object, Connection connection)
+	    throws SQLException;
 
-    protected abstract void deleteBody(Long id, Connection connection);
+    protected abstract void deleteBody(Long id, Connection connection)
+	    throws SQLException;
 
-    protected abstract int countBody(String nameFilter, Connection connection);
+    protected abstract int countBody(String nameFilter, Connection connection)
+	    throws SQLException;
 
     public <idType> String genericFindQuery(String className, idType id) {
 	StringBuilder query = new StringBuilder();

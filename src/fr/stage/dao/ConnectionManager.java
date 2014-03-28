@@ -21,7 +21,7 @@ import fr.stage.utils.Introspection;
  */
 public class ConnectionManager implements IConnectionManager {
 
-    public static final String CONFIG_FILE_NAME = "/conf/jdbcConfigFile.cfg";
+    public static final String CONFIG_FILE_NAME = "/WEB-INF/conf/jdbcConfigFile.cfg";
 
     public static String DRIVER_NAME = "com.mysql.jdbc.Driver";
 
@@ -34,8 +34,7 @@ public class ConnectionManager implements IConnectionManager {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ConnectionManager() {
-
-	// properties = new Properties();
+	properties = new Properties();
 	// properties.put("user", "root");
 	// properties.put("password", "mysqlpassword");
 	// properties
@@ -43,12 +42,14 @@ public class ConnectionManager implements IConnectionManager {
 	// "jdbc:mysql://127.0.0.1:3306/computer-database-db?zeroDateTimeBehavior=convertToNull");
 	// properties = ConfigFileManipulation
 	// .readConfFileAndFill(CONFIG_FILE_NAME);
+	logger.info(properties.toString());
 	loadDriver();
 	initConnectionPool();
     }
 
     private void loadDriver() {
 	logger.info("Loading driver");
+	logger.debug("Loading driver");
 	try {
 	    Class.forName(DRIVER_NAME);
 	    // create connection

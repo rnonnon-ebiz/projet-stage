@@ -32,153 +32,165 @@ public class ComputerDAO extends AbstractDAO<Computer> {
     }
 
     @Override
-    protected int countBody(String nameFilter, Connection connection) {
+    protected int countBody(String nameFilter, Connection connection)
+	    throws SQLException {
 	int total = 0;
-	try {
-	    String query = generateCountQuery();
+	// try {
+	String query = generateCountQuery();
 
-	    stm = connection.prepareStatement(query);
-	    if (nameFilter == null)
-		nameFilter = "";
-	    stm.setString(1, "%" + nameFilter + "%");
-	    stm.setString(2, "%" + nameFilter + "%");
-	    logger.info(stm.toString());
-	    res = stm.executeQuery();
-	    if (res.next()) {
-		total = res.getInt(1);
-	    }
+	stm = connection.prepareStatement(query);
+	if (nameFilter == null)
+	    nameFilter = "";
+	stm.setString(1, "%" + nameFilter + "%");
+	stm.setString(2, "%" + nameFilter + "%");
+	logger.info(stm.toString());
+	res = stm.executeQuery();
+	if (res.next()) {
+	    total = res.getInt(1);
 	}
-	catch (SQLException e) {
-	    logger.error("Failed to count", e);
-	    e.printStackTrace();
-	}
+	// }
+	// catch (SQLException e) {
+	// logger.error("Failed to count", e);
+	// e.printStackTrace();
+	// }
 	return total;
     }
 
     @Override
-    protected void createBody(Computer computer, Connection connection) {
-	try {
-	    generateInsertPrepareStatement(computer, connection);
-	    stm.executeUpdate();
-	    res = stm.getGeneratedKeys();
-	    if (res.next()) {
-		computer.setId(res.getLong(1));
-		logger.info("Computer created : " + computer.toString());
-	    }
+    protected void createBody(Computer computer, Connection connection)
+	    throws SQLException {
+	// try {
+	generateInsertPrepareStatement(computer, connection);
+	stm.executeUpdate();
+	res = stm.getGeneratedKeys();
+	if (res.next()) {
+	    computer.setId(res.getLong(1));
+	    logger.info("Computer created : " + computer.toString());
 	}
-	catch (SQLException e) {
-	    logger.error("Failed to create {}", computer, e);
-	    e.printStackTrace();
-	}
+	// }
+	// catch (SQLException e) {
+	// logger.error("Failed to create {}", computer, e);
+	// e.printStackTrace();
+	// }
     }
 
     @Override
-    protected void deleteBody(Long id, Connection connection) {
-	try {
-	    String query = generateDeleteQuery(id);
-	    logger.info(query);
+    protected void deleteBody(Long id, Connection connection)
+	    throws SQLException {
+	// try {
+	String query = generateDeleteQuery(id);
+	logger.info(query);
 
-	    stm = connection.prepareStatement(query);
-	    stm.executeUpdate(query);
-	}
-	catch (SQLException e) {
-	    logger.error("Failed to delete {}", id, e);
-	    e.printStackTrace();
-	}
+	stm = connection.prepareStatement(query);
+	stm.executeUpdate(query);
+	// }
+	// catch (SQLException e) {
+	// logger.error("Failed to delete {}", id, e);
+	// e.printStackTrace();
+	// }
     }
 
     public Computer find(long id) {
 	logger.info("Start find {}", id);
 	Connection connection = beforeOperation();
-	Computer res = findBody(id, connection);
+	Computer res = null;
+	try {
+	    res = findBody(id, connection);
+	}
+	catch (SQLException e) {
+
+	}
 	afterOperation(connection);
 	logger.info("End find {}", id);
 	return res;
     }
 
-    protected Computer findBody(long id, Connection connection) {
+    protected Computer findBody(long id, Connection connection)
+	    throws SQLException {
 	Computer computer = new Computer();
-	try {
-	    String query = "SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName FROM computer cr LEFT JOIN company cy ON cy.id = cr.company_id WHERE cr.id = ?";
-	    stm = connection.prepareStatement(query);
-	    stm.setLong(1, id);
-	    logger.info(stm.toString());
-	    res = stm.executeQuery();
-	    if (res.next()) {
-		computer.setId(res.getLong("computerId"));
-		computer.setName(res.getString("computerName"));
-		computer.setDiscontinuedDate(res.getDate("discontinued"));
-		computer.setIntroducedDate(res.getDate("introduced"));
+	// try {
+	String query = "SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName FROM computer cr LEFT JOIN company cy ON cy.id = cr.company_id WHERE cr.id = ?";
+	stm = connection.prepareStatement(query);
+	stm.setLong(1, id);
+	logger.info(stm.toString());
+	res = stm.executeQuery();
+	if (res.next()) {
+	    computer.setId(res.getLong("computerId"));
+	    computer.setName(res.getString("computerName"));
+	    computer.setDiscontinuedDate(res.getDate("discontinued"));
+	    computer.setIntroducedDate(res.getDate("introduced"));
 
-		Company company = new Company();
-		company.setId(res.getLong("company_id"));
-		company.setName(res.getString("companyName"));
-		computer.setCompany(company);
-	    }
+	    Company company = new Company();
+	    company.setId(res.getLong("company_id"));
+	    company.setName(res.getString("companyName"));
+	    computer.setCompany(company);
 	}
-	catch (SQLException e) {
-	    logger.error("Failed to find", e);
-	    e.printStackTrace();
-	}
+	// }
+	// catch (SQLException e) {
+	// logger.error("Failed to find", e);
+	// e.printStackTrace();
+	// }
 	return computer;
     }
 
     @Override
-    protected List<Computer> findBody(Page page, Connection connection) {
+    protected List<Computer> findBody(Page page, Connection connection)
+	    throws SQLException {
 	List<Computer> computersList = new ArrayList<Computer>();
-	try {
-	    generateFindPrepareStatement(page, connection);
-	    res = stm.executeQuery();
-	    while (res.next()) {
-		Computer computer = new Computer();
-		computer.setId(res.getLong("computerId"));
-		computer.setName(res.getString("computerName"));
-		computer.setDiscontinuedDate(res.getDate("discontinued"));
-		computer.setIntroducedDate(res.getDate("introduced"));
+	// try {
+	generateFindPrepareStatement(page, connection);
+	res = stm.executeQuery();
+	while (res.next()) {
+	    Computer computer = new Computer();
+	    computer.setId(res.getLong("computerId"));
+	    computer.setName(res.getString("computerName"));
+	    computer.setDiscontinuedDate(res.getDate("discontinued"));
+	    computer.setIntroducedDate(res.getDate("introduced"));
 
-		Company company = new Company();
-		company.setId(res.getLong("company_id"));
-		company.setName(res.getString("companyName"));
-		computer.setCompany(company);
-		computersList.add(computer);
-	    }
+	    Company company = new Company();
+	    company.setId(res.getLong("company_id"));
+	    company.setName(res.getString("companyName"));
+	    computer.setCompany(company);
+	    computersList.add(computer);
 	}
-	catch (SQLException e) {
-	    logger.error("Failed to find", e);
-	    e.printStackTrace();
-	}
+	// }
+	// catch (SQLException e) {
+	// logger.error("Failed to find", e);
+	// e.printStackTrace();
+	// }
 	return computersList;
     }
 
     @Override
-    protected void updateBody(Computer computer, Connection connection) {
-	try {
-	    stm = connection.prepareStatement(UPDATE_QUERY);
-	    stm.setString(1, computer.getName());
-	    if (computer.getIntroducedDate() != null) {
-		stm.setLong(2, computer.getIntroducedDate().getTime() / 1000L);
-	    }
-	    else
-		stm.setNull(2, Types.NULL);
-
-	    if (computer.getDiscontinuedDate() != null) {
-		stm.setLong(3, computer.getDiscontinuedDate().getTime() / 1000L);
-	    }
-	    else
-		stm.setNull(3, Types.NULL);
-
-	    if (computer.getCompany() != null)
-		stm.setLong(4, computer.getCompany().getId());
-	    else
-		stm.setNull(4, Types.NULL);
-	    stm.setLong(5, computer.getId());
-	    logger.info(stm.toString());
-	    stm.executeUpdate();
+    protected void updateBody(Computer computer, Connection connection)
+	    throws SQLException {
+	// try {
+	stm = connection.prepareStatement(UPDATE_QUERY);
+	stm.setString(1, computer.getName());
+	if (computer.getIntroducedDate() != null) {
+	    stm.setLong(2, computer.getIntroducedDate().getTime() / 1000L);
 	}
-	catch (SQLException e) {
-	    logger.error("Failed to update {}", computer, e);
-	    e.printStackTrace();
+	else
+	    stm.setNull(2, Types.NULL);
+
+	if (computer.getDiscontinuedDate() != null) {
+	    stm.setLong(3, computer.getDiscontinuedDate().getTime() / 1000L);
 	}
+	else
+	    stm.setNull(3, Types.NULL);
+
+	if (computer.getCompany() != null)
+	    stm.setLong(4, computer.getCompany().getId());
+	else
+	    stm.setNull(4, Types.NULL);
+	stm.setLong(5, computer.getId());
+	logger.info(stm.toString());
+	stm.executeUpdate();
+	// }
+	// catch (SQLException e) {
+	// logger.error("Failed to update {}", computer, e);
+	// e.printStackTrace();
+	// }
     }
 
     private void generateInsertPrepareStatement(Computer computer,
