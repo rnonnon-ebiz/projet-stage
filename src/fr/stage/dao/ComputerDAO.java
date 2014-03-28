@@ -91,7 +91,7 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	logger.info("Start find {}", id);
 	Connection connection = beforeOperation();
 	Computer res = findBody(id, connection);
-	afterOperation();
+	afterOperation(connection);
 	logger.info("End find {}", id);
 	return res;
     }

@@ -4,12 +4,14 @@
 package fr.stage.dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.jolbox.bonecp.BoneCP;
+import com.jolbox.bonecp.BoneCPConfig;
 
 import fr.stage.utils.Introspection;
 
@@ -25,37 +27,54 @@ public class ConnectionManager implements IConnectionManager {
 
     private Properties properties;
 
-    private Connection connection;
+    private BoneCP connectionPool;
 
     private final static ConnectionManager connectionManager = new ConnectionManager();
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ConnectionManager() {
-	properties = new Properties();
-	properties.put("user", "root");
-	properties.put("password", "mysqlpassword");
-	properties
-		.put("url",
-			"jdbc:mysql://127.0.0.1:3306/computer-database-db?zeroDateTimeBehavior=convertToNull");
+
+	// properties = new Properties();
+	// properties.put("user", "root");
+	// properties.put("password", "mysqlpassword");
+	// properties
+	// .put("url",
+	// "jdbc:mysql://127.0.0.1:3306/computer-database-db?zeroDateTimeBehavior=convertToNull");
 	// properties = ConfigFileManipulation
 	// .readConfFileAndFill(CONFIG_FILE_NAME);
-	init();
+	loadDriver();
+	initConnectionPool();
     }
 
-    private void init() {
-	logger.info("Init ConnectionManager");
+    private void loadDriver() {
+	logger.info("Loading driver");
 	try {
-	    logger.info("Loading driver");
 	    Class.forName(DRIVER_NAME);
-	    logger.info("Driver loaded");
 	    // create connection
-	    this.connection = (Connection) DriverManager.getConnection(
-		    this.properties.getProperty("url"), properties);
-	    logger.info("Connection Ready");
+	    // this.connection = (Connection) DriverManager.getConnection(
+	    // this.properties.getProperty("url"), properties);
 	}
-	catch (SQLException | ClassNotFoundException e) {
-	    logger.error("ERROR Connection Not Ready ");
+	catch (ClassNotFoundException e) {
+	    logger.info("Driver loading error");
+	    e.printStackTrace();
+	}
+	logger.info("Driver loaded");
+    }
+
+    private void initConnectionPool() {
+	try {
+	    logger.info("Init ConnectionPool");
+	    BoneCPConfig config = new BoneCPConfig();
+	    config.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/computer-database-db?zeroDateTimeBehavior=convertToNull");
+	    config.setUsername("root");
+	    config.setPassword("mysqlpassword");
+	    connectionPool = new BoneCP(config);
+	    logger.info("ConnectionPool Ready");
+
+	}
+	catch (SQLException e) {
+	    logger.error("Error on connection pool initialisation");
 	    e.printStackTrace();
 	}
     }
@@ -66,11 +85,16 @@ public class ConnectionManager implements IConnectionManager {
 
     @Override
     public Connection getConnection() {
+	Connection connection = null;
 	try {
-	    if (connection.isClosed()) {
-		this.connection = (Connection) DriverManager.getConnection(
-			this.properties.getProperty("url"), properties);
-	    }
+	    connection = connectionPool.getConnection();
+	    logger.info("Connection Ready");
+	    logger.info("connectionPool free : "
+		    + connectionPool.getTotalFree());
+	    // if (connection.isClosed()) {
+	    // this.connection = (Connection) DriverManager.getConnection(
+	    // this.properties.getProperty("url"), properties);
+	    // }
 	}
 	catch (SQLException e) {
 	    // TODO Auto-generated catch block
@@ -80,8 +104,15 @@ public class ConnectionManager implements IConnectionManager {
     }
 
     @Override
+    @Deprecated
     public void closeConnection() {
+    }
+
+    public void closeConnection(Connection connection) {
 	Introspection.closeSafe(connection);
     }
 
+    public void shutdownPool() {
+	connectionPool.shutdown();
+    }
 }

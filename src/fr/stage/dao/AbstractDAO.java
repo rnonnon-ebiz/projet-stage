@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.stage.domainClasses.Page;
+import fr.stage.service.FactoryDAO;
 import fr.stage.utils.Introspection;
 
 /**
@@ -30,12 +31,13 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected Connection beforeOperation() {
-	Connection connection = connectionManager.getConnection();
+	Connection connection = FactoryDAO.getConnectionManagerInstance()
+		.getConnection();
 	return connection;
     }
 
-    protected void afterOperation() {
-	connectionManager.closeConnection();
+    protected void afterOperation(Connection connection) {
+	FactoryDAO.getConnectionManagerInstance().closeConnection(connection);
 	Introspection.closeSafe(res);
 	Introspection.closeSafe(stm);
     }
@@ -44,7 +46,7 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
 	logger.info("Start count");
 	Connection connection = beforeOperation();
 	int total = countBody(nameFilter, connection);
-	afterOperation();
+	afterOperation(connection);
 	logger.info("End count");
 	return total;
     }
@@ -54,7 +56,7 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
 	logger.info("Start create {}", object);
 	Connection connection = beforeOperation();
 	createBody(object, connection);
-	afterOperation();
+	afterOperation(connection);
 	logger.info("End Create {}", object);
     }
 
@@ -63,7 +65,7 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
 	logger.info("Start find");
 	Connection connection = beforeOperation();
 	List<T> res = findBody(page, connection);
-	afterOperation();
+	afterOperation(connection);
 	logger.info("End find");
 	return res;
     }
@@ -73,7 +75,7 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
 	logger.info("Start update {}", object);
 	Connection connection = beforeOperation();
 	updateBody(object, connection);
-	afterOperation();
+	afterOperation(connection);
 	logger.info("End update {}", object);
     }
 
@@ -82,7 +84,7 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
 	logger.info("Start delete {}", id);
 	Connection connection = beforeOperation();
 	deleteBody(id, connection);
-	afterOperation();
+	afterOperation(connection);
 	logger.info("End delete {}", id);
     }
 

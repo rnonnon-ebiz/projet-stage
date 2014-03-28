@@ -30,7 +30,7 @@ public class CompanyDAO extends AbstractDAO<Company> {
 	Connection connection = beforeOperation();
 	String query = FIND_ALL_QUERY + condition;
 	List<Company> results = findAllBody(query, connection);
-	afterOperation();
+	afterOperation(connection);
 	return results;
     }
 
