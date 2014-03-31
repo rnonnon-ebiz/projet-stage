@@ -1,6 +1,7 @@
 package fr.stage.dao;
 
-import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
@@ -32,19 +33,20 @@ public class ComputerDAO extends AbstractDAO<Computer> {
     }
 
     @Override
-    protected int countBody(String nameFilter, Connection connection)
+    protected int countBody(String nameFilter, QueryObjects qObjects)
 	    throws SQLException {
 	int total = 0;
 	// try {
 	String query = generateCountQuery();
 
-	stm = connection.prepareStatement(query);
+	PreparedStatement stm = qObjects.prepareStatement(query);
+
 	if (nameFilter == null)
 	    nameFilter = "";
 	stm.setString(1, "%" + nameFilter + "%");
 	stm.setString(2, "%" + nameFilter + "%");
 	logger.info(stm.toString());
-	res = stm.executeQuery();
+	ResultSet res = qObjects.executeQuery();
 	if (res.next()) {
 	    total = res.getInt(1);
 	}
@@ -57,12 +59,11 @@ public class ComputerDAO extends AbstractDAO<Computer> {
     }
 
     @Override
-    protected void createBody(Computer computer, Connection connection)
+    protected void createBody(Computer computer, QueryObjects qObjects)
 	    throws SQLException {
 	// try {
-	generateInsertPrepareStatement(computer, connection);
-	stm.executeUpdate();
-	res = stm.getGeneratedKeys();
+	generateInsertPrepareStatement(computer, qObjects);
+	ResultSet res = qObjects.executeUpdateGeneratedKeys();
 	if (res.next()) {
 	    computer.setId(res.getLong(1));
 	    logger.info("Computer created : " + computer.toString());
@@ -75,14 +76,13 @@ public class ComputerDAO extends AbstractDAO<Computer> {
     }
 
     @Override
-    protected void deleteBody(Long id, Connection connection)
+    protected void deleteBody(Long id, QueryObjects qObjects)
 	    throws SQLException {
 	// try {
 	String query = generateDeleteQuery(id);
 	logger.info(query);
-
-	stm = connection.prepareStatement(query);
-	stm.executeUpdate(query);
+	qObjects.prepareStatement(query);
+	qObjects.executeUpdate();
 	// }
 	// catch (SQLException e) {
 	// logger.error("Failed to delete {}", id, e);
@@ -92,28 +92,28 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 
     public Computer find(long id) {
 	logger.info("Start find {}", id);
-	Connection connection = beforeOperation();
+	QueryObjects qObjects = new QueryObjects();
 	Computer res = null;
 	try {
-	    res = findBody(id, connection);
+	    res = findBody(id, qObjects);
 	}
 	catch (SQLException e) {
 
 	}
-	afterOperation(connection);
+	qObjects.afterOperation();
 	logger.info("End find {}", id);
 	return res;
     }
 
-    protected Computer findBody(long id, Connection connection)
+    protected Computer findBody(long id, QueryObjects qObjects)
 	    throws SQLException {
 	Computer computer = new Computer();
 	// try {
 	String query = "SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName FROM computer cr LEFT JOIN company cy ON cy.id = cr.company_id WHERE cr.id = ?";
-	stm = connection.prepareStatement(query);
+	PreparedStatement stm = qObjects.prepareStatement(query);
 	stm.setLong(1, id);
 	logger.info(stm.toString());
-	res = stm.executeQuery();
+	ResultSet res = qObjects.executeQuery();
 	if (res.next()) {
 	    computer.setId(res.getLong("computerId"));
 	    computer.setName(res.getString("computerName"));
@@ -134,12 +134,12 @@ public class ComputerDAO extends AbstractDAO<Computer> {
     }
 
     @Override
-    protected List<Computer> findBody(Page page, Connection connection)
+    protected List<Computer> findBody(Page page, QueryObjects qObjects)
 	    throws SQLException {
 	List<Computer> computersList = new ArrayList<Computer>();
 	// try {
-	generateFindPrepareStatement(page, connection);
-	res = stm.executeQuery();
+	generateFindPrepareStatement(page, qObjects);
+	ResultSet res = qObjects.executeQuery();
 	while (res.next()) {
 	    Computer computer = new Computer();
 	    computer.setId(res.getLong("computerId"));
@@ -162,10 +162,10 @@ public class ComputerDAO extends AbstractDAO<Computer> {
     }
 
     @Override
-    protected void updateBody(Computer computer, Connection connection)
+    protected void updateBody(Computer computer, QueryObjects qObjects)
 	    throws SQLException {
 	// try {
-	stm = connection.prepareStatement(UPDATE_QUERY);
+	PreparedStatement stm = qObjects.prepareStatement(UPDATE_QUERY);
 	stm.setString(1, computer.getName());
 	if (computer.getIntroducedDate() != null) {
 	    stm.setLong(2, computer.getIntroducedDate().getTime() / 1000L);
@@ -185,7 +185,7 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	    stm.setNull(4, Types.NULL);
 	stm.setLong(5, computer.getId());
 	logger.info(stm.toString());
-	stm.executeUpdate();
+	qObjects.executeUpdate();
 	// }
 	// catch (SQLException e) {
 	// logger.error("Failed to update {}", computer, e);
@@ -194,8 +194,8 @@ public class ComputerDAO extends AbstractDAO<Computer> {
     }
 
     private void generateInsertPrepareStatement(Computer computer,
-	    Connection connection) throws SQLException {
-	stm = connection.prepareStatement(INSERT_QUERY,
+	    QueryObjects qObjects) throws SQLException {
+	PreparedStatement stm = qObjects.prepareStatement(INSERT_QUERY,
 		Statement.RETURN_GENERATED_KEYS);
 	stm.setString(1, computer.getName());
 
@@ -230,11 +230,11 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	return query.toString();
     }
 
-    private void generateFindPrepareStatement(Page page, Connection connection)
+    private void generateFindPrepareStatement(Page page, QueryObjects qObjects)
 	    throws SQLException {
 	String query = generateFindQuery(page);
 	int indexParam = 1;
-	stm = connection.prepareStatement(query);
+	PreparedStatement stm = qObjects.prepareStatement(query);
 	String nameFilter = page.getNameFilter();
 	if (nameFilter == null) {
 	    nameFilter = "";

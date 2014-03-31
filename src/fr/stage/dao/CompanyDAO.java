@@ -1,8 +1,7 @@
 package fr.stage.dao;
 
-import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,20 +26,19 @@ public class CompanyDAO extends AbstractDAO<Company> {
     }
 
     public List<Company> findAll(String condition) throws SQLException {
-	Connection connection = beforeOperation();
+	QueryObjects qObjects = new QueryObjects();
 	String query = FIND_ALL_QUERY + condition;
-	List<Company> results = findAllBody(query, connection);
-	afterOperation(connection);
+	List<Company> results = findAllBody(query, qObjects);
+	qObjects.afterOperation();
 	return results;
     }
 
-    protected List<Company> findAllBody(String query, Connection connection) {
+    protected List<Company> findAllBody(String query, QueryObjects qObjects) {
 	List<Company> results = new ArrayList<Company>();
 	try {
 	    System.out.println(query);
-
-	    stm = connection.prepareStatement(query);
-	    res = stm.executeQuery(query);
+	    qObjects.prepareStatement(query);
+	    ResultSet res = qObjects.executeQuery();
 	    while (res.next()) {
 		// Generate Company
 		Company company = new Company();
@@ -57,14 +55,12 @@ public class CompanyDAO extends AbstractDAO<Company> {
     }
 
     @Override
-    protected void createBody(Company company, Connection connection) {
+    protected void createBody(Company company, QueryObjects qObjects) {
 	try {
 	    String query = generateInsertQuery(company);
 	    System.out.println(query);
-
-	    stm = connection.prepareStatement(query);
-	    stm.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
-	    res = stm.getGeneratedKeys();
+	    qObjects.prepareStatement(query);
+	    ResultSet res = qObjects.executeUpdateGeneratedKeys();
 	    if (res.next()) {
 		company.setId(res.getLong(1));
 	    }
@@ -76,38 +72,24 @@ public class CompanyDAO extends AbstractDAO<Company> {
     }
 
     @Override
-    protected List<Company> findBody(Page page, Connection connection) {
-	// try {
-	// String query = generateFindQuery(company);
-	// System.out.println(query);
-	//
-	// stm = connection.createStatement();
-	// res = stm.executeQuery(query);
-	// if (res.next()) {
-	// company.setName(res.getString("name"));
-	// }
-	// }
-	// catch (SQLException e) {
-	// logger.error("Failed to find {}", company, e);
-	// e.printStackTrace();
-	// }
+    protected List<Company> findBody(Page page, QueryObjects qObjects) {
+	// TODO
 	return null;
     }
 
     @Override
-    protected void updateBody(Company object, Connection connection) {
+    protected void updateBody(Company object, QueryObjects qObjects) {
 	// TODO Auto-generated method stub
 
     }
 
     @Override
-    protected void deleteBody(Long id, Connection connection) {
+    protected void deleteBody(Long id, QueryObjects qObjects) {
 	try {
 	    String query = generateDeleteQuery(id);
 	    System.out.println(query);
-
-	    stm = connection.prepareStatement(query);
-	    stm.executeUpdate(query);
+	    qObjects.prepareStatement(query);
+	    qObjects.executeUpdate();
 	}
 	catch (SQLException e) {
 	    logger.error("Failed to delete", e);
@@ -143,7 +125,7 @@ public class CompanyDAO extends AbstractDAO<Company> {
     }
 
     @Override
-    protected int countBody(String nameFilter, Connection connection) {
+    protected int countBody(String nameFilter, QueryObjects qObjects) {
 	// TODO Auto-generated method stub
 	return 0;
     }

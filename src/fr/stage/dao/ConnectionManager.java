@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
 
+import fr.stage.utils.ConfigFileManipulation;
 import fr.stage.utils.Introspection;
 
 /**
@@ -21,11 +22,9 @@ import fr.stage.utils.Introspection;
  */
 public class ConnectionManager implements IConnectionManager {
 
-    public static final String CONFIG_FILE_NAME = "/WEB-INF/conf/jdbcConfigFile.cfg";
+    public static final String CONFIG_FILE_NAME = "/fr/stage/dao/dao.properties";
 
     public static String DRIVER_NAME = "com.mysql.jdbc.Driver";
-
-    private Properties properties;
 
     private BoneCP connectionPool;
 
@@ -34,7 +33,7 @@ public class ConnectionManager implements IConnectionManager {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ConnectionManager() {
-	properties = new Properties();
+	// properties = new Properties();
 	// properties.put("user", "root");
 	// properties.put("password", "mysqlpassword");
 	// properties
@@ -42,7 +41,7 @@ public class ConnectionManager implements IConnectionManager {
 	// "jdbc:mysql://127.0.0.1:3306/computer-database-db?zeroDateTimeBehavior=convertToNull");
 	// properties = ConfigFileManipulation
 	// .readConfFileAndFill(CONFIG_FILE_NAME);
-	logger.info(properties.toString());
+	// logger.info(properties.toString());
 	loadDriver();
 	initConnectionPool();
     }
@@ -64,17 +63,19 @@ public class ConnectionManager implements IConnectionManager {
     }
 
     private void initConnectionPool() {
+	logger.info("Init ConnectionPool");
+	BoneCPConfig config = new BoneCPConfig();
+	Properties properties = ConfigFileManipulation
+		.readConfFileAndFill(CONFIG_FILE_NAME);
 	try {
-	    logger.info("Init ConnectionPool");
-	    BoneCPConfig config = new BoneCPConfig();
-	    config.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/computer-database-db?zeroDateTimeBehavior=convertToNull");
-	    config.setUsername("root");
-	    config.setPassword("mysqlpassword");
+	    config.setJdbcUrl(properties.getProperty("url"));
+	    config.setUsername(properties.getProperty("user"));
+	    config.setPassword(properties.getProperty("password"));
 	    connectionPool = new BoneCP(config);
+	    logger.info(connectionPool.getConfig().getJdbcUrl());
 	    logger.info("ConnectionPool Ready");
-
 	}
-	catch (SQLException e) {
+	catch (Exception e) {
 	    logger.error("Error on connection pool initialisation");
 	    e.printStackTrace();
 	}

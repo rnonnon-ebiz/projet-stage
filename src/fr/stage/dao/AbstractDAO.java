@@ -3,9 +3,6 @@
  */
 package fr.stage.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -13,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.stage.domainClasses.Page;
-import fr.stage.service.FactoryDAO;
-import fr.stage.utils.Introspection;
 
 /**
  * @author rnonnon
@@ -25,35 +20,18 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
     protected IConnectionManager connectionManager = ConnectionManager
 	    .getInstance();
 
-    protected ResultSet res;
-
-    protected PreparedStatement stm;
-
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    protected Connection beforeOperation() {
-	Connection connection = FactoryDAO.getConnectionManagerInstance()
-		.getConnection();
-	return connection;
-    }
-
-    protected void afterOperation(Connection connection) {
-	FactoryDAO.getConnectionManagerInstance().closeConnection(connection);
-	Introspection.closeSafe(res);
-	Introspection.closeSafe(stm);
-    }
 
     public int count(String nameFilter) {
 	logger.debug("Start count");
-	Connection connection = beforeOperation();
+	QueryObjects qObjects = new QueryObjects();
 	int total = 0;
 	try {
-	    total = countBody(nameFilter, connection);
+	    total = countBody(nameFilter, qObjects);
 	}
 	catch (SQLException e) {
-
 	}
-	afterOperation(connection);
+	qObjects.afterOperation();
 	logger.debug("End count");
 	return total;
     }
@@ -61,30 +39,32 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
     @Override
     public void create(T object) {
 	logger.debug("Start create {}", object);
-	Connection connection = beforeOperation();
+	QueryObjects qObjects = new QueryObjects();
 	try {
-	    createBody(object, connection);
+	    qObjects.startTransaction();
+	    createBody(object, qObjects);
 	    LogDAO.logInfo("INSERT " + object.toString());
+	    qObjects.endTransaction();
 	}
 	catch (SQLException e) {
-	    LogDAO.logError("INSERT " + object.toString());
+	    qObjects.rollbackAndLogError("INSERT " + object.toString());
 	}
-	afterOperation(connection);
+	qObjects.afterOperation();
 	logger.debug("End Create {}", object);
     }
 
     @Override
     public List<T> find(Page page) {
 	logger.debug("Start find");
-	Connection connection = beforeOperation();
+	QueryObjects qObjects = new QueryObjects();
 	List<T> res = null;
 	try {
-	    res = findBody(page, connection);
+	    res = findBody(page, qObjects);
 	}
 	catch (SQLException e) {
 
 	}
-	afterOperation(connection);
+	qObjects.afterOperation();
 	logger.debug("End find");
 	return res;
     }
@@ -92,46 +72,50 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
     @Override
     public void update(final T object) {
 	logger.debug("Start update {}", object);
-	Connection connection = beforeOperation();
+	QueryObjects qObjects = new QueryObjects();
 	try {
-	    updateBody(object, connection);
+	    qObjects.startTransaction();
+	    updateBody(object, qObjects);
 	    LogDAO.logInfo("UPDATE  " + object.toString());
+	    qObjects.endTransaction();
 	}
 	catch (SQLException e) {
-	    LogDAO.logError("UPDATE " + object.toString());
+	    qObjects.rollbackAndLogError("UPDATE " + object.toString());
 	}
-	afterOperation(connection);
+	qObjects.afterOperation();
 	logger.debug("End update {}", object);
     }
 
     @Override
     public void delete(Long id) {
 	logger.debug("Start delete {}", id);
-	Connection connection = beforeOperation();
+	QueryObjects qObjects = new QueryObjects();
 	try {
-	    deleteBody(id, connection);
+	    qObjects.startTransaction();
+	    deleteBody(id, qObjects);
 	    LogDAO.logInfo("DELETE " + id);
+	    qObjects.endTransaction();
 	}
 	catch (SQLException e) {
-	    LogDAO.logError("DELETE " + id);
+	    qObjects.rollbackAndLogError("DELETE  " + id);
 	}
-	afterOperation(connection);
+	qObjects.afterOperation();
 	logger.debug("End delete {}", id);
     }
 
-    protected abstract void createBody(T object, Connection connection)
+    protected abstract void createBody(T object, QueryObjects qObjects)
 	    throws SQLException;
 
-    protected abstract List<T> findBody(Page page, Connection connection)
+    protected abstract List<T> findBody(Page page, QueryObjects qObjects)
 	    throws SQLException;
 
-    protected abstract void updateBody(T object, Connection connection)
+    protected abstract void updateBody(T object, QueryObjects qObjects)
 	    throws SQLException;
 
-    protected abstract void deleteBody(Long id, Connection connection)
+    protected abstract void deleteBody(Long id, QueryObjects qObjects)
 	    throws SQLException;
 
-    protected abstract int countBody(String nameFilter, Connection connection)
+    protected abstract int countBody(String nameFilter, QueryObjects qObjects)
 	    throws SQLException;
 
     public <idType> String genericFindQuery(String className, idType id) {

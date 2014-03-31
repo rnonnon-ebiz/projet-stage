@@ -7,7 +7,6 @@ public class Introspection {
 	    o.getClass().getMethod("close").invoke(o);
 	}
 	catch (Exception e) {
-	    e.printStackTrace();
 	}
     }
 }

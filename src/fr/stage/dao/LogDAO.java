@@ -35,6 +35,14 @@ public enum LogDAO {
 	log(LogType.INFO, message);
     }
 
+    public static void logWarning(String message) {
+	log(LogType.WARN, message);
+    }
+
+    public static void logFatal(String message) {
+	log(LogType.FATAL, message);
+    }
+
     private static void log(LogType type, String message) {
 	Connection connection = FactoryDAO.getConnectionManagerInstance()
 		.getConnection();
