@@ -1,5 +1,7 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
 
+<%@ taglib tagdir="/WEB-INF/tags/" prefix="perso" %>
+
 <%@ attribute name="columnTitle" required="true" %>
 <%@ attribute name="width" required="true" %>
 
@@ -8,7 +10,9 @@
 <%@ attribute name="orderByDESC" required="true" %>
 
 <th class="col-md-${width}">
-		${columnTitle} 
-		<a href="?page=${page.getCurrentPage()-1}&search=${page.getNameFilter()}&orderBy=${orderByASC}"><span class="glyphicon glyphicon-arrow-up"></span></a> 
-		<a href="?page=${page.getCurrentPage()-1}&search=${page.getNameFilter()}&orderBy=${orderByDESC}"><span class="glyphicon glyphicon-arrow-down"></span></a>
+		${columnTitle}
+		<perso:orderURI body="<span class='glyphicon glyphicon-arrow-up'></span>" search="${page.getNameFilter()}" page="${page.getFrontCurrentPage()}" orderBy="${orderByASC}"></perso:orderURI>
+		<perso:orderURI body="<span class='glyphicon glyphicon-arrow-down'></span>" search="${page.getNameFilter()}" page="${page.getFrontCurrentPage()}" orderBy="${orderByDESC}"></perso:orderURI>
+<%-- 		<a href="<perso:OrderURI page="${page.getCurrentPage()-1}" search="${page.getNameFilter()}" />"></a>  --%>
+<%-- 		<a href="?page=${page.getCurrentPage()-1}&search=${page.getNameFilter()}&orderBy=${orderByDESC}"><span class="glyphicon glyphicon-arrow-down"></span></a> --%>
 </th>

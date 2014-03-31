@@ -12,7 +12,7 @@
 	<div id="actions">
 		<form action="dashboard" method="GET">
 			<input type="search" id="searchbox" name="search"
-				value="" placeholder="Search name"/>
+				value="<c:out value="${page.getNameFilter()}"/>" placeholder="Search name"/>
 			<button type="submit" id="searchsubmit"
 				class="btn btn-default">
 				<span class="glyphicon glyphicon-search"></span>Filter by name

@@ -226,7 +226,7 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	query.append(" ON cy.id = cr.company_id");
 	// Filter By Name
 	query.append(" WHERE cr.name like ?");
-	query.append(" OR cy.name like ?");
+	query.append(" OR cy.name like ? ");
 	return query.toString();
     }
 
@@ -251,7 +251,7 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	if (offset >= 0) {
 	    stm.setInt(indexParam++, offset);
 	}
-	logger.info(stm.toString());
+	// logger.info(stm.toString());
     }
 
     private String generateFindQuery(Page page) {
@@ -261,7 +261,7 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	query.append(" ON cy.id = cr.company_id");
 	// Filter By Name
 	query.append(" WHERE cr.name like ?");
-	query.append(" OR cy.name like ?");
+	query.append(" OR cy.name like ? ");
 	// ORDER BY
 	int orderBy = page.getOrderBy();
 	switch (orderBy) {

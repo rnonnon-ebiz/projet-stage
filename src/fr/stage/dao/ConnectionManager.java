@@ -22,15 +22,34 @@ import fr.stage.utils.Introspection;
  */
 public class ConnectionManager implements IConnectionManager {
 
+    protected final static Logger logger = LoggerFactory
+	    .getLogger(ConnectionManager.class);
+
     public static final String CONFIG_FILE_NAME = "/fr/stage/dao/dao.properties";
 
     public static String DRIVER_NAME = "com.mysql.jdbc.Driver";
 
-    private BoneCP connectionPool;
+    private static BoneCP connectionPool;
+
+    private static ThreadLocal<Connection> threadLocal = new ThreadLocal<Connection>() {
+
+	@Override
+	protected Connection initialValue() {
+	    Connection connection = null;
+	    try {
+		connection = connectionPool.getConnection();
+		// logger.info("Connection Ready");
+		// logger.info("connectionPool free : "
+		// + connectionPool.getTotalFree());
+	    }
+	    catch (SQLException e) {
+		e.printStackTrace();
+	    }
+	    return connection;
+	}
+    };
 
     private final static ConnectionManager connectionManager = new ConnectionManager();
-
-    protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ConnectionManager() {
 	// properties = new Properties();
@@ -48,7 +67,6 @@ public class ConnectionManager implements IConnectionManager {
 
     private void loadDriver() {
 	logger.info("Loading driver");
-	logger.debug("Loading driver");
 	try {
 	    Class.forName(DRIVER_NAME);
 	    // create connection
@@ -87,31 +105,13 @@ public class ConnectionManager implements IConnectionManager {
 
     @Override
     public Connection getConnection() {
-	Connection connection = null;
-	try {
-	    connection = connectionPool.getConnection();
-	    logger.info("Connection Ready");
-	    logger.info("connectionPool free : "
-		    + connectionPool.getTotalFree());
-	    // if (connection.isClosed()) {
-	    // this.connection = (Connection) DriverManager.getConnection(
-	    // this.properties.getProperty("url"), properties);
-	    // }
-	}
-	catch (SQLException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
-	return connection;
+	return threadLocal.get();
     }
 
     @Override
-    @Deprecated
     public void closeConnection() {
-    }
-
-    public void closeConnection(Connection connection) {
-	Introspection.closeSafe(connection);
+	Introspection.closeSafe(threadLocal.get());
+	threadLocal.remove();
     }
 
     public void shutdownPool() {

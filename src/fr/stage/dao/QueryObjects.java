@@ -107,7 +107,7 @@ public class QueryObjects {
     }
 
     public void afterOperation() {
-	FactoryDAO.getConnectionManagerInstance().closeConnection(connection);
+	FactoryDAO.getConnectionManagerInstance().closeConnection();
 	Introspection.closeSafe(res);
 	Introspection.closeSafe(stm);
     }
