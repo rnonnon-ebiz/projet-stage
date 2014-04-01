@@ -36,7 +36,7 @@ public class CompanyDAO extends AbstractDAO<Company> {
     protected List<Company> findAllBody(String query, QueryObjects qObjects) {
 	List<Company> results = new ArrayList<Company>();
 	try {
-	    System.out.println(query);
+	    // System.out.println(query);
 	    qObjects.prepareStatement(query);
 	    ResultSet res = qObjects.executeQuery();
 	    while (res.next()) {
@@ -58,7 +58,7 @@ public class CompanyDAO extends AbstractDAO<Company> {
     protected void createBody(Company company, QueryObjects qObjects) {
 	try {
 	    String query = generateInsertQuery(company);
-	    System.out.println(query);
+	    // System.out.println(query);
 	    qObjects.prepareStatement(query);
 	    ResultSet res = qObjects.executeUpdateGeneratedKeys();
 	    if (res.next()) {
@@ -87,7 +87,7 @@ public class CompanyDAO extends AbstractDAO<Company> {
     protected void deleteBody(Long id, QueryObjects qObjects) {
 	try {
 	    String query = generateDeleteQuery(id);
-	    System.out.println(query);
+	    // System.out.println(query);
 	    qObjects.prepareStatement(query);
 	    qObjects.executeUpdate();
 	}

@@ -17,8 +17,11 @@ import fr.stage.domainClasses.Page;
  */
 public abstract class AbstractDAO<T> implements ICRUDManager<T> {
 
-    protected IConnectionManager connectionManager = ConnectionManager
-	    .getInstance();
+    // @Autowired
+    // protected IConnectionManager connectionManager;
+
+    // protected IConnectionManager connectionManager = ConnectionManager
+    // .getInstance();
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
