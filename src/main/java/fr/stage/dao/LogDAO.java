@@ -8,8 +8,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import fr.stage.utils.Introspection;
-import fr.stage.utils.LogType;
+import fr.stage.util.LogType;
 
 @Repository
 public class LogDAO {
@@ -20,7 +19,6 @@ public class LogDAO {
     public static String logQuery = "INSERT INTO LOGS (date, logger, level, message) VALUES (FROM_UNIXTIME(?), ?, ?, ?)";
 
     public LogDAO() {
-
     }
 
     public String getCallerClassName() {
@@ -70,7 +68,7 @@ public class LogDAO {
 	    e.printStackTrace();
 	}
 	finally {
-	    Introspection.closeSafe(stm);
+	    connectionManager.close(stm);
 	}
     }
 }

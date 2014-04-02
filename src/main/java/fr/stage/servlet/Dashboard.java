@@ -1,7 +1,6 @@
-package fr.stage.servlets;
+package fr.stage.servlet;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.ServletConfig;
@@ -16,12 +15,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import fr.stage.dao.CompanyDAO;
-import fr.stage.dao.ComputerDAO;
-import fr.stage.domainClasses.Company;
-import fr.stage.domainClasses.Computer;
-import fr.stage.domainClasses.Page;
-import fr.stage.utils.ServletUtils;
+import fr.stage.domain.Company;
+import fr.stage.domain.Computer;
+import fr.stage.domain.Page;
+import fr.stage.service.CompanyService;
+import fr.stage.service.ComputerService;
+import fr.stage.util.ServletUtils;
 
 /**
  * Servlet implementation class Dashboard
@@ -38,10 +37,10 @@ public class Dashboard extends HttpServlet {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private CompanyDAO companyDAO;
+    CompanyService companyService;
 
     @Autowired
-    private ComputerDAO computerDAO;
+    ComputerService computerService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -56,12 +55,7 @@ public class Dashboard extends HttpServlet {
     }
 
     private void initServ() {
-	try {
-	    companiesList = companyDAO.findAll();
-	}
-	catch (SQLException e) {
-	    e.printStackTrace();
-	}
+	companiesList = companyService.findAll();
     }
 
     private Page readRequest(HttpServletRequest request) {
@@ -74,7 +68,7 @@ public class Dashboard extends HttpServlet {
 	    page.setNameFilter(nameFilterParam);
 	}
 	// compute TOTAL Res + max Pages
-	int total = computerDAO.count(page.getNameFilter());
+	int total = computerService.count(page.getNameFilter());
 	page.setTotalRes(total);
 	page.computeMaxPages();
 
@@ -96,7 +90,7 @@ public class Dashboard extends HttpServlet {
 	}
 	page.setCurrentPage(goTo);
 
-	List<Computer> computersList = (List<Computer>) computerDAO.find(page);
+	List<Computer> computersList = computerService.find(page);
 	page.setComputersList(computersList);
 
 	return page;
@@ -126,7 +120,7 @@ public class Dashboard extends HttpServlet {
 	String computerToDelete = request.getParameter("computerToDelete");
 	try {
 	    long id = Long.parseLong(computerToDelete);
-	    computerDAO.delete(id);
+	    computerService.delete(id);
 	    Page page = readRequest(request);
 	    setRequest(request, page);
 	    this.getServletContext()
@@ -146,7 +140,7 @@ public class Dashboard extends HttpServlet {
 	String computerToUpdate = request.getParameter("computerToUpdate");
 	try {
 	    long id = Long.parseLong(computerToUpdate);
-	    Computer computer = computerDAO.find(id);
+	    Computer computer = computerService.find(id);
 	    request.setAttribute("computer", computer);
 	    // logger.info("computerToUpdate :  " + computer);
 	    this.getServletContext()

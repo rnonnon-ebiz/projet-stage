@@ -2,7 +2,7 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<%@ attribute name="page" required="true" type="fr.stage.domainClasses.Page" %>
+<%@ attribute name="page" required="true" type="fr.stage.domain.Page" %>
 
 		<ul class="pagination">
 		  <li><a href="?page=${page.getFrontCurrentPage()-1}&search=<c:out value="${page.getNameFilter()}"/>&orderBy=${page.getOrderBy()}">&laquo;</a></li>

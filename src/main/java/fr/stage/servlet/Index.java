@@ -1,4 +1,4 @@
-package fr.stage.servlets;
+package fr.stage.servlet;
 
 import java.io.IOException;
 
@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import fr.stage.utils.ServletUtils;
+import fr.stage.util.ServletUtils;
 
 /**
  * Servlet implementation class Index

@@ -1,4 +1,4 @@
-package fr.stage.utils;
+package fr.stage.util;
 
 public class ServletUtils {
 

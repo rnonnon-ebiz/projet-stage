@@ -1,4 +1,4 @@
-package fr.stage.utils;
+package fr.stage.util;
 
 public enum LogType {
     ERROR("error"), INFO("info"), WARN("warning"), FATAL("fatal");

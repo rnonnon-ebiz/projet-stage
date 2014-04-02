@@ -4,7 +4,10 @@
 package fr.stage.dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -14,15 +17,15 @@ import org.springframework.stereotype.Repository;
 import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
 
-import fr.stage.utils.ConfigFileManipulation;
-import fr.stage.utils.Introspection;
+import fr.stage.exception.DAOException;
+import fr.stage.util.ConfigFileManipulation;
 
 /**
  * @author rnonnon
  * 
  */
 @Repository
-public class ConnectionManager implements IConnectionManager {
+public class ConnectionManager {
 
     protected Logger logger;
 
@@ -104,14 +107,17 @@ public class ConnectionManager implements IConnectionManager {
 	}
     }
 
-    @Override
     public Connection getConnection() {
 	return threadLocal.get();
     }
 
-    @Override
     public void closeConnection() {
-	Introspection.closeSafe(threadLocal.get());
+	try {
+	    threadLocal.get().close();
+	}
+	catch (SQLException e) {
+	    e.printStackTrace();
+	}
 	threadLocal.remove();
     }
 
@@ -119,12 +125,70 @@ public class ConnectionManager implements IConnectionManager {
 	connectionPool.shutdown();
     }
 
-    public void startTransaction() throws SQLException {
-	threadLocal.get().setAutoCommit(false);
+    public void startTransaction() {
+	try {
+	    threadLocal.get().setAutoCommit(false);
+	}
+	catch (SQLException e) {
+	    throw new DAOException("Transaction Start Exception");
+	}
     }
 
-    public void endTransaction() throws SQLException {
-	threadLocal.get().commit();
+    public void endTransaction() {
+	try {
+	    threadLocal.get().commit();
+	}
+	catch (SQLException e) {
+	    throw new DAOException("Transaction End Exception");
+	}
+
     }
 
+    public void rollbackAndStopTransaction() throws SQLException {
+	threadLocal.get().rollback();
+	threadLocal.get().setAutoCommit(true);
+    }
+
+    public static void close(ResultSet res) {
+	if (res != null) {
+	    try {
+		res.close();
+	    }
+	    catch (SQLException e) {
+		e.printStackTrace();
+	    }
+	}
+    }
+
+    public static void close(PreparedStatement stm) {
+	if (stm != null) {
+	    try {
+		stm.close();
+	    }
+	    catch (SQLException e) {
+		e.printStackTrace();
+	    }
+	}
+    }
+
+    public static void close(Statement stm) {
+	if (stm != null) {
+	    try {
+		stm.close();
+	    }
+	    catch (SQLException e) {
+		e.printStackTrace();
+	    }
+	}
+    }
+
+    public static void close(ResultSet res, Statement stm) {
+	close(res);
+	close(stm);
+    }
+
+    public static void close(ResultSet res, PreparedStatement stm) {
+	close(res);
+	close(stm);
+    }
 }

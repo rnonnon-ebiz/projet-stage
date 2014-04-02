@@ -9,8 +9,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import fr.stage.dao.CompanyDAO;
 import fr.stage.dao.ComputerDAO;
 import fr.stage.dao.ConnectionManager;
-import fr.stage.domainClasses.Company;
-import fr.stage.domainClasses.Computer;
+import fr.stage.domain.Company;
+import fr.stage.domain.Computer;
 
 public class mainClasse {
 

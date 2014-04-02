@@ -5,7 +5,7 @@
 <%@ attribute name="columnTitle" required="true" %>
 <%@ attribute name="width" required="true" %>
 
-<%@ attribute name="page" required="true" type="fr.stage.domainClasses.Page" %>
+<%@ attribute name="page" required="true" type="fr.stage.domain.Page" %>
 <%@ attribute name="orderByASC" required="true" %>
 <%@ attribute name="orderByDESC" required="true" %>
 

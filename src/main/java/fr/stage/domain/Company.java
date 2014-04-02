@@ -1,4 +1,4 @@
-package fr.stage.domainClasses;
+package fr.stage.domain;
 
 
 public class Company {

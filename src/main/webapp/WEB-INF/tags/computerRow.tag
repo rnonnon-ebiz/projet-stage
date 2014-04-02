@@ -1,7 +1,7 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<%@ attribute name="computer" required="true" type="fr.stage.domainClasses.Computer" %>
+<%@ attribute name="computer" required="true" type="fr.stage.domain.Computer" %>
 
 <tr id="${computer.getId()}">
 	<td><a href="#" onclick="">${computer.getName()}</a></td>
