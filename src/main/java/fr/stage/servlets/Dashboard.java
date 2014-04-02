@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,12 +13,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import fr.stage.dao.CompanyDAO;
+import fr.stage.dao.ComputerDAO;
 import fr.stage.domainClasses.Company;
 import fr.stage.domainClasses.Computer;
 import fr.stage.domainClasses.Page;
-import fr.stage.service.FactoryDAO;
 import fr.stage.utils.ServletUtils;
 
 /**
@@ -34,17 +37,27 @@ public class Dashboard extends HttpServlet {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
+    @Autowired
+    private CompanyDAO companyDAO;
+
+    @Autowired
+    private ComputerDAO computerDAO;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+	super.init(config);
+	SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
+		config.getServletContext());
+	initServ();
+    }
+
     public Dashboard() {
 	super();
-	initServ();
     }
 
     private void initServ() {
 	try {
-	    companiesList = CompanyDAO.getInstance().findAll();
+	    companiesList = companyDAO.findAll();
 	}
 	catch (SQLException e) {
 	    e.printStackTrace();
@@ -52,6 +65,7 @@ public class Dashboard extends HttpServlet {
     }
 
     private Page readRequest(HttpServletRequest request) {
+	// initServ();
 	Page page = new Page();
 	page.setComputerPerPage(LIMIT_PER_PAGE_DEF);
 	String nameFilterParam = request.getParameter("search");
@@ -60,8 +74,7 @@ public class Dashboard extends HttpServlet {
 	    page.setNameFilter(nameFilterParam);
 	}
 	// compute TOTAL Res + max Pages
-	int total = FactoryDAO.getComputerDAOInstance().count(
-		page.getNameFilter());
+	int total = computerDAO.count(page.getNameFilter());
 	page.setTotalRes(total);
 	page.computeMaxPages();
 
@@ -83,8 +96,7 @@ public class Dashboard extends HttpServlet {
 	}
 	page.setCurrentPage(goTo);
 
-	List<Computer> computersList = (List<Computer>) FactoryDAO
-		.getComputerDAOInstance().find(page);
+	List<Computer> computersList = (List<Computer>) computerDAO.find(page);
 	page.setComputersList(computersList);
 
 	return page;
@@ -114,7 +126,7 @@ public class Dashboard extends HttpServlet {
 	String computerToDelete = request.getParameter("computerToDelete");
 	try {
 	    long id = Long.parseLong(computerToDelete);
-	    FactoryDAO.getComputerDAOInstance().delete(id);
+	    computerDAO.delete(id);
 	    Page page = readRequest(request);
 	    setRequest(request, page);
 	    this.getServletContext()
@@ -134,7 +146,7 @@ public class Dashboard extends HttpServlet {
 	String computerToUpdate = request.getParameter("computerToUpdate");
 	try {
 	    long id = Long.parseLong(computerToUpdate);
-	    Computer computer = FactoryDAO.getComputerDAOInstance().find(id);
+	    Computer computer = computerDAO.find(id);
 	    request.setAttribute("computer", computer);
 	    // logger.info("computerToUpdate :  " + computer);
 	    this.getServletContext()

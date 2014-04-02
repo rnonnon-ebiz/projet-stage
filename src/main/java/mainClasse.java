@@ -4,20 +4,27 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import fr.stage.dao.CompanyDAO;
 import fr.stage.dao.ComputerDAO;
 import fr.stage.dao.ConnectionManager;
-import fr.stage.dao.IConnectionManager;
 import fr.stage.domainClasses.Company;
 import fr.stage.domainClasses.Computer;
-import fr.stage.service.FactoryDAO;
 
 public class mainClasse {
 
     public static void main(String[] args) {
-	
 	// TODO Auto-generated method stub
-	IConnectionManager coMan = ConnectionManager.getInstance();
+	ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+		"beans.xml");
+
+	ConnectionManager coMan = applicationContext
+		.getBean(ConnectionManager.class);
+	ComputerDAO computerDAO = applicationContext.getBean(ComputerDAO.class);
+	CompanyDAO companyDAO = applicationContext.getBean(CompanyDAO.class);
+
+	// IConnectionManager coMan = ConnectionManager.getInstance();
 	Connection co = coMan.getConnection();
 	try {
 	    ResultSet res;
@@ -41,8 +48,8 @@ public class mainClasse {
 	computer.setDiscontinuedDate(new Date());
 	// computer.setCompany(comp);
 
-	ComputerDAO computerDAO = FactoryDAO.getComputerDAOInstance();
-	CompanyDAO companyDAO = FactoryDAO.getCompanyDAOInstance();
+	// ComputerDAO computerDAO = FactoryDAO.getComputerDAOInstance();
+	// CompanyDAO companyDAO = FactoryDAO.getCompanyDAOInstance();
 
 	// try {
 	// companyDAO.create(comp);

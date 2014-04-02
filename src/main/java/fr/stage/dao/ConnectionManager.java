@@ -9,6 +9,7 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
@@ -20,38 +21,20 @@ import fr.stage.utils.Introspection;
  * @author rnonnon
  * 
  */
+@Repository
 public class ConnectionManager implements IConnectionManager {
 
-    protected final static Logger logger = LoggerFactory
-	    .getLogger(ConnectionManager.class);
+    protected Logger logger;
 
-    public static final String CONFIG_FILE_NAME = "/fr/stage/dao/dao.properties";
+    public static final String CONFIG_FILE_NAME = "fr/stage/dao/dao.properties";
 
     public static String DRIVER_NAME = "com.mysql.jdbc.Driver";
 
-    private static BoneCP connectionPool;
+    private BoneCP connectionPool;
 
-    private static ThreadLocal<Connection> threadLocal = new ThreadLocal<Connection>() {
+    private ThreadLocal<Connection> threadLocal;
 
-	@Override
-	protected Connection initialValue() {
-	    Connection connection = null;
-	    try {
-		connection = connectionPool.getConnection();
-		// logger.info("Connection Ready");
-		// logger.info("connectionPool free : "
-		// + connectionPool.getTotalFree());
-	    }
-	    catch (SQLException e) {
-		e.printStackTrace();
-	    }
-	    return connection;
-	}
-    };
-
-    private final static ConnectionManager connectionManager = new ConnectionManager();
-
-    private ConnectionManager() {
+    public ConnectionManager() {
 	// properties = new Properties();
 	// properties.put("user", "root");
 	// properties.put("password", "mysqlpassword");
@@ -61,8 +44,30 @@ public class ConnectionManager implements IConnectionManager {
 	// properties = ConfigFileManipulation
 	// .readConfFileAndFill(CONFIG_FILE_NAME);
 	// logger.info(properties.toString());
+	logger = LoggerFactory.getLogger(ConnectionManager.class);
 	loadDriver();
 	initConnectionPool();
+	initThreadLocal();
+    }
+
+    public void initThreadLocal() {
+	threadLocal = new ThreadLocal<Connection>() {
+
+	    @Override
+	    protected Connection initialValue() {
+		Connection connection = null;
+		try {
+		    connection = connectionPool.getConnection();
+		    // logger.info("Connection Ready");
+		    // logger.info("connectionPool free : "
+		    // + connectionPool.getTotalFree());
+		}
+		catch (SQLException e) {
+		    e.printStackTrace();
+		}
+		return connection;
+	    }
+	};
     }
 
     private void loadDriver() {
@@ -99,10 +104,6 @@ public class ConnectionManager implements IConnectionManager {
 	}
     }
 
-    public static ConnectionManager getInstance() {
-	return connectionManager;
-    }
-
     @Override
     public Connection getConnection() {
 	return threadLocal.get();
@@ -117,4 +118,13 @@ public class ConnectionManager implements IConnectionManager {
     public void shutdownPool() {
 	connectionPool.shutdown();
     }
+
+    public void startTransaction() throws SQLException {
+	threadLocal.get().setAutoCommit(false);
+    }
+
+    public void endTransaction() throws SQLException {
+	threadLocal.get().commit();
+    }
+
 }

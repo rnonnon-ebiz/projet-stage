@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,11 +14,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import fr.stage.dao.CompanyDAO;
+import fr.stage.dao.ComputerDAO;
 import fr.stage.domainClasses.Company;
 import fr.stage.domainClasses.Computer;
-import fr.stage.service.FactoryDAO;
 import fr.stage.utils.DateUtils;
 import fr.stage.utils.ServletUtils;
 
@@ -33,18 +36,30 @@ public class AddComputer extends HttpServlet {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    private CompanyDAO companyDAO;
+
+    @Autowired
+    private ComputerDAO computerDAO;
+
     /**
      * @see HttpServlet#HttpServlet()
      */
     public AddComputer() {
 	super();
-	initServ();
+    }
 
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+	super.init(config);
+	SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
+		config.getServletContext());
+	initServ();
     }
 
     private void initServ() {
 	try {
-	    companiesList = CompanyDAO.getInstance().findAll();
+	    companiesList = companyDAO.findAll();
 	}
 	catch (SQLException e) {
 	    e.printStackTrace();
@@ -128,10 +143,10 @@ public class AddComputer extends HttpServlet {
 	request.setAttribute("companiesList", companiesList);
 	Computer computer = fillComputer(request);
 	if (computer.getId() == 0) {
-	    FactoryDAO.getComputerDAOInstance().create(computer);
+	    computerDAO.create(computer);
 	}
 	else {
-	    FactoryDAO.getComputerDAOInstance().update(computer);
+	    computerDAO.update(computer);
 	}
 	response.sendRedirect("dashboard");
     }

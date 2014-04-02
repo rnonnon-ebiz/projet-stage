@@ -21,5 +21,4 @@ public class ConfigFileManipulation {
 	}
 	return prop;
     }
-
 }

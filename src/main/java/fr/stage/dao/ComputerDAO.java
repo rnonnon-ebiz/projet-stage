@@ -1,5 +1,6 @@
 package fr.stage.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,13 +9,15 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
 import fr.stage.domainClasses.Company;
 import fr.stage.domainClasses.Computer;
 import fr.stage.domainClasses.Page;
+import fr.stage.utils.Introspection;
 
+@Repository
 public class ComputerDAO extends AbstractDAO<Computer> {
-
-    private static final ComputerDAO computerDao = new ComputerDAO();
 
     public static final String FIND_ALL_QUERY = "SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName FROM computer cr LEFT JOIN company cy ON cr.company_id = cy.id ";
 
@@ -25,177 +28,199 @@ public class ComputerDAO extends AbstractDAO<Computer> {
     // public static final String COUNT_ALL_QUERY =
     // "SELECT COUNT(*) FROM computer cr ";
 
-    private ComputerDAO() {
-    }
-
-    public static ComputerDAO getInstance() {
-	return computerDao;
+    public ComputerDAO() {
     }
 
     @Override
-    protected int countBody(String nameFilter, QueryObjects qObjects)
-	    throws SQLException {
+    protected int countBody(String nameFilter) {
 	int total = 0;
-	// try {
 	String query = generateCountQuery();
+	Connection connection = connectionManager.getConnection();
+	PreparedStatement stm = null;
+	ResultSet res = null;
+	try {
+	    stm = connection.prepareStatement(query);
 
-	PreparedStatement stm = qObjects.prepareStatement(query);
-
-	if (nameFilter == null)
-	    nameFilter = "";
-	stm.setString(1, "%" + nameFilter + "%");
-	stm.setString(2, "%" + nameFilter + "%");
-	logger.info(stm.toString());
-	ResultSet res = qObjects.executeQuery();
-	if (res.next()) {
-	    total = res.getInt(1);
+	    if (nameFilter == null)
+		nameFilter = "";
+	    stm.setString(1, "%" + nameFilter + "%");
+	    stm.setString(2, "%" + nameFilter + "%");
+	    logger.info(stm.toString());
+	    res = stm.executeQuery();
+	    if (res.next()) {
+		total = res.getInt(1);
+	    }
 	}
-	// }
-	// catch (SQLException e) {
-	// logger.error("Failed to count", e);
-	// e.printStackTrace();
-	// }
+	catch (SQLException e) {
+	    logger.error("Failed to count", e);
+	    Introspection.closeSafe(res);
+	    Introspection.closeSafe(stm);
+	    e.printStackTrace();
+	}
 	return total;
     }
 
     @Override
-    protected void createBody(Computer computer, QueryObjects qObjects)
-	    throws SQLException {
-	// try {
-	generateInsertPrepareStatement(computer, qObjects);
-	ResultSet res = qObjects.executeUpdateGeneratedKeys();
-	if (res.next()) {
-	    computer.setId(res.getLong(1));
-	    logger.info("Computer created : " + computer.toString());
+    protected void createBody(Computer computer) {
+	Connection connection = connectionManager.getConnection();
+	PreparedStatement stm = null;
+	ResultSet res = null;
+	try {
+	    stm = generateInsertPrepareStatement(computer, connection);
+	    stm.executeUpdate();
+	    res = stm.getGeneratedKeys();
+	    if (res.next()) {
+		computer.setId(res.getLong(1));
+		logger.info("Computer created : " + computer.toString());
+	    }
 	}
-	// }
-	// catch (SQLException e) {
-	// logger.error("Failed to create {}", computer, e);
-	// e.printStackTrace();
-	// }
+	catch (SQLException e) {
+	    logger.error("Failed to create {}", computer, e);
+	    e.printStackTrace();
+	}
+	finally {
+	    Introspection.closeSafe(res);
+	    Introspection.closeSafe(stm);
+	}
     }
 
     @Override
-    protected void deleteBody(Long id, QueryObjects qObjects)
-	    throws SQLException {
-	// try {
+    protected void deleteBody(Long id) {
 	String query = generateDeleteQuery(id);
 	logger.info(query);
-	qObjects.prepareStatement(query);
-	qObjects.executeUpdate();
-	// }
-	// catch (SQLException e) {
-	// logger.error("Failed to delete {}", id, e);
-	// e.printStackTrace();
-	// }
+	Connection connection = connectionManager.getConnection();
+	PreparedStatement stm = null;
+	try {
+	    stm = connection.prepareStatement(query);
+	    stm.executeUpdate();
+	}
+	catch (SQLException e) {
+	    logger.error("Failed to delete {}", id, e);
+	    e.printStackTrace();
+	}
+	finally {
+	    Introspection.closeSafe(stm);
+	}
     }
 
     public Computer find(long id) {
 	logger.info("Start find {}", id);
-	QueryObjects qObjects = new QueryObjects();
 	Computer res = null;
-	try {
-	    res = findBody(id, qObjects);
-	}
-	catch (SQLException e) {
-
-	}
-	qObjects.afterOperation();
+	res = findBody(id);
 	logger.info("End find {}", id);
 	return res;
     }
 
-    protected Computer findBody(long id, QueryObjects qObjects)
-	    throws SQLException {
+    protected Computer findBody(long id) {
 	Computer computer = new Computer();
 	// try {
-	String query = "SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName FROM computer cr LEFT JOIN company cy ON cy.id = cr.company_id WHERE cr.id = ?";
-	PreparedStatement stm = qObjects.prepareStatement(query);
-	stm.setLong(1, id);
-	logger.info(stm.toString());
-	ResultSet res = qObjects.executeQuery();
-	if (res.next()) {
-	    computer.setId(res.getLong("computerId"));
-	    computer.setName(res.getString("computerName"));
-	    computer.setDiscontinuedDate(res.getDate("discontinued"));
-	    computer.setIntroducedDate(res.getDate("introduced"));
+	Connection connection = connectionManager.getConnection();
+	PreparedStatement stm = null;
+	ResultSet res = null;
+	try {
+	    String query = "SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName FROM computer cr LEFT JOIN company cy ON cy.id = cr.company_id WHERE cr.id = ?";
+	    stm = connection.prepareStatement(query);
+	    stm.setLong(1, id);
+	    logger.info(stm.toString());
+	    res = stm.executeQuery();
+	    if (res.next()) {
+		computer.setId(res.getLong("computerId"));
+		computer.setName(res.getString("computerName"));
+		computer.setDiscontinuedDate(res.getDate("discontinued"));
+		computer.setIntroducedDate(res.getDate("introduced"));
 
-	    Company company = new Company();
-	    company.setId(res.getLong("company_id"));
-	    company.setName(res.getString("companyName"));
-	    computer.setCompany(company);
+		Company company = new Company();
+		company.setId(res.getLong("company_id"));
+		company.setName(res.getString("companyName"));
+		computer.setCompany(company);
+	    }
 	}
-	// }
-	// catch (SQLException e) {
-	// logger.error("Failed to find", e);
-	// e.printStackTrace();
-	// }
+	catch (SQLException e) {
+	    logger.error("Failed to find", e);
+	    e.printStackTrace();
+	}
+	finally {
+	    Introspection.closeSafe(res);
+	    Introspection.closeSafe(stm);
+	}
 	return computer;
     }
 
     @Override
-    protected List<Computer> findBody(Page page, QueryObjects qObjects)
-	    throws SQLException {
+    protected List<Computer> findBody(Page page) {
 	List<Computer> computersList = new ArrayList<Computer>();
-	// try {
-	generateFindPrepareStatement(page, qObjects);
-	ResultSet res = qObjects.executeQuery();
-	while (res.next()) {
-	    Computer computer = new Computer();
-	    computer.setId(res.getLong("computerId"));
-	    computer.setName(res.getString("computerName"));
-	    computer.setDiscontinuedDate(res.getDate("discontinued"));
-	    computer.setIntroducedDate(res.getDate("introduced"));
+	Connection connection = connectionManager.getConnection();
+	PreparedStatement stm = null;
+	ResultSet res = null;
+	try {
+	    stm = generateFindPrepareStatement(page, connection);
+	    res = stm.executeQuery();
+	    while (res.next()) {
+		Computer computer = new Computer();
+		computer.setId(res.getLong("computerId"));
+		computer.setName(res.getString("computerName"));
+		computer.setDiscontinuedDate(res.getDate("discontinued"));
+		computer.setIntroducedDate(res.getDate("introduced"));
 
-	    Company company = new Company();
-	    company.setId(res.getLong("company_id"));
-	    company.setName(res.getString("companyName"));
-	    computer.setCompany(company);
-	    computersList.add(computer);
+		Company company = new Company();
+		company.setId(res.getLong("company_id"));
+		company.setName(res.getString("companyName"));
+		computer.setCompany(company);
+		computersList.add(computer);
+	    }
 	}
-	// }
-	// catch (SQLException e) {
-	// logger.error("Failed to find", e);
-	// e.printStackTrace();
-	// }
+	catch (SQLException e) {
+	    logger.error("Failed to find", e);
+	    e.printStackTrace();
+	}
+	finally {
+	    Introspection.closeSafe(res);
+	    Introspection.closeSafe(stm);
+	}
 	return computersList;
     }
 
     @Override
-    protected void updateBody(Computer computer, QueryObjects qObjects)
-	    throws SQLException {
-	// try {
-	PreparedStatement stm = qObjects.prepareStatement(UPDATE_QUERY);
-	stm.setString(1, computer.getName());
-	if (computer.getIntroducedDate() != null) {
-	    stm.setLong(2, computer.getIntroducedDate().getTime() / 1000L);
-	}
-	else
-	    stm.setNull(2, Types.NULL);
+    protected void updateBody(Computer computer) {
+	Connection connection = connectionManager.getConnection();
+	PreparedStatement stm = null;
+	ResultSet res = null;
+	try {
+	    stm = connection.prepareStatement(UPDATE_QUERY);
+	    stm.setString(1, computer.getName());
+	    if (computer.getIntroducedDate() != null) {
+		stm.setLong(2, computer.getIntroducedDate().getTime() / 1000L);
+	    }
+	    else
+		stm.setNull(2, Types.NULL);
 
-	if (computer.getDiscontinuedDate() != null) {
-	    stm.setLong(3, computer.getDiscontinuedDate().getTime() / 1000L);
-	}
-	else
-	    stm.setNull(3, Types.NULL);
+	    if (computer.getDiscontinuedDate() != null) {
+		stm.setLong(3, computer.getDiscontinuedDate().getTime() / 1000L);
+	    }
+	    else
+		stm.setNull(3, Types.NULL);
 
-	if (computer.getCompany() != null)
-	    stm.setLong(4, computer.getCompany().getId());
-	else
-	    stm.setNull(4, Types.NULL);
-	stm.setLong(5, computer.getId());
-	logger.info(stm.toString());
-	qObjects.executeUpdate();
-	// }
-	// catch (SQLException e) {
-	// logger.error("Failed to update {}", computer, e);
-	// e.printStackTrace();
-	// }
+	    if (computer.getCompany() != null)
+		stm.setLong(4, computer.getCompany().getId());
+	    else
+		stm.setNull(4, Types.NULL);
+	    stm.setLong(5, computer.getId());
+	    logger.info(stm.toString());
+	    stm.executeUpdate();
+	}
+	catch (SQLException e) {
+	    logger.error("Failed to update {}", computer, e);
+	    e.printStackTrace();
+	}
+	finally {
+	    Introspection.closeSafe(res);
+	    Introspection.closeSafe(stm);
+	}
     }
 
-    private void generateInsertPrepareStatement(Computer computer,
-	    QueryObjects qObjects) throws SQLException {
-	PreparedStatement stm = qObjects.prepareStatement(INSERT_QUERY,
+    private PreparedStatement generateInsertPrepareStatement(Computer computer,
+	    Connection connection) throws SQLException {
+	PreparedStatement stm = connection.prepareStatement(INSERT_QUERY,
 		Statement.RETURN_GENERATED_KEYS);
 	stm.setString(1, computer.getName());
 
@@ -217,6 +242,7 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	    stm.setNull(4, Types.NULL);
 
 	logger.info(stm.toString());
+	return stm;
     }
 
     private String generateCountQuery() {
@@ -230,11 +256,11 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	return query.toString();
     }
 
-    private void generateFindPrepareStatement(Page page, QueryObjects qObjects)
-	    throws SQLException {
+    private PreparedStatement generateFindPrepareStatement(Page page,
+	    Connection connection) throws SQLException {
 	String query = generateFindQuery(page);
 	int indexParam = 1;
-	PreparedStatement stm = qObjects.prepareStatement(query);
+	PreparedStatement stm = connection.prepareStatement(query);
 	String nameFilter = page.getNameFilter();
 	if (nameFilter == null) {
 	    nameFilter = "";
@@ -251,6 +277,7 @@ public class ComputerDAO extends AbstractDAO<Computer> {
 	if (offset >= 0) {
 	    stm.setInt(indexParam++, offset);
 	}
+	return stm;
 	// logger.info(stm.toString());
     }
 

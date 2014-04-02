@@ -3,11 +3,13 @@
  */
 package fr.stage.dao;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.stage.domainClasses.Page;
 
@@ -17,8 +19,11 @@ import fr.stage.domainClasses.Page;
  */
 public abstract class AbstractDAO<T> implements ICRUDManager<T> {
 
-    // @Autowired
-    // protected IConnectionManager connectionManager;
+    @Autowired
+    protected ConnectionManager connectionManager;
+
+    @Autowired
+    protected LogDAO logDao;
 
     // protected IConnectionManager connectionManager = ConnectionManager
     // .getInstance();
@@ -27,14 +32,15 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
 
     public int count(String nameFilter) {
 	logger.debug("Start count");
-	QueryObjects qObjects = new QueryObjects();
 	int total = 0;
 	try {
-	    total = countBody(nameFilter, qObjects);
+	    total = countBody(nameFilter);
 	}
 	catch (SQLException e) {
 	}
-	qObjects.afterOperation();
+	finally {
+	    connectionManager.closeConnection();
+	}
 	logger.debug("End count");
 	return total;
     }
@@ -42,32 +48,35 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
     @Override
     public void create(T object) {
 	logger.debug("Start create {}", object);
-	QueryObjects qObjects = new QueryObjects();
+	Connection connection = connectionManager.getConnection();
 	try {
-	    qObjects.startTransaction();
-	    createBody(object, qObjects);
-	    LogDAO.logInfo("INSERT " + object.toString());
-	    qObjects.endTransaction();
+	    connectionManager.startTransaction();
+	    createBody(object);
+	    logDao.logInfo("INSERT " + object.toString());
+	    connectionManager.endTransaction();
 	}
 	catch (SQLException e) {
-	    qObjects.rollbackAndLogError("INSERT " + object.toString());
+	    rollbackAndLogError("INSERT " + object.toString(), connection);
 	}
-	qObjects.afterOperation();
+	finally {
+	    connectionManager.closeConnection();
+	}
 	logger.debug("End Create {}", object);
     }
 
     @Override
     public List<T> find(Page page) {
 	logger.debug("Start find");
-	QueryObjects qObjects = new QueryObjects();
 	List<T> res = null;
 	try {
-	    res = findBody(page, qObjects);
+	    res = findBody(page);
 	}
 	catch (SQLException e) {
 
 	}
-	qObjects.afterOperation();
+	finally {
+	    connectionManager.closeConnection();
+	}
 	logger.debug("End find");
 	return res;
     }
@@ -75,51 +84,60 @@ public abstract class AbstractDAO<T> implements ICRUDManager<T> {
     @Override
     public void update(final T object) {
 	logger.debug("Start update {}", object);
-	QueryObjects qObjects = new QueryObjects();
+	Connection connection = connectionManager.getConnection();
 	try {
-	    qObjects.startTransaction();
-	    updateBody(object, qObjects);
-	    LogDAO.logInfo("UPDATE  " + object.toString());
-	    qObjects.endTransaction();
+	    connectionManager.startTransaction();
+	    updateBody(object);
+	    logDao.logInfo("UPDATE  " + object.toString());
+	    connectionManager.endTransaction();
 	}
 	catch (SQLException e) {
-	    qObjects.rollbackAndLogError("UPDATE " + object.toString());
+	    rollbackAndLogError("UPDATE " + object.toString(), connection);
 	}
-	qObjects.afterOperation();
+	finally {
+	    connectionManager.closeConnection();
+	}
 	logger.debug("End update {}", object);
     }
 
     @Override
     public void delete(Long id) {
-	logger.debug("Start delete {}", id);
-	QueryObjects qObjects = new QueryObjects();
+	logger.info("Start delete {}", id);
+	Connection connection = connectionManager.getConnection();
 	try {
-	    qObjects.startTransaction();
-	    deleteBody(id, qObjects);
-	    LogDAO.logInfo("DELETE " + id);
-	    qObjects.endTransaction();
+	    connectionManager.startTransaction();
+	    deleteBody(id);
+	    logDao.logInfo("DELETE " + id);
+	    connectionManager.endTransaction();
 	}
 	catch (SQLException e) {
-	    qObjects.rollbackAndLogError("DELETE  " + id);
+	    rollbackAndLogError("DELETE " + id, connection);
 	}
-	qObjects.afterOperation();
-	logger.debug("End delete {}", id);
+	finally {
+	    connectionManager.closeConnection();
+	}
+	logger.info("End delete {}", id);
     }
 
-    protected abstract void createBody(T object, QueryObjects qObjects)
-	    throws SQLException;
+    protected abstract void createBody(T object) throws SQLException;
 
-    protected abstract List<T> findBody(Page page, QueryObjects qObjects)
-	    throws SQLException;
+    protected abstract List<T> findBody(Page page) throws SQLException;
 
-    protected abstract void updateBody(T object, QueryObjects qObjects)
-	    throws SQLException;
+    protected abstract void updateBody(T object) throws SQLException;
 
-    protected abstract void deleteBody(Long id, QueryObjects qObjects)
-	    throws SQLException;
+    protected abstract void deleteBody(Long id) throws SQLException;
 
-    protected abstract int countBody(String nameFilter, QueryObjects qObjects)
-	    throws SQLException;
+    protected abstract int countBody(String nameFilter) throws SQLException;
+
+    public void rollbackAndLogError(String msg, Connection connection) {
+	try {
+	    connection.rollback();
+	    logDao.logError(msg);
+	}
+	catch (SQLException e1) {
+	    e1.printStackTrace();
+	}
+    }
 
     public <idType> String genericFindQuery(String className, idType id) {
 	StringBuilder query = new StringBuilder();
