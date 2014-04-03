@@ -94,8 +94,7 @@ public class Page {
 
     public void computeMaxPages() {
 	if (computerPerPage > 0) {
-	    maxPages = (int) Math.ceil((double) (totalRes)
-		    / (double) (computerPerPage));
+	    maxPages = (int) Math.ceil((double) (totalRes) / (double) (computerPerPage));
 	}
     }
 }

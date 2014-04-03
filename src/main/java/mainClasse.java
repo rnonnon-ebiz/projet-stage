@@ -15,12 +15,31 @@ import fr.stage.domain.Computer;
 public class mainClasse {
 
     public static void main(String[] args) {
-	// TODO Auto-generated method stub
-	ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
-		"beans.xml");
 
-	ConnectionManager coMan = applicationContext
-		.getBean(ConnectionManager.class);
+	byte errorCode = 32;
+	if ((errorCode & 0x01) == 0x01) {
+	    System.out.println("0x01");
+	}
+	if ((errorCode & 0x02) == 0x02) {
+	    System.out.println("0x02");
+	}
+	if ((errorCode & 0x04) == 0x04) {
+	    System.out.println("0x04");
+	}
+	if ((errorCode & 0x08) == 0x08) {
+	    System.out.println("0x08");
+	}
+	if ((errorCode & 0x10) == 0x10) {
+	    System.out.println("0x10");
+	}
+	if ((errorCode & 0x20) == 0x20) {
+	    System.out.println("0x20");
+	}
+
+	// TODO Auto-generated method stub
+	ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
+
+	ConnectionManager coMan = applicationContext.getBean(ConnectionManager.class);
 	ComputerDAO computerDAO = applicationContext.getBean(ComputerDAO.class);
 	CompanyDAO companyDAO = applicationContext.getBean(CompanyDAO.class);
 
@@ -73,6 +92,5 @@ public class mainClasse {
 	// // TODO Auto-generated catch block
 	// e.printStackTrace();
 	// }
-
     }
 }

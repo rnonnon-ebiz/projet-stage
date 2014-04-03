@@ -29,6 +29,20 @@ public class ComputerService {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    public boolean exist(long id) {
+	boolean computerExistence = false;
+	try {
+	    computerExistence = computerDAO.exist(id);
+	}
+	catch (DAOException e) {
+	    throw e;
+	}
+	finally {
+	    connectionManager.closeConnection();
+	}
+	return computerExistence;
+    }
+
     public int count(String nameFilter) {
 	logger.debug("Start count");
 	int total = 0;
@@ -115,12 +129,13 @@ public class ComputerService {
 	}
     }
 
-    public void delete(Long id) {
+    public boolean delete(Long id) {
+	boolean deleteSuccess = false;
 	try {
 	    logger.debug("Start Transaction");
 
 	    connectionManager.startTransaction();
-	    computerDAO.delete(id);
+	    deleteSuccess = computerDAO.delete(id);
 	    logDao.logInfo("DELETE " + id);
 	    connectionManager.endTransaction();
 
@@ -133,6 +148,7 @@ public class ComputerService {
 	finally {
 	    connectionManager.closeConnection();
 	}
+	return deleteSuccess;
     }
 
     private void rollbackAndLogError(String error) {

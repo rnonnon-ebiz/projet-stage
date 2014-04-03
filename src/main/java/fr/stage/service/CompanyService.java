@@ -19,6 +19,34 @@ public class CompanyService {
     @Autowired
     CompanyDAO companyDAO;
 
+    public boolean exist(long id) {
+	boolean companyExistence = false;
+	try {
+	    companyExistence = companyDAO.exist(id);
+	}
+	catch (DAOException e) {
+	    throw e;
+	}
+	finally {
+	    connectionManager.closeConnection();
+	}
+	return companyExistence;
+    }
+
+    public Company find(long id) {
+	Company res = null;
+	try {
+	    res = companyDAO.find(id);
+	}
+	catch (DAOException e) {
+	    throw e;
+	}
+	finally {
+	    connectionManager.closeConnection();
+	}
+	return res;
+    }
+
     public List<Company> findAll() {
 	List<Company> res = null;
 	try {

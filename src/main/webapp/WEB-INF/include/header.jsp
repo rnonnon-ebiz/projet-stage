@@ -16,6 +16,7 @@
 	<script src="resources/js/jquery-ui-1.10.4.custom.min.js"></script>
 	<script src="resources/js/jquery.validate.min.js"></script>
 	<script src="resources/js/additional-methods.min.js"></script>
+	<script src="resources/js/formValidator.js"></script>
 	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
 	
 	<script type="text/javascript">

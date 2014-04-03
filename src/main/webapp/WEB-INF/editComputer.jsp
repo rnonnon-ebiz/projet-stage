@@ -5,10 +5,12 @@
 <section id="main">
 
 	<div class="page-header">
-		<h1>Add Computer</h1>
+		<h1><c:out value="Edit Computer"/></h1>
 	</div>
 	
-	<form class="form-horizontal " id="addComputerForm" action="addComputer" method="POST">
+	<form class="form-horizontal " id="editComputerForm" action="editComputer" method="POST">
+	
+		<input type="text" value="${computer.id}" class="hidden" name="id"/>
 		
 		<div class="form-group ${errorCode != null ? ((perso:byteEquals(errorCode, 2) == 0) ? 'has-error' : 'has-success') : ''}">
 			<label class="col-sm-2 control-label" for="name">Computer name:</label>
@@ -68,7 +70,7 @@
 			<div class="col-sm-offset-2 col-sm-10">
 				<div class="col-xs-2">
 					<button type="submit" class="btn btn-success" >
-						<span class="glyphicon glyphicon-ok"></span>Add
+						<span class="glyphicon glyphicon-ok"></span>Edit
 					</button>
 					or <a href="dashboard" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> Cancel</a>
 				</div>

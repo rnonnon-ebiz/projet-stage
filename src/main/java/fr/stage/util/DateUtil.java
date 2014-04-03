@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class DateUtils {
+public class DateUtil {
 
     public static java.sql.Date convertDateToSql(Date date) {
 	if (date != null)
@@ -15,8 +15,7 @@ public class DateUtils {
 	    return null;
     }
 
-    public static String convertDateToSQLString(String before, Date date,
-	    String after, String alternative) {
+    public static String convertDateToSQLString(String before, Date date, String after, String alternative) {
 	StringBuilder result = new StringBuilder();
 	result.append(before);
 	if (date != null) {
@@ -31,8 +30,7 @@ public class DateUtils {
 	return result.toString();
     }
 
-    public static long stringToTimestamp(String stringDate)
-	    throws NumberFormatException {
+    public static long stringToTimestamp(String stringDate) throws NumberFormatException {
 	String[] dateSplitted = stringDate.split("-");
 	Calendar cal = Calendar.getInstance();
 	int year = Integer.parseInt(dateSplitted[0]);
@@ -42,8 +40,7 @@ public class DateUtils {
 	return cal.getTimeInMillis();
     }
 
-    public static Date stringToDate(String stringDate)
-	    throws NumberFormatException {
+    public static Date stringToDate(String stringDate) throws NumberFormatException {
 	DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 	Date d = null;
 	try {
@@ -53,6 +50,14 @@ public class DateUtils {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
+	return d;
+    }
+
+    public static String DateToString(Date date) {
+	DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+	String d;
+	format.setLenient(false);
+	d = format.format(date);
 	return d;
     }
 }

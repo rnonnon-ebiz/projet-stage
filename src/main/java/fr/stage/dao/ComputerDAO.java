@@ -30,6 +30,39 @@ public class ComputerDAO {
     public ComputerDAO() {
     }
 
+    public boolean exist(long id) {
+	logger.debug("Start existence check {}", id);
+	Connection connection = connectionManager.getConnection();
+	PreparedStatement stm = null;
+	ResultSet res = null;
+
+	boolean computerExistence = false;
+	try {
+	    // Generate query
+	    String query = "SELECT id  FROM computer WHERE id = ?";
+	    // Generate preparedStatement
+	    stm = connection.prepareStatement(query);
+	    stm.setLong(1, id);
+	    logger.info(stm.toString());
+	    // Execute preparedStatement
+	    res = stm.executeQuery();
+	    if (res.next()) {
+		// Construct Result
+		computerExistence = true;
+	    }
+	}
+	catch (SQLException e) {
+	    logger.error("Failed to check existence", e);
+	    throw new DAOException("Failed to check existence");
+	}
+	finally {
+	    connectionManager.close(res, stm);
+	}
+
+	logger.debug("End existence check {}", id);
+	return computerExistence;
+    }
+
     public int count(String nameFilter) {
 	logger.debug("Start count {}", nameFilter);
 	Connection connection = connectionManager.getConnection();
@@ -96,18 +129,18 @@ public class ComputerDAO {
 	logger.debug("End create {}", computer);
     }
 
-    public void delete(Long id) {
+    public boolean delete(Long id) {
 	logger.debug("Start delete {}", id);
 	Connection connection = connectionManager.getConnection();
 	PreparedStatement stm = null;
-
+	int nDelete = 0;
 	try {
 	    // Generate query
 	    String query = "DELETE FROM computer WHERE id = " + id;
 	    // Generate preparedStatement
 	    stm = connection.prepareStatement(query);
 	    // Execute preparedStatement
-	    stm.executeUpdate();
+	    nDelete = stm.executeUpdate();
 	}
 	catch (SQLException e) {
 	    logger.error("Failed to delete {}", id, e);
@@ -118,6 +151,7 @@ public class ComputerDAO {
 	}
 
 	logger.debug("End delete {}", id);
+	return (nDelete == 1);
     }
 
     public Computer find(long id) {
@@ -126,8 +160,9 @@ public class ComputerDAO {
 	PreparedStatement stm = null;
 	ResultSet res = null;
 
-	Computer computer = new Computer();
+	Computer computer;
 	try {
+	    computer = new Computer();
 	    // Generate query
 	    String query = "SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName FROM computer cr LEFT JOIN company cy ON cy.id = cr.company_id WHERE cr.id = ?";
 	    // Generate preparedStatement
@@ -150,6 +185,7 @@ public class ComputerDAO {
 	    }
 	}
 	catch (SQLException e) {
+	    computer = null;
 	    logger.error("Failed to find", e);
 	    throw new DAOException("Failed to find computer");
 	}
@@ -243,14 +279,12 @@ public class ComputerDAO {
 	logger.debug("End update {}", computer);
     }
 
-    private PreparedStatement generateInsertPrepareStatement(Computer computer,
-	    Connection connection) throws SQLException {
+    private PreparedStatement generateInsertPrepareStatement(Computer computer, Connection connection) throws SQLException {
 	// Generate query
 	String query = "INSERT INTO computer  ( name , introduced , discontinued , company_id ) "
 		+ "VALUES (? , FROM_UNIXTIME(?) , FROM_UNIXTIME(?) , ?)";
 	// Generate preparedStatement
-	PreparedStatement stm = connection.prepareStatement(query,
-		Statement.RETURN_GENERATED_KEYS);
+	PreparedStatement stm = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
 	stm.setString(1, computer.getName());
 
@@ -275,8 +309,7 @@ public class ComputerDAO {
 	return stm;
     }
 
-    private PreparedStatement generateFindPrepareStatement(Page page,
-	    Connection connection) throws SQLException {
+    private PreparedStatement generateFindPrepareStatement(Page page, Connection connection) throws SQLException {
 	// Generate query
 	String query = generateFindQuery(page);
 	// Generate preparedStatement

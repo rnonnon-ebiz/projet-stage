@@ -1,18 +1,18 @@
 <jsp:include page="include/header.jsp" />
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib tagdir="/WEB-INF/tags/" prefix="perso" %>
+<%@ taglib prefix="perso" uri="/WEB-INF/tags/taglib.tld" %>
 
 <section id="main">
 	<div class="page-header">
-		<h1 id="homeTitle">${page.getTotalRes()} Computers found</h1>
+		<h1 id="homeTitle">${page.totalRes} Computers found</h1>
 		<h2 id="subTitle" style="display:none"> WELCOME :)</h2>
 	</div>
 	
 	<div id="actions">
 		<form action="dashboard" method="GET">
 			<input type="search" id="searchbox" name="search"
-				value="<c:out value="${page.getNameFilter()}"/>" placeholder="Search name"/>
+				value="<c:out value="${page.nameFilter}"/>" placeholder="Search name"/>
 			<button type="submit" id="searchsubmit"
 				class="btn btn-default">
 				<span class="glyphicon glyphicon-search"></span>Filter by name
@@ -34,7 +34,7 @@
 						<perso:headColumnOrder page="${page}" orderByASC="6" orderByDESC="7" width="2" columnTitle="Company"></perso:headColumnOrder>
 				</thead>
 				<tbody>
-					<c:forEach var="computer" items="${page.getComputersList()}"> 
+					<c:forEach var="computer" items="${page.computersList}"> 
 						<perso:computerRow computer="${computer}"></perso:computerRow>
 					</c:forEach>
 				</tbody>

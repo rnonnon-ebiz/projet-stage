@@ -15,12 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import fr.stage.domain.Company;
 import fr.stage.domain.Computer;
 import fr.stage.domain.Page;
-import fr.stage.service.CompanyService;
 import fr.stage.service.ComputerService;
-import fr.stage.util.ServletUtils;
+import fr.stage.util.ServletUtil;
 
 /**
  * Servlet implementation class Dashboard
@@ -28,16 +26,11 @@ import fr.stage.util.ServletUtils;
 @WebServlet("/dashboard")
 public class Dashboard extends HttpServlet {
 
-    private static int LIMIT_PER_PAGE_DEF = 10;
+    private static int LIMIT_PER_PAGE_DEFAULT = 10;
 
     private static final long serialVersionUID = 1L;
 
-    private List<Company> companiesList;
-
     Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    CompanyService companyService;
 
     @Autowired
     ComputerService computerService;
@@ -45,23 +38,20 @@ public class Dashboard extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
 	super.init(config);
-	SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this,
-		config.getServletContext());
-	initServ();
+	SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
     public Dashboard() {
 	super();
     }
 
-    private void initServ() {
-	companiesList = companyService.findAll();
-    }
-
-    private Page readRequest(HttpServletRequest request) {
-	// initServ();
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	Page page = new Page();
-	page.setComputerPerPage(LIMIT_PER_PAGE_DEF);
+	page.setComputerPerPage(LIMIT_PER_PAGE_DEFAULT);
 	String nameFilterParam = request.getParameter("search");
 	String pageParam = request.getParameter("page");
 	if (nameFilterParam != null) {
@@ -93,78 +83,15 @@ public class Dashboard extends HttpServlet {
 	List<Computer> computersList = computerService.find(page);
 	page.setComputersList(computersList);
 
-	return page;
-    }
-
-    private void setRequest(HttpServletRequest request, Page page) {
 	request.setAttribute("page", page);
-	request.setAttribute("companiesList", companiesList);
-    }
-
-    /**
-     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-     *      response)
-     */
-    protected void doGet(HttpServletRequest request,
-	    HttpServletResponse response) throws ServletException, IOException {
-	Page page = readRequest(request);
-	setRequest(request, page);
-	this.getServletContext()
-		.getRequestDispatcher(ServletUtils.PAGE_URI + "dashboard.jsp")
-		.forward(request, response);
-    }
-
-    private void processDelete(HttpServletRequest request,
-	    HttpServletResponse response) throws ServletException, IOException {
-	logger.info("processDelete");
-	String computerToDelete = request.getParameter("computerToDelete");
-	try {
-	    long id = Long.parseLong(computerToDelete);
-	    computerService.delete(id);
-	    Page page = readRequest(request);
-	    setRequest(request, page);
-	    this.getServletContext()
-		    .getRequestDispatcher(
-			    ServletUtils.PAGE_URI + "dashboard.jsp")
-		    .forward(request, response);
-	}
-	catch (NullPointerException | NumberFormatException e) {
-
-	}
-    }
-
-    private void processUpdate(HttpServletRequest request,
-	    HttpServletResponse response) throws ServletException, IOException {
-	logger.info("processUpdate");
-	request.setAttribute("companiesList", companiesList);
-	String computerToUpdate = request.getParameter("computerToUpdate");
-	try {
-	    long id = Long.parseLong(computerToUpdate);
-	    Computer computer = computerService.find(id);
-	    request.setAttribute("computer", computer);
-	    // logger.info("computerToUpdate :  " + computer);
-	    this.getServletContext()
-		    .getRequestDispatcher(
-			    ServletUtils.PAGE_URI + "addComputer.jsp")
-		    .forward(request, response);
-	}
-	catch (NullPointerException | NumberFormatException e) {
-
-	}
-    }
-
-    private void readPostRequest(HttpServletRequest request,
-	    HttpServletResponse response) throws ServletException, IOException {
-	processDelete(request, response);
-	processUpdate(request, response);
+	this.getServletContext().getRequestDispatcher(ServletUtil.PAGE_URI + "dashboard.jsp").forward(request, response);
     }
 
     /**
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
      *      response)
      */
-    protected void doPost(HttpServletRequest request,
-	    HttpServletResponse response) throws ServletException, IOException {
-	readPostRequest(request, response);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	this.getServletContext().getRequestDispatcher(ServletUtil.PAGE_URI + "dashboard.jsp").forward(request, response);
     }
 }

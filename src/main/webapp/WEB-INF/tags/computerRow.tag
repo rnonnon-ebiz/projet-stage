@@ -3,26 +3,26 @@
 
 <%@ attribute name="computer" required="true" type="fr.stage.domain.Computer" %>
 
-<tr id="${computer.getId()}">
-	<td><a href="#" onclick="">${computer.getName()}</a></td>
-	<td>${computer.getIntroducedDate()}</td>
-	<td>${computer.getDiscontinuedDate()}</td>
-	<td>${computer.getCompany().getName()}</td>
+<tr id="${computer.id}">
+	<td><a href="#" onclick="">${computer.name}</a></td>
+	<td>${computer.introducedDate}</td>
+	<td>${computer.discontinuedDate}</td>
+	<td>${computer.company.name}</td>
 </tr>
 
-<tr id="slide${computer.getId()}" style="display:none" class="warning">
+<tr id="slide${computer.id}" style="display:none" class="warning">
 	<td colspan="4">
- 			<form method="post" style="display:inline;">
-				<input type="text" class="hidden" name="computerToUpdate"
-						value="${computer.getId()}" />
+ 			<form method="get" action="editComputer" style="display:inline;">
+				<input type="text" class="hidden" name="id"
+						value="${computer.id}" />
 				<button type="submit"
-						class="btn btn-info" onclick="return edit(${computer.getId()})">
+						class="btn btn-info" onclick="return edit(${computer.id})">
 						<span class="glyphicon glyphicon-pencil"></span> Edit
 				</button>
  			</form>
-			<form method="post" style="display:inline;">
-				<input type="text" class="hidden" name="computerToDelete"
-						value="${computer.getId()}" />
+			<form method="post" action="deleteComputer" style="display:inline;">
+				<input type="text" class="hidden" name="id"
+						value="${computer.id}" />
 				<button type="submit" type="button"
 						class="btn btn-danger"
 						onClick="return confirm('Confirm delete') ">	

@@ -9,4 +9,6 @@ http://www.springframework.org/schema/context/spring-context-4.0.xsd">
 	<context:annotation-config />
 	<context:component-scan base-package="fr.stage.dao"/>
 	<context:component-scan base-package="fr.stage.service"/>
+	<context:component-scan base-package="fr.stage.validator"/>
+	<context:component-scan base-package="fr.stage.mapper"/>
 </beans>
