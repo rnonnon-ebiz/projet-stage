@@ -1,4 +1,4 @@
-package fr.stage.servlet;
+package fr.stage.controller;
 
 import java.io.IOException;
 

@@ -1,6 +1,7 @@
 <jsp:include page="include/header.jsp" />
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="perso" uri="/WEB-INF/tags/taglib.tld" %>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <section id="main">
 
@@ -8,15 +9,15 @@
 		<h1><c:out value="Edit Computer"/></h1>
 	</div>
 	
-	<form class="form-horizontal " id="editComputerForm" action="editComputer" method="POST">
+	<form:form class="form-horizontal " id="editComputerForm" action="editComputer" method="POST" commandName="computer">
 	
-		<input type="text" value="${computer.id}" class="hidden" name="id"/>
+		<form:input type="hidden" path="id"/>
 		
 		<div class="form-group ${errorCode != null ? ((perso:byteEquals(errorCode, 2) == 0) ? 'has-error' : 'has-success') : ''}">
 			<label class="col-sm-2 control-label" for="name">Computer name:</label>
 			<div class="col-sm-10">
 				<div class="col-xs-2">
-					<input type="text" class="form-control computerName" placeholder="Enter name" name="name" value="${computer.name}"/>
+					<form:input class="form-control computerName" path="name" placeholder="Enter name"/>
 				</div>
 				<span class="help-block">No blank space before or after / only chars and digits</span>
 			</div>
@@ -25,7 +26,7 @@
 			<label class="col-sm-2 control-label" for="introduced">Introduced date:</label>
 			<div class="col-sm-10">
 				<div class="col-xs-2">
-					<input type="text"  class="form-control col-xs-2 datepicker" placeholder="Click to select" name="introduced" value="${computer.introducedDate}"/>
+					<form:input class="form-control col-xs-2 datepicker" placeholder="Click to select" path="introducedDate"/>
 				</div>
 				<span class="help-block">year-month-day</span>
 			</div>
@@ -34,7 +35,7 @@
 			<label class="col-sm-2 control-label" for="discontinued">Discontinued date:</label>
 			<div class="col-sm-10">
 				<div class="col-xs-2">
-					<input type="text" class="form-control datepicker" placeholder="Click to select" name="discontinued" value="${computer.discontinuedDate}"/>
+					<form:input class="form-control datepicker" placeholder="Click to select" path="discontinuedDate"/>
 				</div>
 				<span class="help-block">year-month-day</span>
 			</div>
@@ -43,7 +44,7 @@
 			<label class="col-sm-2 control-label" for="company">Company Name:</label>
 			<div class="col-sm-10">
 				<div class="col-xs-2">
-					<select class="form-control" name="company">
+					<form:select class="form-control" path="company">
 						<c:choose>
 							<c:when test="${computer.company == 'null'}">
 								<option value="null" selected="selected">--</option>
@@ -62,7 +63,7 @@
 								</c:when>
 							</c:choose>
 						</c:forEach>
-					</select>
+					</form:select>
 				</div>
 			</div>
 		</div>
@@ -76,7 +77,7 @@
 				</div>
  			</div>
 		</div>
-	</form>
+	</form:form>
 	<script>
 	$.validator.addMethod(
 	        "regex",

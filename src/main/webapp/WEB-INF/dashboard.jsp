@@ -6,9 +6,9 @@
 <section id="main">
 	<div class="page-header">
 		<h1 id="homeTitle">${page.totalRes} Computers found</h1>
-		<h2 id="subTitle" style="display:none"> WELCOME :)</h2>
+		<h2 id="subtitle" class="hidden"> WELCOME :)</h2>
 	</div>
-	
+	<p class="bg-success status" >${successMessage}</p>
 	<div id="actions">
 		<form action="dashboard" method="GET">
 			<input type="search" id="searchbox" name="search"
@@ -22,6 +22,7 @@
 	</div>
 	
 		<perso:pagination page="${page}"/>
+		
 		<div class="row">
 			<table class="computers table table-bordered table-hover">
 				<thead>
@@ -45,7 +46,7 @@
 <script>
 	var currentSlided = -1; 
 // 	var currentEdited = -1; 	
-	
+		$( "p.bg-success.status" ).fadeOut(3000);
 		$( "tr" ).click(function() {
 			var id = $(this).attr( "id" );
 			var rowId = "#slide"+id;

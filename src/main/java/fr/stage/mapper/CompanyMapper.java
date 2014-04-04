@@ -1,11 +1,11 @@
 package fr.stage.mapper;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import fr.stage.domain.Company;
 import fr.stage.dto.CompanyDTO;
 
-@Component
+@Service
 public class CompanyMapper {
 
     public Company toCompany(CompanyDTO companyDTO) {

@@ -1,9 +1,12 @@
 package fr.stage.dto;
 
+import javax.validation.constraints.NotNull;
+
 public class ComputerDTO {
 
     private String id;
 
+    @NotNull
     private String name;
 
     private String introducedDate;
@@ -53,7 +56,7 @@ public class ComputerDTO {
     }
 
     public String toString() {
-	return "Computer [id=" + id + ", name=" + name + ", introducedDate=" + introducedDate + ", discontinuedDate=" + discontinuedDate
-		+ ", company=" + company + "]";
+	return "Computer [id=" + id + ", name=" + name + ", introducedDate=" + introducedDate
+		+ ", discontinuedDate=" + discontinuedDate + ", company=" + company + "]";
     }
 }

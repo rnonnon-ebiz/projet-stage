@@ -97,4 +97,12 @@ public class Page {
 	    maxPages = (int) Math.ceil((double) (totalRes) / (double) (computerPerPage));
 	}
     }
+
+    @Override
+    public String toString() {
+	return "Page [computerPerPage=" + computerPerPage + ", computersList=" + computersList
+		+ ", currentPage=" + currentPage + ", maxPages=" + maxPages + ", nameFilter="
+		+ nameFilter + ", totalRes=" + totalRes + ", orderBy=" + orderBy + "]";
+    }
+
 }

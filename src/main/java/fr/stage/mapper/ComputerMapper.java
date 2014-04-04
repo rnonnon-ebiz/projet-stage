@@ -3,7 +3,7 @@ package fr.stage.mapper;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import fr.stage.domain.Company;
 import fr.stage.domain.Computer;
@@ -11,7 +11,7 @@ import fr.stage.dto.ComputerDTO;
 import fr.stage.service.CompanyService;
 import fr.stage.util.DateUtil;
 
-@Component
+@Service
 public class ComputerMapper {
 
     @Autowired

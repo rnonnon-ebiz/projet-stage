@@ -1,5 +1,6 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix ="form" uri="http://www.springframework.org/tags/form" %>
 
 <%@ attribute name="computer" required="true" type="fr.stage.domain.Computer" %>
 
@@ -13,7 +14,7 @@
 <tr id="slide${computer.id}" style="display:none" class="warning">
 	<td colspan="4">
  			<form method="get" action="editComputer" style="display:inline;">
-				<input type="text" class="hidden" name="id"
+				<input type="hidden" name="id"
 						value="${computer.id}" />
 				<button type="submit"
 						class="btn btn-info" onclick="return edit(${computer.id})">
@@ -21,7 +22,7 @@
 				</button>
  			</form>
 			<form method="post" action="deleteComputer" style="display:inline;">
-				<input type="text" class="hidden" name="id"
+				<input type="hidden" name="id"
 						value="${computer.id}" />
 				<button type="submit" type="button"
 						class="btn btn-danger"
