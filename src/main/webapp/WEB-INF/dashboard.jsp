@@ -2,23 +2,32 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="perso" uri="/WEB-INF/tags/taglib.tld" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+
+<spring:message code="computerName" var="col1"/>
+<spring:message code="introducedDate" var="col2"/>
+<spring:message code="discontinuedDate" var="col3"/>
+<spring:message code="company" var="col4"/>
 
 <section id="main">
+
 	<div class="page-header">
-		<h1 id="homeTitle">${page.totalRes} Computers found</h1>
-		<h2 id="subtitle" class="hidden"> WELCOME :)</h2>
+		<h1 id="homeTitle">${page.totalRes} <spring:message code="computersFound"/></h1>
+		<h2 id="subtitle" style="display:none"> <spring:message code="welcome"/> :)</h2>
 	</div>
+	
 	<p class="bg-success status" >${successMessage}</p>
+	
 	<div id="actions">
 		<form action="dashboard" method="GET">
 			<input type="search" id="searchbox" name="search"
-				value="<c:out value="${page.nameFilter}"/>" placeholder="Search name"/>
+				value="<c:out value="${page.nameFilter}"/>" placeholder="<spring:message code="searchName"/>"/>
 			<button type="submit" id="searchsubmit"
 				class="btn btn-default">
-				<span class="glyphicon glyphicon-search"></span>Filter by name
+				<span class="glyphicon glyphicon-search"></span><spring:message code="filterByName"/>
 			</button>
 		</form>
-		<a href="addComputer" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span> Add Computer</a>
+		<a href="addComputer" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span> <spring:message code="addComputer"/></a>
 	</div>
 	
 		<perso:pagination page="${page}"/>
@@ -29,10 +38,10 @@
 					<tr>
 						<!-- Variable declarations for passing labels as parameters -->
 						<!-- Table header for Computer Name -->
-						<perso:headColumnOrder page="${page}" orderByASC="0" orderByDESC="1" width="5" columnTitle="Computer Name"></perso:headColumnOrder>
-						<perso:headColumnOrder page="${page}" orderByASC="2" orderByDESC="3" width="2" columnTitle="Introduced Date"></perso:headColumnOrder>
-						<perso:headColumnOrder page="${page}" orderByASC="4" orderByDESC="5" width="2" columnTitle="Discontinued Date"></perso:headColumnOrder>
-						<perso:headColumnOrder page="${page}" orderByASC="6" orderByDESC="7" width="2" columnTitle="Company"></perso:headColumnOrder>
+						<perso:headColumnOrder page="${page}" orderByASC="0" orderByDESC="1" width="5" columnTitle="${col1}"></perso:headColumnOrder>
+						<perso:headColumnOrder page="${page}" orderByASC="2" orderByDESC="3" width="2" columnTitle="${col2}"></perso:headColumnOrder>
+						<perso:headColumnOrder page="${page}" orderByASC="4" orderByDESC="5" width="2" columnTitle="${col3}"></perso:headColumnOrder>
+						<perso:headColumnOrder page="${page}" orderByASC="6" orderByDESC="7" width="2" columnTitle="${col4}"></perso:headColumnOrder>
 				</thead>
 				<tbody>
 					<c:forEach var="computer" items="${page.computersList}"> 
@@ -44,6 +53,17 @@
 </section>
 
 <script>
+$( ".page-header" ).click(function() {
+	if($( "#subtitle" ).is(":hidden")){
+		$( "#subtitle" ).slideDown("slow");
+	}
+	else
+		$( "#subtitle" ).slideUp("slow");
+});
+
+
+
+
 	var currentSlided = -1; 
 // 	var currentEdited = -1; 	
 		$( "p.bg-success.status" ).fadeOut(3000);

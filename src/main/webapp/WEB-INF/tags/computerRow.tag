@@ -1,6 +1,7 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix ="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 
 <%@ attribute name="computer" required="true" type="fr.stage.domain.Computer" %>
 
@@ -18,16 +19,22 @@
 						value="${computer.id}" />
 				<button type="submit"
 						class="btn btn-info" onclick="return edit(${computer.id})">
-						<span class="glyphicon glyphicon-pencil"></span> Edit
+						<span class="glyphicon glyphicon-pencil"></span> 
+						<spring:message code="button.edit"/>
 				</button>
  			</form>
 			<form method="post" action="deleteComputer" style="display:inline;">
+			
 				<input type="hidden" name="id"
 						value="${computer.id}" />
+						
 				<button type="submit" type="button"
 						class="btn btn-danger"
-						onClick="return confirm('Confirm delete') ">	
-						<span class="glyphicon glyphicon-remove"></span> Delete
+						onClick="return confirm('<spring:message code="confirm.delete"/>') ">	
+						
+						<span class="glyphicon glyphicon-remove"></span> 
+						<spring:message code="button.delete"/>
+						
 				</button>	
 			</form>
 	</td>

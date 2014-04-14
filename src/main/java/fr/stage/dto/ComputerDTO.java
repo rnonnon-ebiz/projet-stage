@@ -1,12 +1,10 @@
 package fr.stage.dto;
 
-import javax.validation.constraints.NotNull;
 
 public class ComputerDTO {
 
     private String id;
 
-    @NotNull
     private String name;
 
     private String introducedDate;

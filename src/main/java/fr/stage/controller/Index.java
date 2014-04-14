@@ -30,8 +30,8 @@ public class Index extends HttpServlet {
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      *      response)
      */
-    protected void doGet(HttpServletRequest request,
-	    HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	    throws ServletException, IOException {
 	// this.getServletContext()
 	// .getRequestDispatcher(ServletUtils.PAGE_URI + "index.jsp")
 	// .forward(request, response);
@@ -41,10 +41,9 @@ public class Index extends HttpServlet {
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
      *      response)
      */
-    protected void doPost(HttpServletRequest request,
-	    HttpServletResponse response) throws ServletException, IOException {
-	this.getServletContext()
-		.getRequestDispatcher(ServletUtil.PAGE_URI + "/index.jsp")
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+	    throws ServletException, IOException {
+	this.getServletContext().getRequestDispatcher(ServletUtil.PAGE_URI + "/index.jsp")
 		.forward(request, response);
     }
 

@@ -6,13 +6,15 @@ import java.text.SimpleDateFormat;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
 import fr.stage.dto.ComputerDTO;
 import fr.stage.service.CompanyService;
 import fr.stage.service.ComputerService;
 
 @Service
-public class ComputerValidator {
+public class ComputerCreationValidator implements Validator {
 
     @Autowired
     CompanyService companyService;
@@ -20,31 +22,35 @@ public class ComputerValidator {
     @Autowired
     ComputerService computerService;
 
-    /*
-     * Error Code : 
-     *  1 : ComputerDTO is null
-     *  2 : Name is null or empty
-     *  4 : Introduced incorrectly formatted or doesn't exist
-     *  8 : Discontinued incorrectly formatted or doesn't exist
-     *  16 : Company doesn't exist
-     */
-    public byte validForCreate(ComputerDTO computerDTO) {
-	byte error = 0;
+    @Override
+    public boolean supports(Class<?> clazz) {
+	return ComputerDTO.class.equals(clazz);
+    }
+
+    @Override
+    public void validate(Object target, Errors errors) {
+	ComputerDTO computerDTO = (ComputerDTO) target;
 	if (computerDTO != null) {
 	    // Valid Name
-	    error += (byte) (validName(computerDTO.getName()) ? 0 : 2);
+	    if (!validName(computerDTO.getName())) {
+		errors.rejectValue("name", "computer.add.name.invalid");
+	    }
 	    // Valid Introduced Date
-	    error += (byte) (validDate(computerDTO.getIntroducedDate()) ? 0 : 4);
+	    if (!validDate(computerDTO.getIntroducedDate())) {
+		errors.rejectValue("introducedDate", "computer.add.introducedDate.invalid");
+	    }
 	    // Valid Discontinued Date
-	    error += (byte) (validDate(computerDTO.getDiscontinuedDate()) ? 0 : 8);
+	    if (!validDate(computerDTO.getDiscontinuedDate())) {
+		errors.rejectValue("discontinuedDate", "computer.add.discontinuedDate.invalid");
+	    }
 	    // Valid Company
-	    error += (byte) (validCompany(computerDTO.getCompany()) ? 0 : 16);
+	    if (!validCompany(computerDTO.getCompany())) {
+		errors.rejectValue("company", "computer.add.discontinuedDate.invalid");
+	    }
 	}
 	else {
-	    error = 1;
+	    errors.reject("computer.add.computer.fatal");
 	}
-	// Return result
-	return error;
     }
 
     /*
@@ -56,26 +62,31 @@ public class ComputerValidator {
      *  16 : Company doesn't exist
      *  32 : Computer doesn't exist (id error)
      */
-    public byte validForUpdate(ComputerDTO computerDTO) {
-	byte error = 0;
-	if (computerDTO != null) {
-	    // Valid Name
-	    error += (byte) (validName(computerDTO.getName()) ? 0 : 2);
-	    // Valid Introduced Date
-	    error += (byte) (validDate(computerDTO.getIntroducedDate()) ? 0 : 4);
-	    // Valid Discontinued Date
-	    error += (byte) (validDate(computerDTO.getDiscontinuedDate()) ? 0 : 8);
-	    // Valid Company
-	    error += (byte) (validCompany(computerDTO.getCompany()) ? 0 : 16);
-	    // Valid Id
-	    error += (byte) (existId(computerDTO.getId()) ? 0 : 32);
-	}
-	else {
-	    error = 1;
-	}
-	// Return result
-	return error;
-    }
+    // @Override
+    // public void validate(Object target, Errors errors) {
+    // if (computerDTO != null) {
+    // // Valid Name
+    // if (!validName(computerDTO.getName())) {
+    //
+    // }
+    // // Valid Introduced Date
+    // if (!validDate(computerDTO.getIntroducedDate())) {
+    //
+    // }
+    // // Valid Discontinued Date
+    // if (!validDate(computerDTO.getDiscontinuedDate())) {
+    //
+    // }
+    // // Valid Company
+    // if (!validCompany(computerDTO.getCompany())) {
+    //
+    // }
+    // // Valid Id
+    // if (!existId(computerDTO.getId())) {
+    //
+    // }
+    // }
+    // }
 
     public boolean existId(String idString) {
 	boolean exist = false;

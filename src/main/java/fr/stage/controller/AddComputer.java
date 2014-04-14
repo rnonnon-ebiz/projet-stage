@@ -1,16 +1,26 @@
 package fr.stage.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
 import fr.stage.domain.Company;
 import fr.stage.domain.Computer;
@@ -20,7 +30,7 @@ import fr.stage.mapper.CompanyMapper;
 import fr.stage.mapper.ComputerMapper;
 import fr.stage.service.CompanyService;
 import fr.stage.service.ComputerService;
-import fr.stage.validator.ComputerValidator;
+import fr.stage.validator.ComputerCreationValidator;
 
 @Controller
 @RequestMapping("/addComputer")
@@ -35,13 +45,27 @@ public class AddComputer {
     ComputerService computerService;
 
     @Autowired
-    ComputerValidator computerValidator;
-
-    @Autowired
     ComputerMapper computerMapper;
 
     @Autowired
     CompanyMapper companyMapper;
+
+    // Edit Validator
+    @Autowired
+    ComputerCreationValidator computerCreationValidator;
+
+    // To access Messages_locale.properties
+    @Autowired
+    ReloadableResourceBundleMessageSource messageSource;
+
+    // To manipulate the cookie to get the locale
+    @Autowired
+    CookieLocaleResolver cookieLocaleResolver;
+
+    @InitBinder
+    private void initBinder(WebDataBinder binder) {
+	binder.setValidator(computerCreationValidator);
+    }
 
     private List<CompanyDTO> getCompanies() {
 	List<Company> companies = companyService.findAll();
@@ -60,28 +84,65 @@ public class AddComputer {
 	return "addComputer";
     }
 
+    // @RequestMapping(method = RequestMethod.POST)
+    // protected ModelAndView doPost(ComputerDTO computerDTO) {
+    // byte errorCode = computerValidator.validForCreate(computerDTO);
+    // // Null Computer Or Company ERROR: Shouldn't produce
+    // // Fatal ERROR
+    // if ((errorCode & 0x01) == 0x01 || (errorCode & 0x10) == 0x10) {
+    // System.out.println("error code : " + Byte.toString(errorCode));
+    // throw new RuntimeException();
+    // }
+    // // If no error
+    // else if (errorCode == 0) {
+    // // Store in DB
+    // Computer computer = computerMapper.toComputer(computerDTO);
+    // computerService.create(computer);
+    // ModelAndView mod = new ModelAndView("redirect:dashboard");
+    // mod.addObject("successMessage", "Computer Successfully added");
+    // return mod;
+    // }
+    // // Error but not fatal
+    // else {
+    // ModelAndView mod = new ModelAndView("addComputer");
+    // mod.addObject("errorCode", errorCode);
+    // mod.addObject("computer", computerDTO);
+    // mod.addObject("companiesList", getCompanies());
+    // return mod;
+    // }
+    // }
     @RequestMapping(method = RequestMethod.POST)
-    protected ModelAndView doPost(ComputerDTO computerDTO) {
-	byte errorCode = computerValidator.validForCreate(computerDTO);
-	// Null Computer Or Company ERROR: Shouldn't produce
-	// Fatal ERROR
-	if ((errorCode & 0x01) == 0x01 || (errorCode & 0x10) == 0x10) {
-	    System.out.println("error code : " + Byte.toString(errorCode));
+    protected ModelAndView doPost(@ModelAttribute("computer") @Valid ComputerDTO computerDTO,
+	    BindingResult result, HttpServletRequest request) {
+	if (result.hasGlobalErrors()) {
 	    throw new RuntimeException();
 	}
 	// If no error
-	else if (errorCode == 0) {
+	else if (!result.hasErrors()) {
 	    // Store in DB
 	    Computer computer = computerMapper.toComputer(computerDTO);
 	    computerService.create(computer);
+	    // Redirect to Dashboard
 	    ModelAndView mod = new ModelAndView("redirect:dashboard");
-	    mod.addObject("successMessage", "Computer Successfully added");
+
+	    // SET request to UTF-8
+	    try {
+		request.setCharacterEncoding("UTF-8");
+	    }
+	    catch (UnsupportedEncodingException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
+
+	    mod.addObject(
+		    "successMessage",
+		    messageSource.getMessage("successMessage.added", null,
+			    cookieLocaleResolver.resolveLocale(request)));
 	    return mod;
 	}
 	// Error but not fatal
 	else {
 	    ModelAndView mod = new ModelAndView("addComputer");
-	    mod.addObject("errorCode", errorCode);
 	    mod.addObject("computer", computerDTO);
 	    mod.addObject("companiesList", getCompanies());
 	    return mod;

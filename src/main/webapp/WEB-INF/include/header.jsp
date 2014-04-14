@@ -18,7 +18,6 @@
 	<script src="<c:url value="/resources/js/additional-methods.min.js"/>"></script>
 	<script src="<c:url value="/resources/js/formValidator.js"/>"></script>
 	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
-	
 	<script type="text/javascript">
 		$(function datePicker(){
 			$(".datepicker").datepicker({
@@ -32,4 +31,7 @@
 		<h1>
 			<a href="dashboard"> Application - Computer Database </a>
 		</h1>
+		
 	</nav>
+		<a href="?lang=fr"><img src="/WEB-INF/images/fr.jpg"/></a>
+		<a href="?lang=en"><img src="/WEB-INF/images/en.jpeg"/></a>
