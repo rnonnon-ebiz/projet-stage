@@ -1,15 +1,15 @@
 package fr.stage.controller;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -104,7 +104,7 @@ public class EditComputer {
 
     @RequestMapping(method = RequestMethod.POST)
     protected ModelAndView doPost(@ModelAttribute("computer") @Valid ComputerDTO computerDTO,
-	    BindingResult result, HttpServletRequest request) {
+	    BindingResult result) {
 	if (result.hasGlobalErrors()) {
 	    throw new RuntimeException();
 	}
@@ -115,18 +115,10 @@ public class EditComputer {
 	    computerService.update(computer);
 	    // Redirect to Dashboard
 	    ModelAndView mod = new ModelAndView("redirect:dashboard");
-
-	    // SET request to UTF-8
-	    try {
-		request.setCharacterEncoding("UTF-8");
-	    }
-	    catch (UnsupportedEncodingException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    }
-
-	    mod.addObject("successMessage", messageSource.getMessage("successMessage.edited", null,
-		    "", cookieLocaleResolver.resolveLocale(request)));
+	    // Get locale to obtain the message in desired language
+	    Locale loc = LocaleContextHolder.getLocale();
+	    mod.addObject("successMessage",
+		    messageSource.getMessage("successMessage.edited", null, loc));
 	    return mod;
 	}
 	// Error but not fatal

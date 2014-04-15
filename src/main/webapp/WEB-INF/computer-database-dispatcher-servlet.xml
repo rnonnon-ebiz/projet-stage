@@ -16,10 +16,11 @@ http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
 	<context:component-scan base-package="fr.stage.mapper" />
 	<context:component-scan base-package="fr.stage.controller" />
 	<context:component-scan base-package="fr.stage.dto" />
+
+
 	
-<!-- 	<mvc:resources mapping="/resources/**" location="/resources/" /> -->
-<!-- 	<mvc:annotation-driven /> -->
-	
+	<!-- <mvc:default-servlet-handler /> -->
+
 	<bean id="validator"
 		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
 
@@ -51,6 +52,8 @@ http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
 		<property name="prefix" value="/WEB-INF/" />
 		<property name="suffix" value=".jsp" />
 	</bean>
-<!-- 	<mvc:default-servlet-handler /> -->
+<!-- 	<mvc:annotation-driven /> -->
+<!-- 	<mvc:resources mapping="resources/**" location="resources/" /> -->
+
 
 </beans>

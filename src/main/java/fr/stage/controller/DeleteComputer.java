@@ -1,10 +1,11 @@
 package fr.stage.controller;
 
-import java.io.UnsupportedEncodingException;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,19 +43,10 @@ public class DeleteComputer {
 	if (computerService.delete(id)) {
 	    // If 1 row has been deleted
 
-	    // SET request to UTF-8
-	    try {
-		request.setCharacterEncoding("UTF-8");
-	    }
-	    catch (UnsupportedEncodingException e) {
-		e.printStackTrace();
-	    }
-
-	    mod.addObject(
-		    "successMessage",
-		    messageSource.getMessage("successMessage.deleted", null,
-			    cookieLocaleResolver.resolveLocale(request)));
-	    // return "redirect:dashboard";
+	    // Get locale to obtain the message in desired language
+	    Locale loc = LocaleContextHolder.getLocale();
+	    mod.addObject("successMessage",
+		    messageSource.getMessage("successMessage.deleted", null, loc));
 	}
 	return mod;
     }

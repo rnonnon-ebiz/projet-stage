@@ -1,15 +1,15 @@
 package fr.stage.controller;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 
 import fr.stage.domain.Company;
 import fr.stage.domain.Computer;
@@ -58,9 +57,9 @@ public class AddComputer {
     @Autowired
     ReloadableResourceBundleMessageSource messageSource;
 
-    // To manipulate the cookie to get the locale
-    @Autowired
-    CookieLocaleResolver cookieLocaleResolver;
+    // // To manipulate the cookie to get the locale
+    // @Autowired
+    // CookieLocaleResolver cookieLocaleResolver;
 
     @InitBinder
     private void initBinder(WebDataBinder binder) {
@@ -113,7 +112,7 @@ public class AddComputer {
     // }
     @RequestMapping(method = RequestMethod.POST)
     protected ModelAndView doPost(@ModelAttribute("computer") @Valid ComputerDTO computerDTO,
-	    BindingResult result, HttpServletRequest request) {
+	    BindingResult result) {
 	if (result.hasGlobalErrors()) {
 	    throw new RuntimeException();
 	}
@@ -125,19 +124,10 @@ public class AddComputer {
 	    // Redirect to Dashboard
 	    ModelAndView mod = new ModelAndView("redirect:dashboard");
 
-	    // SET request to UTF-8
-	    try {
-		request.setCharacterEncoding("UTF-8");
-	    }
-	    catch (UnsupportedEncodingException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	    }
-
-	    mod.addObject(
-		    "successMessage",
-		    messageSource.getMessage("successMessage.added", null,
-			    cookieLocaleResolver.resolveLocale(request)));
+	    // Get locale to obtain the message in desired language
+	    Locale loc = LocaleContextHolder.getLocale();
+	    mod.addObject("successMessage",
+		    messageSource.getMessage("successMessage.added", null, loc));
 	    return mod;
 	}
 	// Error but not fatal
