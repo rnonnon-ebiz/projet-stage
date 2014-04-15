@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 
 <!DOCTYPE html>
 <html>
@@ -17,13 +18,15 @@
 	<script src="resources/js/jquery.validate.min.js"></script>
 	<script src="resources/js/additional-methods.min.js"></script>
 	<script src="resources/js/formValidator.js"></script>
+	<script src="resources/js/datepicker-locale.js"></script>
 	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
 	<script type="text/javascript">
 		$(function datePicker(){
+			$.datepicker.setDefaults( $.datepicker.regional["<spring:message code="localeLang"/>"] );
 			$(".datepicker").datepicker({
 	 			dateFormat: "yy-mm-dd"});
 		});
-		$.datepicker.setDefaults( $.datepicker.regional['${datepickerLocale}'] );
+		
 	</script>
 	
 </head>

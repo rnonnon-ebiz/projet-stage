@@ -3,6 +3,7 @@ package fr.stage.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,6 +50,7 @@ public class Dashboard {
 	page.setComputersList(computersList);
 	// Set Result
 	model.addAttribute("page", page);
+	model.addAttribute("lang", LocaleContextHolder.getLocale());
 	model.addAttribute("successMessage", successMessage);
 	return "dashboard";
     }

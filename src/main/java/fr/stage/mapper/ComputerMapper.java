@@ -1,7 +1,6 @@
 package fr.stage.mapper;
 
-import java.util.Date;
-
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,13 +30,13 @@ public class ComputerMapper {
 	    // Fill Introduced Date
 	    String introducedString = computerDTO.getIntroducedDate();
 	    if (!"".equals(introducedString)) {
-		Date introduced = DateUtil.stringToDate(introducedString);
+		DateTime introduced = DateUtil.stringToDate(introducedString, "y-m-d");
 		computer.setIntroducedDate(introduced);
 	    }
 	    // Fill Discontinued Date
 	    String discontinuedString = computerDTO.getDiscontinuedDate();
 	    if (!"".equals(discontinuedString)) {
-		Date discontinued = DateUtil.stringToDate(discontinuedString);
+		DateTime discontinued = DateUtil.stringToDate(discontinuedString, "y-m-d");
 		computer.setDiscontinuedDate(discontinued);
 	    }
 	    // Fill Company
@@ -65,18 +64,19 @@ public class ComputerMapper {
 	    // Fill Name
 	    computerDTO.setName(computer.getName());
 	    // Fill Introduced Date
-	    Date introduced = computer.getIntroducedDate();
+	    DateTime introduced = computer.getIntroducedDate();
 	    if (introduced != null) {
-		String introducedString = DateUtil.DateToString(introduced);
+		String introducedString = DateUtil.DateToString(introduced, "y-m-d");
 		computerDTO.setIntroducedDate(introducedString);
+		System.out.println(introducedString);
 	    }
 	    else {
 		computerDTO.setIntroducedDate("");
 	    }
 	    // Fill Discontinued Date
-	    Date discontinued = computer.getDiscontinuedDate();
+	    DateTime discontinued = computer.getDiscontinuedDate();
 	    if (discontinued != null) {
-		String discontinuedString = DateUtil.DateToString(discontinued);
+		String discontinuedString = DateUtil.DateToString(discontinued, "y-m-d");
 		computerDTO.setDiscontinuedDate(discontinuedString);
 	    }
 	    else {

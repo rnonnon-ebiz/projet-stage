@@ -2,8 +2,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Date;
 
+import org.joda.time.DateTime;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import fr.stage.dao.CompanyDAO;
@@ -37,7 +37,8 @@ public class mainClasse {
 	}
 
 	// TODO Auto-generated method stub
-	ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("beans.xml");
+	ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
+		"beans.xml");
 
 	ConnectionManager coMan = applicationContext.getBean(ConnectionManager.class);
 	ComputerDAO computerDAO = applicationContext.getBean(ComputerDAO.class);
@@ -64,7 +65,7 @@ public class mainClasse {
 
 	computer.setName("TOTO_COMPUTER5");
 	// computer.setIntroducedDate(new Date());
-	computer.setDiscontinuedDate(new Date());
+	computer.setDiscontinuedDate(new DateTime());
 	// computer.setCompany(comp);
 
 	// ComputerDAO computerDAO = FactoryDAO.getComputerDAOInstance();

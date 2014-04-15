@@ -44,8 +44,8 @@
 						<perso:headColumnOrder page="${page}" orderByASC="6" orderByDESC="7" width="2" columnTitle="${col4}"></perso:headColumnOrder>
 				</thead>
 				<tbody>
-					<c:forEach var="computer" items="${page.computersList}"> 
-						<perso:computerRow computer="${computer}"></perso:computerRow>
+					<c:forEach var="computer" items="${page.computersList}">
+						<perso:computerRow computer="${computer}" lang="${lang}"></perso:computerRow>
 					</c:forEach>
 				</tbody>
 			</table>

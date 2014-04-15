@@ -1,6 +1,6 @@
 package fr.stage.domain;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 public class Computer {
 
@@ -8,9 +8,9 @@ public class Computer {
 
     private String name;
 
-    private Date introducedDate;
+    private DateTime introducedDate;
 
-    private Date discontinuedDate;
+    private DateTime discontinuedDate;
 
     private Company company;
 
@@ -22,8 +22,7 @@ public class Computer {
 	discontinuedDate = null;
     }
 
-    public Computer(String name, Date introducedDate, Date discontinuedDate,
-	    Company company) {
+    public Computer(String name, DateTime introducedDate, DateTime discontinuedDate, Company company) {
 	super();
 	this.id = 0L;
 	this.name = name;
@@ -32,8 +31,8 @@ public class Computer {
 	this.company = company;
     }
 
-    public Computer(Long id, String name, Date introducedDate,
-	    Date discontinuedDate, Company company) {
+    public Computer(Long id, String name, DateTime introducedDate, DateTime discontinuedDate,
+	    Company company) {
 	super();
 	this.id = id;
 	this.name = name;
@@ -50,19 +49,19 @@ public class Computer {
 	this.name = name;
     }
 
-    public Date getIntroducedDate() {
+    public DateTime getIntroducedDate() {
 	return introducedDate;
     }
 
-    public void setIntroducedDate(final Date introducedDate) {
+    public void setIntroducedDate(DateTime introducedDate) {
 	this.introducedDate = introducedDate;
     }
 
-    public Date getDiscontinuedDate() {
+    public DateTime getDiscontinuedDate() {
 	return discontinuedDate;
     }
 
-    public void setDiscontinuedDate(final Date discontinuedDate) {
+    public void setDiscontinuedDate(final DateTime discontinuedDate) {
 	this.discontinuedDate = discontinuedDate;
     }
 
@@ -127,9 +126,8 @@ public class Computer {
 
     @Override
     public String toString() {
-	return "Computer [id=" + id + ", name=" + name + ", introducedDate="
-		+ introducedDate + ", discontinuedDate=" + discontinuedDate
-		+ ", company=" + company + "]";
+	return "Computer [id=" + id + ", name=" + name + ", introducedDate=" + introducedDate
+		+ ", discontinuedDate=" + discontinuedDate + ", company=" + company + "]";
     }
 
 }

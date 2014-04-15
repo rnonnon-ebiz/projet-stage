@@ -1,9 +1,5 @@
 package fr.stage.validator;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
@@ -12,6 +8,7 @@ import org.springframework.validation.Validator;
 import fr.stage.dto.ComputerDTO;
 import fr.stage.service.CompanyService;
 import fr.stage.service.ComputerService;
+import fr.stage.util.DateUtil;
 
 @Service
 public class ComputerCreationValidator implements Validator {
@@ -136,13 +133,11 @@ public class ComputerCreationValidator implements Validator {
 	    valid = true;
 	}
 	else {
-	    DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-	    format.setLenient(false);
 	    try {
-		format.parse(date);
+		DateUtil.stringToDate(date, "yyyy-MM-dd");
 		valid = true;
 	    }
-	    catch (ParseException e) {
+	    catch (IllegalArgumentException e) {
 	    }
 	}
 	return valid;

@@ -2,13 +2,15 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix ="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 
 <%@ attribute name="computer" required="true" type="fr.stage.domain.Computer" %>
+<%@ attribute name="lang" required="true" %>
 
 <tr id="${computer.id}">
 	<td><a href="#" onclick="">${computer.name}</a></td>
-	<td>${computer.introducedDate}</td>
-	<td>${computer.discontinuedDate}</td>
+	<td><joda:format var="parsed" locale="${lang}" value="${computer.introducedDate}" />${parsed}</td>
+	<td><joda:format var="parsed2" locale="${lang}" value="${computer.discontinuedDate}" />${parsed2}</td>
 	<td>${computer.company.name}</td>
 </tr>
 
