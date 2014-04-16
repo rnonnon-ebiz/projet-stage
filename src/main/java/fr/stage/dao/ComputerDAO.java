@@ -14,27 +14,31 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
+
+import com.jolbox.bonecp.BoneCPDataSource;
 
 import fr.stage.domain.Company;
 import fr.stage.domain.Computer;
 import fr.stage.domain.Page;
 import fr.stage.exception.DAOException;
+import fr.stage.util.ConnectionUtil;
 
 @Repository
 public class ComputerDAO {
 
     @Autowired
-    ConnectionManager connectionManager;
+    private BoneCPDataSource dataSource;
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public ComputerDAO() {
     }
 
-    public boolean exist(long id) {
+    public boolean exist(long id) throws DAOException {
 	logger.debug("Start existence check {}", id);
-	Connection connection = connectionManager.getConnection();
+	Connection connection = DataSourceUtils.getConnection(dataSource);
 	PreparedStatement stm = null;
 	ResultSet res = null;
 
@@ -58,16 +62,16 @@ public class ComputerDAO {
 	    throw new DAOException("Failed to check existence");
 	}
 	finally {
-	    connectionManager.close(res, stm);
+	    ConnectionUtil.close(res, stm);
 	}
 
 	logger.debug("End existence check {}", id);
 	return computerExistence;
     }
 
-    public int count(String nameFilter) {
+    public int count(String nameFilter) throws DAOException {
 	logger.debug("Start count {}", nameFilter);
-	Connection connection = connectionManager.getConnection();
+	Connection connection = DataSourceUtils.getConnection(dataSource);
 	PreparedStatement stm = null;
 	ResultSet res = null;
 
@@ -95,16 +99,16 @@ public class ComputerDAO {
 	    throw new DAOException("Failed to count computers");
 	}
 	finally {
-	    connectionManager.close(res, stm);
+	    ConnectionUtil.close(res, stm);
 	}
 
 	logger.debug("End count {}", nameFilter);
 	return total;
     }
 
-    public void create(Computer computer) {
+    public void create(Computer computer) throws DAOException {
 	logger.debug("Start create {}", computer);
-	Connection connection = connectionManager.getConnection();
+	Connection connection = DataSourceUtils.getConnection(dataSource);
 	PreparedStatement stm = null;
 	ResultSet res = null;
 
@@ -125,15 +129,15 @@ public class ComputerDAO {
 	    throw new DAOException("Failed to create computer");
 	}
 	finally {
-	    connectionManager.close(res, stm);
+	    ConnectionUtil.close(res, stm);
 	}
 
 	logger.debug("End create {}", computer);
     }
 
-    public boolean delete(Long id) {
+    public boolean delete(Long id) throws DAOException {
 	logger.debug("Start delete {}", id);
-	Connection connection = connectionManager.getConnection();
+	Connection connection = DataSourceUtils.getConnection(dataSource);
 	PreparedStatement stm = null;
 	int nDelete = 0;
 	try {
@@ -149,16 +153,16 @@ public class ComputerDAO {
 	    throw new DAOException("Failed to delete computer");
 	}
 	finally {
-	    connectionManager.close(stm);
+	    ConnectionUtil.close(stm);
 	}
 
 	logger.debug("End delete {}", id);
 	return (nDelete == 1);
     }
 
-    public Computer find(long id) {
+    public Computer find(long id) throws DAOException {
 	logger.debug("Start find {}", id);
-	Connection connection = connectionManager.getConnection();
+	Connection connection = DataSourceUtils.getConnection(dataSource);
 	PreparedStatement stm = null;
 	ResultSet res = null;
 
@@ -192,16 +196,16 @@ public class ComputerDAO {
 	    throw new DAOException("Failed to find computer");
 	}
 	finally {
-	    connectionManager.close(res, stm);
+	    ConnectionUtil.close(res, stm);
 	}
 
 	logger.debug("End find {}", id);
 	return computer;
     }
 
-    public List<Computer> find(Page page) {
+    public List<Computer> find(Page page) throws DAOException {
 	logger.debug("Start find {}", page);
-	Connection connection = connectionManager.getConnection();
+	Connection connection = DataSourceUtils.getConnection(dataSource);
 	PreparedStatement stm = null;
 	ResultSet res = null;
 
@@ -237,16 +241,16 @@ public class ComputerDAO {
 	    throw new DAOException("Failed to find computers");
 	}
 	finally {
-	    connectionManager.close(res, stm);
+	    ConnectionUtil.close(res, stm);
 	}
 
 	logger.debug("Start find {}", page);
 	return computersList;
     }
 
-    public void update(Computer computer) {
+    public void update(Computer computer) throws DAOException {
 	logger.debug("Start update {}", computer);
-	Connection connection = connectionManager.getConnection();
+	Connection connection = DataSourceUtils.getConnection(dataSource);
 	PreparedStatement stm = null;
 	ResultSet res = null;
 
@@ -281,7 +285,7 @@ public class ComputerDAO {
 	    throw new DAOException("Failed to update computer");
 	}
 	finally {
-	    connectionManager.close(res, stm);
+	    ConnectionUtil.close(res, stm);
 	}
 
 	logger.debug("End update {}", computer);

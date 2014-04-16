@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import fr.stage.util.ServletUtil;
-
 /**
  * Servlet implementation class Index
  */
@@ -43,7 +41,7 @@ public class Index extends HttpServlet {
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
 	    throws ServletException, IOException {
-	this.getServletContext().getRequestDispatcher(ServletUtil.PAGE_URI + "/index.jsp")
+	this.getServletContext().getRequestDispatcher("WEB-INF/index.jsp")
 		.forward(request, response);
     }
 

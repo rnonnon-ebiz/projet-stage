@@ -10,9 +10,9 @@
 <%@ attribute name="orderByDESC" required="true" %>
 
 <th class="col-md-${width}">
-		${columnTitle}
-		<perso:orderURI body="<span class='glyphicon glyphicon-arrow-up'></span>" search="${page.nameFilter}" goTo="${page.getFrontCurrentPage()}" orderBy="${orderByASC}"></perso:orderURI>
-		<perso:orderURI body="<span class='glyphicon glyphicon-arrow-down'></span>" search="${page.nameFilter}" goTo="${page.getFrontCurrentPage()}" orderBy="${orderByDESC}"></perso:orderURI>
-<%-- 		<a href="<perso:OrderURI page="${page.getCurrentPage()-1}" search="${page.getNameFilter()}" />"></a>  --%>
-<%-- 		<a href="?page=${page.getCurrentPage()-1}&search=${page.getNameFilter()}&orderBy=${orderByDESC}"><span class="glyphicon glyphicon-arrow-down"></span></a> --%>
+	${columnTitle}
+	<perso:orderURI body="<span class='glyphicon glyphicon-arrow-up'></span>" search="${page.nameFilter}" goTo="${page.getFrontCurrentPage()}" orderBy="${orderByASC}"></perso:orderURI>
+	<perso:orderURI body="<span class='glyphicon glyphicon-arrow-down'></span>" search="${page.nameFilter}" goTo="${page.getFrontCurrentPage()}" orderBy="${orderByDESC}"></perso:orderURI>
+	<%-- <a href="<perso:OrderURI page="${page.getCurrentPage()-1}" search="${page.getNameFilter()}" />"></a> --%>
+	<%-- <a href="?page=${page.getCurrentPage()-1}&search=${page.getNameFilter()}&orderBy=${orderByDESC}"><span class="glyphicon glyphicon-arrow-down"></span></a> --%>
 </th>

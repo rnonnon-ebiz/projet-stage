@@ -27,7 +27,7 @@ public class Dashboard {
     protected String doGet(
 	    @RequestParam(value = "successMessage", required = false, defaultValue = "") String successMessage,
 	    @RequestParam(value = "search", required = false, defaultValue = "") String search,
-	    @RequestParam(value = "goTo", required = false, defaultValue = "1") int goTo,
+	    @RequestParam(value = "goTo", required = false, defaultValue = "0") int goTo,
 	    @RequestParam(value = "orderBy", required = false, defaultValue = "0") byte orderBy,
 	    ModelMap model) {
 	Page page = new Page();
@@ -37,13 +37,13 @@ public class Dashboard {
 	page.setNameFilter(search);
 	// Set OrderBy
 	page.setOrderBy(orderBy);
-	// Set Go To
-	page.setCurrentPage(goTo);
 	// compute TOTAL Res + max Pages
 	int total = computerService.count(page.getNameFilter());
 	page.setTotalRes(total);
 	// Compute max pages
 	page.computeMaxPages();
+	// Set Go To
+	page.setCurrentPage(goTo);
 	// Search computers
 	List<Computer> computersList = computerService.find(page);
 	// Set Computers found

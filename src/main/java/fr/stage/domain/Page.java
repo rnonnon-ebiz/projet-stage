@@ -46,6 +46,12 @@ public class Page {
 	return currentPage;
     }
 
+    public int getFrontCurrentPage() {
+	return currentPage + 1;
+    }
+
+    // Back : pages go from 0 to maxPages-1
+    // Front : pages go from 1 to maxPages
     public void setCurrentPage(int goTo) {
 	if (maxPages == 0) {
 	    goTo = 0;
@@ -82,10 +88,6 @@ public class Page {
 
     public void setTotalRes(int totalRes) {
 	this.totalRes = totalRes;
-    }
-
-    public int getFrontCurrentPage() {
-	return currentPage + 1;
     }
 
     public int computeOffset() {

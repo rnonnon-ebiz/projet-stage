@@ -10,10 +10,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Repository;
+
+import com.jolbox.bonecp.BoneCPDataSource;
 
 import fr.stage.domain.Company;
 import fr.stage.exception.DAOException;
+import fr.stage.util.ConnectionUtil;
 
 @Repository
 public class CompanyDAO {
@@ -21,16 +25,16 @@ public class CompanyDAO {
     public static final String FIND_ALL_QUERY = "SELECT id, name  FROM company";
 
     @Autowired
-    ConnectionManager connectionManager;
+    private BoneCPDataSource dataSource;
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public CompanyDAO() {
     }
 
-    public boolean exist(long id) {
+    public boolean exist(long id) throws DAOException {
 	logger.debug("Start existence check {}", id);
-	Connection connection = connectionManager.getConnection();
+	Connection connection = DataSourceUtils.getConnection(dataSource);
 	PreparedStatement stm = null;
 	ResultSet res = null;
 
@@ -54,16 +58,16 @@ public class CompanyDAO {
 	    throw new DAOException("Failed to check existence");
 	}
 	finally {
-	    connectionManager.close(res, stm);
+	    ConnectionUtil.close(res, stm);
 	}
 
 	logger.debug("End existence check {}", id);
 	return companyExistence;
     }
 
-    public Company find(long id) {
+    public Company find(long id) throws DAOException {
 	logger.debug("Start find {}", id);
-	Connection connection = connectionManager.getConnection();
+	Connection connection = DataSourceUtils.getConnection(dataSource);
 	PreparedStatement stm = null;
 	ResultSet res = null;
 
@@ -90,16 +94,16 @@ public class CompanyDAO {
 	    throw new DAOException("Failed to find company");
 	}
 	finally {
-	    connectionManager.close(res, stm);
+	    ConnectionUtil.close(res, stm);
 	}
 
 	logger.debug("End find {}", id);
 	return company;
     }
 
-    public List<Company> findAll() {
+    public List<Company> findAll() throws DAOException {
 	logger.debug("Start Find All");
-	Connection connection = connectionManager.getConnection();
+	Connection connection = DataSourceUtils.getConnection(dataSource);
 	PreparedStatement stm = null;
 	ResultSet res = null;
 
@@ -124,7 +128,7 @@ public class CompanyDAO {
 	    throw new DAOException("Failed to find Companies");
 	}
 	finally {
-	    connectionManager.close(res, stm);
+	    ConnectionUtil.close(res, stm);
 	}
 	logger.debug("End Find All");
 	return results;

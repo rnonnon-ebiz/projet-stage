@@ -4,60 +4,34 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import fr.stage.dao.CompanyDAO;
-import fr.stage.dao.ConnectionManager;
 import fr.stage.domain.Company;
 import fr.stage.exception.DAOException;
 
 @Service
+@Transactional
 public class CompanyService {
-
-    @Autowired
-    ConnectionManager connectionManager;
 
     @Autowired
     CompanyDAO companyDAO;
 
-    public boolean exist(long id) {
-	boolean companyExistence = false;
-	try {
-	    companyExistence = companyDAO.exist(id);
-	}
-	catch (DAOException e) {
-	    throw e;
-	}
-	finally {
-	    connectionManager.closeConnection();
-	}
-	return companyExistence;
+    // Check if company exists
+    @Transactional(readOnly = true)
+    public boolean exist(long id) throws DAOException {
+	return companyDAO.exist(id);
     }
 
-    public Company find(long id) {
-	Company res = null;
-	try {
-	    res = companyDAO.find(id);
-	}
-	catch (DAOException e) {
-	    throw e;
-	}
-	finally {
-	    connectionManager.closeConnection();
-	}
-	return res;
+    // Find company by id
+    @Transactional(readOnly = true)
+    public Company find(long id) throws DAOException {
+	return companyDAO.find(id);
     }
 
-    public List<Company> findAll() {
-	List<Company> res = null;
-	try {
-	    res = companyDAO.findAll();
-	}
-	catch (DAOException e) {
-	    throw e;
-	}
-	finally {
-	    connectionManager.closeConnection();
-	}
-	return res;
+    // Find all companies in DB
+    @Transactional(readOnly = true)
+    public List<Company> findAll() throws DAOException {
+	return companyDAO.findAll();
     }
 }

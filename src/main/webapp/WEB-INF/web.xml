@@ -21,17 +21,29 @@
 		<servlet-name>computer-database-dispatcher</servlet-name>
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
+
+	<!-- ERROR PAGES -->
+	<error-page>
+	  <error-code>404</error-code>
+	  <location>/WEB-INF/error/notfound.jsp</location>
+	</error-page>
 	
+	<error-page>
+		<exception-type>fr.stage.exception.DAOException</exception-type>
+		<location>/WEB-INF/error/daoexcept.jsp</location>
+	</error-page>
+	<!-- RESOURCES -->
+	<!-- CSS -->
 	<servlet-mapping>
         <servlet-name>default</servlet-name>
         <url-pattern>/resources/css/*</url-pattern>
     </servlet-mapping>
-    
+	<!-- JS -->
     <servlet-mapping>
         <servlet-name>default</servlet-name>
         <url-pattern>/resources/js/*</url-pattern>
     </servlet-mapping>
-    
+	<!-- IMAGES -->
     <servlet-mapping>
         <servlet-name>default</servlet-name>
         <url-pattern>/resources/images/*</url-pattern>

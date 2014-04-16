@@ -1,25 +1,22 @@
 package fr.stage.service;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import fr.stage.dao.ComputerDAO;
-import fr.stage.dao.ConnectionManager;
 import fr.stage.dao.LogDAO;
 import fr.stage.domain.Computer;
 import fr.stage.domain.Page;
 import fr.stage.exception.DAOException;
 
 @Service
+@Transactional
 public class ComputerService {
-
-    @Autowired
-    ConnectionManager connectionManager;
 
     @Autowired
     LogDAO logDao;
@@ -29,135 +26,86 @@ public class ComputerService {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public boolean exist(long id) {
-	boolean computerExistence = false;
-	try {
-	    computerExistence = computerDAO.exist(id);
-	}
-	catch (DAOException e) {
-	    throw e;
-	}
-	finally {
-	    connectionManager.closeConnection();
-	}
+    @Transactional(readOnly = true)
+    public boolean exist(long id) throws DAOException {
+	logger.debug("Start exist");
+
+	// WORK
+	boolean computerExistence = computerDAO.exist(id);
+
+	logger.debug("End exist");
 	return computerExistence;
     }
 
-    public int count(String nameFilter) {
+    @Transactional(readOnly = true)
+    public int count(String nameFilter) throws DAOException {
 	logger.debug("Start count");
-	int total = 0;
-	try {
-	    total = computerDAO.count(nameFilter);
-	}
-	catch (DAOException e) {
-	    throw e;
-	}
-	finally {
-	    connectionManager.closeConnection();
-	}
+
+	// WORK
+	int total = computerDAO.count(nameFilter);
+
 	logger.debug("End count");
 	return total;
     }
 
-    public void create(Computer computer) {
-	try {
-	    logger.debug("Start Transaction");
+    @Transactional(readOnly = false)
+    public void create(Computer computer) throws DAOException {
+	logger.debug("Start Create Transaction");
 
-	    connectionManager.startTransaction();
-	    computerDAO.create(computer);
-	    logDao.logInfo("INSERT " + computer.toString());
-	    connectionManager.endTransaction();
+	// WORK
+	computerDAO.create(computer);
+	// LOG
+	logDao.logInfo("INSERT " + computer.toString());
 
-	    logger.debug("Transaction Ended");
-	}
-	catch (DAOException e) {
-	    rollbackAndLogError("INSERT " + computer.toString());
-	    throw e;
-	}
-	finally {
-	    connectionManager.closeConnection();
-	}
+	logger.debug("End Create Transaction");
     }
 
     // Find By ID
-    public Computer find(long id) {
-	Computer res = null;
-	try {
-	    res = computerDAO.find(id);
-	}
-	catch (DAOException e) {
-	    throw e;
-	}
-	finally {
-	    connectionManager.closeConnection();
-	}
+    @Transactional(readOnly = true)
+    public Computer find(long id) throws DAOException {
+	logger.debug("Start find by id");
+
+	// WORK
+	Computer res = computerDAO.find(id);
+
+	logger.debug("End find by id");
 	return res;
     }
 
     // Find By Page Parameters
-    public List<Computer> find(Page page) {
-	List<Computer> res = null;
-	try {
-	    res = computerDAO.find(page);
-	}
-	catch (DAOException e) {
-	    throw e;
-	}
-	finally {
-	    connectionManager.closeConnection();
-	}
+    @Transactional(readOnly = true)
+    public List<Computer> find(Page page) throws DAOException {
+	logger.debug("Start find by Page");
+
+	// WORK
+	List<Computer> res = computerDAO.find(page);
+
+	logger.debug("End find by Page");
 	return res;
     }
 
-    public void update(Computer computer) {
-	try {
-	    logger.debug("Start Transaction");
+    @Transactional(readOnly = false)
+    public void update(Computer computer) throws DAOException {
+	logger.debug("Start Update Transaction");
 
-	    connectionManager.startTransaction();
-	    computerDAO.update(computer);
-	    logDao.logInfo("UPDATE  " + computer.toString());
-	    connectionManager.endTransaction();
+	// WORK
+	computerDAO.update(computer);
+	// LOG
+	logDao.logInfo("UPDATE  " + computer.toString());
 
-	    logger.debug("Transaction Ended");
-	}
-	catch (DAOException e) {
-	    rollbackAndLogError("UPDATE  " + computer.toString());
-	    throw e;
-	}
-	finally {
-	    connectionManager.closeConnection();
-	}
+	logger.debug("End Update Transaction");
     }
 
-    public boolean delete(Long id) {
-	boolean deleteSuccess = false;
-	try {
-	    logger.debug("Start Transaction");
+    @Transactional(readOnly = false)
+    public boolean delete(Long id) throws DAOException {
+	logger.debug("Start Delete Transaction");
 
-	    connectionManager.startTransaction();
-	    deleteSuccess = computerDAO.delete(id);
-	    logDao.logInfo("DELETE " + id);
-	    connectionManager.endTransaction();
+	// WORK
+	boolean deleteSuccess = computerDAO.delete(id);
+	// LOG
+	logDao.logInfo("DELETE " + id);
 
-	    logger.debug("Transaction Ended");
-	}
-	catch (DAOException e) {
-	    rollbackAndLogError("DELETE " + id);
-	    throw e;
-	}
-	finally {
-	    connectionManager.closeConnection();
-	}
+	logger.debug("End Delete Transaction");
 	return deleteSuccess;
-    }
-
-    private void rollbackAndLogError(String error) {
-	try {
-	    connectionManager.rollbackAndStopTransaction();
-	    logDao.logError(error);
-	}
-	catch (SQLException e1) {
-	    e1.printStackTrace();
-	}
     }
 }
