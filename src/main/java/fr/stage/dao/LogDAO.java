@@ -5,7 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import javax.sql.DataSource;
+
 import org.springframework.stereotype.Repository;
 
 import fr.stage.util.LogType;
@@ -13,8 +14,7 @@ import fr.stage.util.LogType;
 @Repository
 public class LogDAO {
 
-    @Autowired
-    private ConnectionManager connectionManager;
+    private DataSource dataSource;
 
     public static String logQuery = "INSERT INTO LOGS (date, logger, level, message) VALUES (FROM_UNIXTIME(?), ?, ?, ?)";
 
@@ -52,23 +52,31 @@ public class LogDAO {
     }
 
     private void log(LogType type, String message) {
-	Connection connection = connectionManager.getConnection();
-	String caller = getCallerClassName();
-	PreparedStatement stm = null;
+	Connection connection;
 	try {
-	    stm = connection.prepareStatement(logQuery);
-	    stm.setLong(1, (new Date().getTime()) / 1000L);
-	    stm.setString(2, caller);
-	    stm.setString(3, type.toString());
-	    stm.setString(4, message);
-	    stm.executeUpdate();
+	    connection = dataSource.getConnection();
+
+	    String caller = getCallerClassName();
+	    PreparedStatement stm = null;
+	    try {
+		stm = connection.prepareStatement(logQuery);
+		stm.setLong(1, (new Date().getTime()) / 1000L);
+		stm.setString(2, caller);
+		stm.setString(3, type.toString());
+		stm.setString(4, message);
+		stm.executeUpdate();
+	    }
+	    catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
+	    finally {
+		connection.close();
+	    }
 	}
-	catch (SQLException e) {
+	catch (SQLException e1) {
 	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
-	finally {
-	    connectionManager.close(stm);
+	    e1.printStackTrace();
 	}
     }
 }

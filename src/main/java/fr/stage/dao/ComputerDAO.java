@@ -41,7 +41,7 @@ public class ComputerDAO {
 	boolean computerExistence = false;
 	try {
 	    // Generate query
-	    String query = "SELECT id  FROM computer WHERE id = ?";
+	    String query = "SELECT id FROM computer WHERE id = ?";
 	    // Generate preparedStatement
 	    stm = connection.prepareStatement(query);
 	    stm.setLong(1, id);
@@ -252,7 +252,7 @@ public class ComputerDAO {
 
 	try {
 	    // Generate query
-	    String query = "UPDATE computer SET name = ?,  introduced = FROM_UNIXTIME(?) , discontinued = FROM_UNIXTIME(?), company_id = ? WHERE id = ?";
+	    String query = "UPDATE computer SET name = ?, introduced = FROM_UNIXTIME(?) , discontinued = FROM_UNIXTIME(?), company_id = ? WHERE id = ?";
 	    // Generate preparedStatement
 	    stm = connection.prepareStatement(query);
 	    stm.setString(1, computer.getName());
@@ -290,7 +290,7 @@ public class ComputerDAO {
     private PreparedStatement generateInsertPrepareStatement(Computer computer,
 	    Connection connection) throws SQLException {
 	// Generate query
-	String query = "INSERT INTO computer  ( name , introduced , discontinued , company_id ) "
+	String query = "INSERT INTO computer ( name , introduced , discontinued , company_id ) "
 		+ "VALUES (? , FROM_UNIXTIME(?) , FROM_UNIXTIME(?) , ?)";
 	// Generate preparedStatement
 	PreparedStatement stm = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);

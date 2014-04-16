@@ -26,15 +26,15 @@
         <servlet-name>default</servlet-name>
         <url-pattern>/resources/css/*</url-pattern>
     </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>default</servlet-name>
         <url-pattern>/resources/js/*</url-pattern>
     </servlet-mapping>
     
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/computer-database-dispatcher-servlet.xml</param-value>
-	</context-param>
-	
-
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>/resources/images/*</url-pattern>
+    </servlet-mapping>
+    
 </web-app>

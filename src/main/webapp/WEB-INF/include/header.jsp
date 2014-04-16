@@ -30,7 +30,8 @@
 	</script>
 	
 </head>
-<body >
+<body>
+
 	<nav class="navbar navbar-inverse">
 	<div class="container-fluid">
 		<div class="navbar-header">
@@ -44,8 +45,8 @@
 	    </div>
 	    <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
-	       	 	<li><a href="langSwitch?lang=fr"><span class="label label-default">FR</span></a></li>
-	       	 	<li><a href="langSwitch?lang=en"><span class="label label-default">EN</span></a></li>
+	       	 	<li><a href="langSwitch?lang=fr"><span class="label label-default">FR</span><img src="resources/images/flag_fr.png"/></a></li>
+	       	 	<li><a href="langSwitch?lang=en"><span class="label label-default">EN</span><img src="resources/images/flag_en.png"/></a></li>
 			</ul>
 		</div>
 	</div>

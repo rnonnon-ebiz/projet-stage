@@ -1,14 +1,8 @@
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import org.joda.time.DateTime;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import fr.stage.dao.CompanyDAO;
 import fr.stage.dao.ComputerDAO;
-import fr.stage.dao.ConnectionManager;
 import fr.stage.domain.Company;
 import fr.stage.domain.Computer;
 
@@ -40,25 +34,26 @@ public class mainClasse {
 	ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(
 		"beans.xml");
 
-	ConnectionManager coMan = applicationContext.getBean(ConnectionManager.class);
+	// ConnectionManager coMan =
+	// applicationContext.getBean(ConnectionManager.class);
 	ComputerDAO computerDAO = applicationContext.getBean(ComputerDAO.class);
 	CompanyDAO companyDAO = applicationContext.getBean(CompanyDAO.class);
 
 	// IConnectionManager coMan = ConnectionManager.getInstance();
-	Connection co = coMan.getConnection();
-	try {
-	    ResultSet res;
-	    Statement stm = co.createStatement();
-	    res = stm.executeQuery("SELECT * FROM company");
-	    while (res.next()) {
-		System.out.println(res.getString("name"));
-	    }
-
-	}
-	catch (SQLException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
+	// Connection co = coMan.getConnection();
+	// try {
+	// ResultSet res;
+	// Statement stm = co.createStatement();
+	// res = stm.executeQuery("SELECT * FROM company");
+	// while (res.next()) {
+	// System.out.println(res.getString("name"));
+	// }
+	//
+	// }
+	// catch (SQLException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
 	Computer computer = new Computer();
 	Company comp = new Company();
 	comp.setName("totoCompany");
