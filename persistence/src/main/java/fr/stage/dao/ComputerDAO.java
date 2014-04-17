@@ -1,11 +1,11 @@
 package fr.stage.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
@@ -174,16 +174,20 @@ public class ComputerDAO {
 	    // Generate preparedStatement
 	    stm = connection.prepareStatement(query);
 	    stm.setLong(1, id);
-	    logger.info(stm.toString());
 	    // Execute preparedStatement
 	    res = stm.executeQuery();
 	    if (res.next()) {
 		// Construct Result
 		computer.setId(res.getLong("computerId"));
 		computer.setName(res.getString("computerName"));
-		computer.setDiscontinuedDate(new DateTime(res.getString("discontinued")));
-		computer.setIntroducedDate(new DateTime(res.getString("introduced")));
-
+		Date introduced = res.getDate("introduced");
+		if (introduced != null) {
+		    computer.setIntroducedDate(new DateTime(introduced));
+		}
+		Date discontinued = res.getDate("discontinued");
+		if (discontinued != null) {
+		    computer.setDiscontinuedDate(new DateTime(discontinued));
+		}
 		Company company = new Company();
 		company.setId(res.getLong("company_id"));
 		company.setName(res.getString("companyName"));
@@ -220,15 +224,14 @@ public class ComputerDAO {
 		Computer computer = new Computer();
 		computer.setId(res.getLong("computerId"));
 		computer.setName(res.getString("computerName"));
-		Timestamp discontinued = res.getTimestamp("discontinued");
+		Date introduced = res.getDate("introduced");
+		if (introduced != null) {
+		    computer.setIntroducedDate(new DateTime(introduced));
+		}
+		Date discontinued = res.getDate("discontinued");
 		if (discontinued != null) {
 		    computer.setDiscontinuedDate(new DateTime(discontinued));
 		}
-		Timestamp introduced = res.getTimestamp("introduced");
-		if (discontinued != null) {
-		    computer.setIntroducedDate(new DateTime(introduced));
-		}
-
 		Company company = new Company();
 		company.setId(res.getLong("company_id"));
 		company.setName(res.getString("companyName"));
@@ -261,13 +264,13 @@ public class ComputerDAO {
 	    stm = connection.prepareStatement(query);
 	    stm.setString(1, computer.getName());
 	    if (computer.getIntroducedDate() != null) {
-		stm.setLong(2, computer.getIntroducedDate().getMillis());
+		stm.setLong(2, computer.getIntroducedDate().getMillis() / 1000);
 	    }
 	    else
 		stm.setNull(2, Types.NULL);
 
 	    if (computer.getDiscontinuedDate() != null) {
-		stm.setLong(3, computer.getDiscontinuedDate().getMillis());
+		stm.setLong(3, computer.getDiscontinuedDate().getMillis() / 1000);
 	    }
 	    else
 		stm.setNull(3, Types.NULL);
@@ -302,13 +305,13 @@ public class ComputerDAO {
 	stm.setString(1, computer.getName());
 
 	if (computer.getIntroducedDate() != null) {
-	    stm.setLong(2, computer.getIntroducedDate().getMillis());
+	    stm.setLong(2, computer.getIntroducedDate().getMillis() / 1000);
 	}
 	else
 	    stm.setNull(2, Types.NULL);
 
 	if (computer.getDiscontinuedDate() != null) {
-	    stm.setLong(3, computer.getDiscontinuedDate().getMillis());
+	    stm.setLong(3, computer.getDiscontinuedDate().getMillis() / 1000);
 	}
 	else
 	    stm.setNull(3, Types.NULL);
@@ -317,8 +320,6 @@ public class ComputerDAO {
 	    stm.setLong(4, computer.getCompany().getId());
 	else
 	    stm.setNull(4, Types.NULL);
-
-	logger.info(stm.toString());
 	return stm;
     }
 

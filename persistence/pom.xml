@@ -21,6 +21,13 @@
 	</properties>
 	<dependencies>
 		<!-- START Compile Scope : -->
+		<!-- Joda-Time to manage dates -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		
 		<!-- Spring MVC -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -40,6 +47,12 @@
 			<groupId>fr.stage</groupId>
 			<artifactId>core</artifactId>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- END Compile Scope : -->
 

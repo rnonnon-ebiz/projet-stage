@@ -16,7 +16,9 @@
 		<h2 id="subtitle" style="display:none"> <spring:message code="welcome"/> :)</h2>
 	</div>
 	
-	<p class="bg-success status" >${successMessage}</p>
+	<div style="max-height:30px;min-height:30px;">
+		<p class="bg-success status" >${successMessage}</p>
+	</div>
 	
 	<div id="actions">
 		<form action="dashboard" method="GET">

@@ -33,21 +33,53 @@
 			<artifactId>spring-tx</artifactId>
 			<scope>compile</scope>
 		</dependency>
-
+		
+		<!-- Spring JDBC -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		
 		<!-- Project modules -->
 		<dependency>
 			<groupId>fr.stage</groupId>
 			<artifactId>core</artifactId>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>fr.stage</groupId>
 			<artifactId>persistence</artifactId>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- END Compile Scope : -->
 		
 		<!-- START Runtime Scope : -->
+		<!-- BoneCP to Manage Connection -->
+		<dependency>
+			<groupId>com.jolbox</groupId>
+			<artifactId>bonecp</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		
+		<!-- MySql for Database connection -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 		<!-- END Runtime Scope : -->
 	</dependencies>
 </project>

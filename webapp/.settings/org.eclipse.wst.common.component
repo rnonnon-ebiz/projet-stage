@@ -6,16 +6,16 @@
         <dependent-module archiveName="core-1.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/core/core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="service-1.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/service/service">
+        <dependent-module archiveName="persistence-1.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/persistence/persistence">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="persistence-1.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/persistence/persistence">
+        <dependent-module archiveName="service-1.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/service/service">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="binding-1.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/binding/binding">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <property name="context-root" value="projet-stageWebApp"/>
         <property name="java-output-path" value="/webapp/target/classes"/>
+        <property name="context-root" value="webapp"/>
     </wb-module>
 </project-modules>

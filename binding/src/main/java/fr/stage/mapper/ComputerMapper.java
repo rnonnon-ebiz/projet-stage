@@ -13,6 +13,8 @@ import fr.stage.util.DateUtil;
 @Service
 public class ComputerMapper {
 
+    private static String DATE_PATTERN_EN = "yyyy-MM-dd";
+
     @Autowired
     private CompanyService companyService;
 
@@ -29,14 +31,14 @@ public class ComputerMapper {
 	    computer.setName(computerDTO.getName());
 	    // Fill Introduced Date
 	    String introducedString = computerDTO.getIntroducedDate();
-	    if (!"".equals(introducedString)) {
-		DateTime introduced = DateUtil.stringToDate(introducedString, "y-m-d");
+	    if (introducedString != null && !"".equals(introducedString)) {
+		DateTime introduced = DateUtil.stringToDate(introducedString, DATE_PATTERN_EN);
 		computer.setIntroducedDate(introduced);
 	    }
 	    // Fill Discontinued Date
 	    String discontinuedString = computerDTO.getDiscontinuedDate();
-	    if (!"".equals(discontinuedString)) {
-		DateTime discontinued = DateUtil.stringToDate(discontinuedString, "y-m-d");
+	    if (introducedString != null && !"".equals(discontinuedString)) {
+		DateTime discontinued = DateUtil.stringToDate(discontinuedString, DATE_PATTERN_EN);
 		computer.setDiscontinuedDate(discontinued);
 	    }
 	    // Fill Company
@@ -66,9 +68,8 @@ public class ComputerMapper {
 	    // Fill Introduced Date
 	    DateTime introduced = computer.getIntroducedDate();
 	    if (introduced != null) {
-		String introducedString = DateUtil.DateToString(introduced, "y-m-d");
+		String introducedString = DateUtil.DateToString(introduced, DATE_PATTERN_EN);
 		computerDTO.setIntroducedDate(introducedString);
-		System.out.println(introducedString);
 	    }
 	    else {
 		computerDTO.setIntroducedDate("");
@@ -76,7 +77,7 @@ public class ComputerMapper {
 	    // Fill Discontinued Date
 	    DateTime discontinued = computer.getDiscontinuedDate();
 	    if (discontinued != null) {
-		String discontinuedString = DateUtil.DateToString(discontinued, "y-m-d");
+		String discontinuedString = DateUtil.DateToString(discontinued, DATE_PATTERN_EN);
 		computerDTO.setDiscontinuedDate(discontinuedString);
 	    }
 	    else {

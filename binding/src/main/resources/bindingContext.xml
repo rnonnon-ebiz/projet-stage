@@ -7,15 +7,12 @@ http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
 http://www.springframework.org/schema/context
 http://www.springframework.org/schema/context/spring-context-4.0.xsd">
 
-	<import resource="classpath:bindingContext.xml"/>
-	
-	<context:annotation-config />
-	
-	<bean id="localeResolver"
-		class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
-		<property name="defaultLocale" value="en" />
-	</bean>
-	
-	
+	<import resource="classpath:serviceContext.xml"/>
 
+	<context:annotation-config />
+	<context:component-scan base-package="fr.stage.mapper" />
+	<context:component-scan base-package="fr.stage.validator" />
+	
+	
+	
 </beans>
