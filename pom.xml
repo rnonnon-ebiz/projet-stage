@@ -6,117 +6,144 @@
 	<groupId>fr.stage</groupId>
 	<artifactId>projet-stage</artifactId>
 	<version>1.0-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>pom</packaging>
 	<name>Projet Stage</name>
 
+	<!-- Versions -->
 	<properties>
 		<spring.version>4.0.3.RELEASE</spring.version>
+		<hibernate-validator.version>5.1.0.Final</hibernate-validator.version>
+		<joda-time.version>2.3</joda-time.version>
+		<joda-time-jsptags.version>1.1.1</joda-time-jsptags.version>
+		<bonecp.version>0.8.0.RELEASE</bonecp.version>
+		<mysql-connector-java.version>5.1.29</mysql-connector-java.version>
+		<jstl.version>1.2</jstl.version>
+		<slf4j-log4j12.version>1.7.6</slf4j-log4j12.version>
+		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+		<tomcat7-maven-plugin.version>2.1</tomcat7-maven-plugin.version>
+		<core.version>1.0-SNAPSHOT</core.version>
+		<persistence.version>1.0-SNAPSHOT</persistence.version>
+		<service.version>1.0-SNAPSHOT</service.version>
+		<binding.version>1.0-SNAPSHOT</binding.version>
+		<webapp.version>1.0-SNAPSHOT</webapp.version>
 	</properties>
 
+	<!-- Unmanaged dependencies : -->
+	<!-- SL4J to Log -->
 	<dependencies>
-		<!-- START Compile Scope : -->
-		<!-- SL4J to Log -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.6</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-aspects</artifactId>
-			<version>${spring.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>${spring.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<!-- Spring Transaction -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-			<version>${spring.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<!-- Spring JDBC -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
-			<version>${spring.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<!-- Hibernate Validator -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>5.1.0.Final</version>
-			<scope>compile</scope>
-		</dependency>
-		<!-- Joda-Time to manage dates -->
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>2.3</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time-jsptags</artifactId>
-			<version>1.1.1</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<!-- END Compile Scope : -->
-
-		<!-- START Runtime Scope : -->
-		<!-- BoneCP to Manage Connection -->
-		<dependency>
-			<groupId>com.jolbox</groupId>
-			<artifactId>bonecp</artifactId>
-			<version>0.8.0.RELEASE</version>
-			<scope>runtime</scope>
-		</dependency>
-		<!-- MySql for Database connection -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.29</version>
-			<scope>runtime</scope>
-		</dependency>
-		<!-- JSTL for jsp library -->
-		<dependency>
-			<groupId>jstl</groupId>
-			<artifactId>jstl</artifactId>
-			<version>1.2</version>
-			<scope>runtime</scope>
-		</dependency>
-		<!-- SL4J to Log -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.6</version>
-			<scope>runtime</scope>
+			<version>${slf4j-log4j12.version}</version>
 		</dependency>
-
-		<!-- END Runtime Scope : -->
-
 	</dependencies>
+
+	<!-- Managed dependencies : -->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			
+			<!-- Spring MVC -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<!-- Spring Transaction -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<!-- Spring JDBC -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jdbc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+
+			<!-- Hibernate Validator -->
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-validator</artifactId>
+				<version>${hibernate-validator.version}</version>
+			</dependency>
+
+			<!-- Joda-Time to manage dates -->
+			<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time</artifactId>
+				<version>${joda-time.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>joda-time</groupId>
+				<artifactId>joda-time-jsptags</artifactId>
+				<version>${joda-time-jsptags.version}</version>
+			</dependency>
+
+			<!-- BoneCP to Manage Connection -->
+			<dependency>
+				<groupId>com.jolbox</groupId>
+				<artifactId>bonecp</artifactId>
+				<version>${bonecp.version}</version>
+			</dependency>
+
+			<!-- MySql for Database connection -->
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>${mysql-connector-java.version}</version>
+			</dependency>
+
+			<!-- JSTL for jsp library -->
+			<dependency>
+				<groupId>jstl</groupId>
+				<artifactId>jstl</artifactId>
+				<version>${jstl.version}</version>
+			</dependency>
+
+			<!-- Project modules -->
+			<dependency>
+				<groupId>fr.stage</groupId>
+				<artifactId>core</artifactId>
+				<version>${core.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.stage</groupId>
+				<artifactId>persistence</artifactId>
+				<version>${persistence.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.stage</groupId>
+				<artifactId>service</artifactId>
+				<version>${service.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.stage</groupId>
+				<artifactId>binding</artifactId>
+				<version>${binding.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.stage</groupId>
+				<artifactId>webapp</artifactId>
+				<version>${webapp.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<build>
 		<finalName>projet-stageWebApp</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
@@ -125,7 +152,7 @@
 			<plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
 				<artifactId>tomcat7-maven-plugin</artifactId>
-				<version>2.1</version>
+				<version>${tomcat7-maven-plugin.version}</version>
 				<configuration>
 					<port>8080</port>
 					<hostName>localhost</hostName>
@@ -136,5 +163,12 @@
 			</plugin>
 		</plugins>
 	</build>
+	<modules>
+		<module>persistence</module>
+		<module>service</module>
+		<module>webapp</module>
+		<module>binding</module>
+		<module>core</module>
+	</modules>
 </project>
 
