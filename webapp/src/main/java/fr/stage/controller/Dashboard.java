@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import fr.stage.domain.Computer;
 import fr.stage.domain.Page;
@@ -24,12 +24,11 @@ public class Dashboard {
     ComputerService computerService;
 
     @RequestMapping(method = RequestMethod.GET)
-    protected String doGet(
+    protected ModelAndView doGet(
 	    @RequestParam(value = "successMessage", required = false, defaultValue = "") String successMessage,
 	    @RequestParam(value = "search", required = false, defaultValue = "") String search,
 	    @RequestParam(value = "goTo", required = false, defaultValue = "0") int goTo,
-	    @RequestParam(value = "orderBy", required = false, defaultValue = "0") byte orderBy,
-	    ModelMap model) {
+	    @RequestParam(value = "orderBy", required = false, defaultValue = "0") byte orderBy) {
 	Page page = new Page();
 	// Set limit
 	page.setComputerPerPage(LIMIT_PER_PAGE_DEFAULT);
@@ -49,10 +48,11 @@ public class Dashboard {
 	// Set Computers found
 	page.setComputersList(computersList);
 	// Set Result
-	model.addAttribute("page", page);
-	model.addAttribute("lang", LocaleContextHolder.getLocale());
-	model.addAttribute("successMessage", successMessage);
-	model.addAttribute("search", search);
-	return "dashboard";
+	ModelAndView model = new ModelAndView("dashboard");
+	model.addObject("page", page);
+	model.addObject("lang", LocaleContextHolder.getLocale());
+	model.addObject("successMessage", successMessage);
+	model.addObject("search", search);
+	return model;
     }
 }

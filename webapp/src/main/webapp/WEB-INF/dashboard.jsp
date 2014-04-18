@@ -17,7 +17,7 @@
 	</div>
 	
 	<div style="max-height:30px;min-height:30px;">
-		<p class="bg-success status" >${successMessage}</p>
+		<p class="bg-success status" ><c:out value="${successMessage}"/></p>
 	</div>
 	
 	<div id="actions">
