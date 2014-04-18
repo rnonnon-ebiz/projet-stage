@@ -29,7 +29,7 @@
 				<span class="glyphicon glyphicon-search"></span><spring:message code="filterByName"/>
 			</button>
 		</form>
-		<a href="addComputer" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span> <spring:message code="addComputer"/></a>
+		<a href="<spring:url value="/addComputer"/>" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span> <spring:message code="addComputer"/></a>
 	</div>
 	
 		<perso:pagination page="${page}"/>

@@ -94,7 +94,7 @@
 					
 					<spring:message code="button.or"/> 
 					
-					<a href="dashboard" class="btn btn-danger">
+					<a href="<spring:url value="/dashboard"/>" class="btn btn-danger">
 						<span class="glyphicon glyphicon-remove"></span>
 						<spring:message code="button.cancel"/>
 					</a>

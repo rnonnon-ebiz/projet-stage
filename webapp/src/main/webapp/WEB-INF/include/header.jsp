@@ -41,7 +41,7 @@
 	        <span class="icon-bar"></span>
 	        <span class="icon-bar"></span>
 	      </button>
-	      <a class="navbar-brand" href="dashboard">Application - Computer Database</a>
+	      <a class="navbar-brand" href="<spring:url value="/dashboard"/>">Application - Computer Database</a>
 	    </div>
 	    <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">

@@ -96,7 +96,7 @@
 			</div>
 		</div>
 		
-		<!-- 		Form foot -->
+		<!-- Form foot -->
 		
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-sm-10">
@@ -109,7 +109,7 @@
 
 					<spring:message code="button.or" />
 
-					<a href="dashboard" class="btn btn-danger"> <span
+					<a href="<spring:url value="/dashboard"/>" class="btn btn-danger"> <span
 						class="glyphicon glyphicon-remove"></span> <spring:message
 							code="button.cancel" />
 					</a>
