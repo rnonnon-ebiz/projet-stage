@@ -52,6 +52,7 @@ public class Dashboard {
 	model.addAttribute("page", page);
 	model.addAttribute("lang", LocaleContextHolder.getLocale());
 	model.addAttribute("successMessage", successMessage);
+	model.addAttribute("search", search);
 	return "dashboard";
     }
 }

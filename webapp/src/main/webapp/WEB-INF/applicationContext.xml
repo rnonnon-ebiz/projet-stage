@@ -15,7 +15,5 @@ http://www.springframework.org/schema/context/spring-context-4.0.xsd">
 		class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
 		<property name="defaultLocale" value="en" />
 	</bean>
-	
-	
 
 </beans>

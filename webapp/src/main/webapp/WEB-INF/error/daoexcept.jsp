@@ -11,6 +11,6 @@
 	
 	<body>
 		<spring:message code="dao.except"/>
-		<img src="/resources/images/crash.jpg"/>
+		<img src="<spring:url value="/resources/images/crash.jpg"/>"/>
 	</body>
 </html>

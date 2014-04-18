@@ -41,8 +41,9 @@ http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
 		<property name="suffix" value=".jsp" />
 	</bean>
 
-	<!-- <mvc:annotation-driven /> -->
-	<!-- <mvc:resources mapping="resources/**" location="resources/" /> -->
+<!-- 	<mvc:annotation-driven /> -->
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
+	<mvc:resources mapping="/resources/**" location="/resources/" />
 
 
 </beans>

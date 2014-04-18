@@ -26,16 +26,16 @@ public class ComputerService {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Transactional(readOnly = true)
-    public boolean exist(long id) throws DAOException {
-	logger.debug("Start exist");
-
-	// WORK
-	boolean computerExistence = computerDAO.exist(id);
-
-	logger.debug("End exist");
-	return computerExistence;
-    }
+    // @Transactional(readOnly = true)
+    // public boolean exist(long id) throws DAOException {
+    // logger.debug("Start exist");
+    //
+    // // WORK
+    // boolean computerExistence = computerDAO.exist(id);
+    //
+    // logger.debug("End exist");
+    // return computerExistence;
+    // }
 
     @Transactional(readOnly = true)
     public int count(String nameFilter) throws DAOException {

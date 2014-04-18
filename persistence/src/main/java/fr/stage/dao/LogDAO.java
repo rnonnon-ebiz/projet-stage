@@ -1,18 +1,14 @@
 package fr.stage.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.jolbox.bonecp.BoneCPDataSource;
 
 import fr.stage.exception.DAOException;
-import fr.stage.util.ConnectionUtil;
 import fr.stage.util.LogType;
 
 @Repository
@@ -21,7 +17,7 @@ public class LogDAO {
     @Autowired
     private BoneCPDataSource dataSource;
 
-    public static String logQuery = "INSERT INTO LOGS (date, logger, level, message) VALUES (FROM_UNIXTIME(?), ?, ?, ?)";
+    public static String logQuery = "INSERT INTO LOGS (date, logger, level, message) VALUES (?, ?, ?, ?)";
 
     public LogDAO() {
     }
@@ -60,26 +56,28 @@ public class LogDAO {
     }
 
     private void log(LogType type, String message) throws DAOException {
-	Connection connection = DataSourceUtils.getConnection(dataSource);
-	// Get the caller class
-	String caller = getCallerClassName();
-	PreparedStatement stm = null;
+	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+	// Generate args
+	Object[] args = generateInsertArgs(type, message);
 	try {
-	    // Prepare the statement
-	    stm = connection.prepareStatement(logQuery);
-	    // Fill it
-	    stm.setLong(1, (new DateTime().getMillis()) / 1000L);
-	    stm.setString(2, caller);
-	    stm.setString(3, type.toString());
-	    stm.setString(4, message);
-	    // Execute it
-	    stm.executeUpdate();
+	    jdbcTemplate.update(logQuery, args);
 	}
-	catch (SQLException e) {
+	catch (DataAccessException e) {
 	    throw new DAOException("Failed to log");
 	}
-	finally {
-	    ConnectionUtil.close(stm);
-	}
+    }
+
+    private Object[] generateInsertArgs(LogType type, String message) {
+	Object[] args = new Object[4];
+	// Set Date
+	args[0] = new DateTime().toDate();
+	// Set Caller class
+	String caller = getCallerClassName();
+	args[1] = caller;
+	// Set Error Type
+	args[2] = type.toString();
+	// Set Message
+	args[3] = message;
+	return args;
     }
 }

@@ -1,23 +1,19 @@
 package fr.stage.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.jolbox.bonecp.BoneCPDataSource;
 
 import fr.stage.domain.Company;
 import fr.stage.exception.DAOException;
-import fr.stage.util.ConnectionUtil;
+import fr.stage.rowmapper.CompanyRowMapper;
 
 @Repository
 public class CompanyDAO {
@@ -34,31 +30,23 @@ public class CompanyDAO {
 
     public boolean exist(long id) throws DAOException {
 	logger.debug("Start existence check {}", id);
-	Connection connection = DataSourceUtils.getConnection(dataSource);
-	PreparedStatement stm = null;
-	ResultSet res = null;
+	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 	boolean companyExistence = false;
+	// Generate query
+	String query = "SELECT id  FROM company WHERE id = ?";
+	// Generate args
+	Object[] args = { id };
+
 	try {
-	    // Generate query
-	    String query = "SELECT id  FROM company WHERE id = ?";
-	    // Generate preparedStatement
-	    stm = connection.prepareStatement(query);
-	    stm.setLong(1, id);
-	    logger.info(stm.toString());
-	    // Execute preparedStatement
-	    res = stm.executeQuery();
-	    if (res.next()) {
-		// Construct Result
+	    Long idFound = jdbcTemplate.queryForObject(query, Long.class, args);
+	    if (idFound != null) {
 		companyExistence = true;
 	    }
 	}
-	catch (SQLException e) {
+	catch (DataAccessException e) {
 	    logger.error("Failed to check existence", e);
 	    throw new DAOException("Failed to check existence");
-	}
-	finally {
-	    ConnectionUtil.close(res, stm);
 	}
 
 	logger.debug("End existence check {}", id);
@@ -67,34 +55,19 @@ public class CompanyDAO {
 
     public Company find(long id) throws DAOException {
 	logger.debug("Start find {}", id);
-	Connection connection = DataSourceUtils.getConnection(dataSource);
-	PreparedStatement stm = null;
-	ResultSet res = null;
+	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-	Company company;
+	Company company = null;
+	// Generate query
+	String query = "SELECT id, name  FROM company WHERE id = ?";
+	// Generate args
+	Object[] args = { id };
 	try {
-	    company = new Company();
-	    // Generate query
-	    String query = "SELECT id, name  FROM company WHERE id = ?";
-	    // Generate preparedStatement
-	    stm = connection.prepareStatement(query);
-	    stm.setLong(1, id);
-	    logger.info(stm.toString());
-	    // Execute preparedStatement
-	    res = stm.executeQuery();
-	    if (res.next()) {
-		// Construct Result
-		company.setId(res.getLong("id"));
-		company.setName(res.getString("name"));
-	    }
+	    company = jdbcTemplate.queryForObject(query, args, new CompanyRowMapper());
 	}
-	catch (SQLException e) {
-	    company = null;
+	catch (DataAccessException e) {
 	    logger.error("Failed to find", e);
 	    throw new DAOException("Failed to find company");
-	}
-	finally {
-	    ConnectionUtil.close(res, stm);
 	}
 
 	logger.debug("End find {}", id);
@@ -103,34 +76,20 @@ public class CompanyDAO {
 
     public List<Company> findAll() throws DAOException {
 	logger.debug("Start Find All");
-	Connection connection = DataSourceUtils.getConnection(dataSource);
-	PreparedStatement stm = null;
-	ResultSet res = null;
+	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-	List<Company> results = new ArrayList<Company>();
+	List<Company> companyList = null;
+	// Generate query
+	String query = "SELECT id, name  FROM company";
 	try {
-	    // Generate query
-	    String query = "SELECT id, name  FROM company";
-	    // Generate preparedStatement
-	    stm = connection.prepareStatement(query);
-	    // Execute preparedStatement
-	    res = stm.executeQuery();
-	    while (res.next()) {
-		// Construct Result
-		Company company = new Company();
-		company.setId(res.getLong("id"));
-		company.setName(res.getString("name"));
-		results.add(company);
-	    }
+	    companyList = jdbcTemplate.query(query, new CompanyRowMapper());
 	}
-	catch (SQLException e) {
+	catch (DataAccessException e) {
 	    logger.error("Failed to findAll", e);
 	    throw new DAOException("Failed to find Companies");
 	}
-	finally {
-	    ConnectionUtil.close(res, stm);
-	}
+
 	logger.debug("End Find All");
-	return results;
+	return companyList;
     }
 }

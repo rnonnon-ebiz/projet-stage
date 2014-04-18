@@ -11,6 +11,6 @@
 	
 	<body>
 		<spring:message code="not.found" />
-		<img src="resources/images/notFound.jpg" />
+		<img src="<spring:url value="/resources/images/notFound.jpg"/>" />
 	</body>
 </html>

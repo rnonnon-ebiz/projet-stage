@@ -42,7 +42,7 @@ public class ComputerCreationValidator implements Validator {
 	    }
 	    // Valid Company
 	    if (!validCompany(computerDTO.getCompany())) {
-		errors.rejectValue("company", "computer.add.discontinuedDate.invalid");
+		errors.rejectValue("company", "computer.add.company.inexist");
 	    }
 	}
 	else {
@@ -85,17 +85,17 @@ public class ComputerCreationValidator implements Validator {
     // }
     // }
 
-    public boolean existId(String idString) {
-	boolean exist = false;
-	String regex = "^\\d\\d*$";
-	// It should be match the regexp to be valid
-	if (idString != null && idString.matches(regex)) {
-	    long id = Long.parseLong(idString);
-	    // And Should exist in DB
-	    exist = computerService.exist(id);
-	}
-	return exist;
-    }
+    // public boolean existId(String idString) {
+    // boolean exist = false;
+    // String regex = "^\\d\\d*$";
+    // // It should be match the regexp to be valid
+    // if (idString != null && idString.matches(regex)) {
+    // long id = Long.parseLong(idString);
+    // // And Should exist in DB
+    // exist = computerService.exist(id);
+    // }
+    // return exist;
+    // }
 
     public static boolean validName(String name) {
 	boolean valid = false;

@@ -1,20 +1,15 @@
 package fr.stage.dao;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import com.jolbox.bonecp.BoneCPDataSource;
@@ -23,7 +18,7 @@ import fr.stage.domain.Company;
 import fr.stage.domain.Computer;
 import fr.stage.domain.Page;
 import fr.stage.exception.DAOException;
-import fr.stage.util.ConnectionUtil;
+import fr.stage.rowmapper.ComputerRowMapper;
 
 @Repository
 public class ComputerDAO {
@@ -38,31 +33,23 @@ public class ComputerDAO {
 
     public boolean exist(long id) throws DAOException {
 	logger.debug("Start existence check {}", id);
-	Connection connection = DataSourceUtils.getConnection(dataSource);
-	PreparedStatement stm = null;
-	ResultSet res = null;
+	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 	boolean computerExistence = false;
+	// Generate query
+	String query = "SELECT id FROM computer WHERE id = ?";
+	// Generate args
+	Object[] args = { id };
+
 	try {
-	    // Generate query
-	    String query = "SELECT id FROM computer WHERE id = ?";
-	    // Generate preparedStatement
-	    stm = connection.prepareStatement(query);
-	    stm.setLong(1, id);
-	    logger.info(stm.toString());
-	    // Execute preparedStatement
-	    res = stm.executeQuery();
-	    if (res.next()) {
-		// Construct Result
+	    Long idFound = jdbcTemplate.queryForObject(query, Long.class, args);
+	    if (idFound != null) {
 		computerExistence = true;
 	    }
 	}
-	catch (SQLException e) {
+	catch (DataAccessException e) {
 	    logger.error("Failed to check existence", e);
 	    throw new DAOException("Failed to check existence");
-	}
-	finally {
-	    ConnectionUtil.close(res, stm);
 	}
 
 	logger.debug("End existence check {}", id);
@@ -71,89 +58,61 @@ public class ComputerDAO {
 
     public int count(String nameFilter) throws DAOException {
 	logger.debug("Start count {}", nameFilter);
-	Connection connection = DataSourceUtils.getConnection(dataSource);
-	PreparedStatement stm = null;
-	ResultSet res = null;
+	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 	int total = 0;
-	try {
-	    // Generate query
-	    String query = "SELECT COUNT(*) FROM computer cr LEFT JOIN company cy ON cy.id = cr.company_id "
-		    + "WHERE cr.name like ? OR cy.name like ? ";
-	    // Generate preparedStatement
-	    stm = connection.prepareStatement(query);
+	// Generate query
+	String query = "SELECT COUNT(*) FROM computer cr LEFT JOIN company cy ON cy.id = cr.company_id "
+		+ "WHERE cr.name like ? OR cy.name like ? ";
+	// Generate Count Args
+	Object[] args = generateCountArgs(nameFilter);
 
-	    if (nameFilter == null)
-		nameFilter = "";
-	    stm.setString(1, "%" + nameFilter + "%");
-	    stm.setString(2, "%" + nameFilter + "%");
-	    // Execute preparedStatement
-	    res = stm.executeQuery();
-	    if (res.next()) {
-		// Construct Result
-		total = res.getInt(1);
-	    }
+	try {
+	    total = jdbcTemplate.queryForObject(query, Integer.class, args);
 	}
-	catch (SQLException e) {
-	    logger.error("Failed to count", e);
+	catch (DataAccessException e) {
+	    logger.error("Failed to count computers");
 	    throw new DAOException("Failed to count computers");
-	}
-	finally {
-	    ConnectionUtil.close(res, stm);
 	}
 
 	logger.debug("End count {}", nameFilter);
 	return total;
+
     }
 
     public void create(Computer computer) throws DAOException {
 	logger.debug("Start create {}", computer);
-	Connection connection = DataSourceUtils.getConnection(dataSource);
-	PreparedStatement stm = null;
-	ResultSet res = null;
 
-	try {
-	    // Generate preparedStatement
-	    stm = generateInsertPrepareStatement(computer, connection);
-	    // Execute preparedStatement
-	    stm.executeUpdate();
-	    res = stm.getGeneratedKeys();
-	    if (res.next()) {
-		// Construct Result
-		computer.setId(res.getLong(1));
-		logger.info("Computer created : " + computer.toString());
-	    }
-	}
-	catch (SQLException e) {
-	    logger.error("Failed to create {}", computer, e);
-	    throw new DAOException("Failed to create computer");
-	}
-	finally {
-	    ConnectionUtil.close(res, stm);
-	}
+	SimpleJdbcInsert insertComputer = new SimpleJdbcInsert(dataSource)
+		.withTableName("computer").usingGeneratedKeyColumns("id");
 
+	// Generate Insert Args
+	Map<String, Object> args = generateInsertArgs(computer);
+	// Execute and get generated id
+	long id = (Long) insertComputer.executeAndReturnKey(args);
+	// Set computer id
+	computer.setId(id);
+
+	logger.info("Computer created : " + computer.toString());
 	logger.debug("End create {}", computer);
     }
 
     public boolean delete(Long id) throws DAOException {
 	logger.debug("Start delete {}", id);
-	Connection connection = DataSourceUtils.getConnection(dataSource);
-	PreparedStatement stm = null;
+	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+
 	int nDelete = 0;
+	// Generate Query
+	String query = "DELETE FROM computer WHERE id = ? ";
+	// Generate Args
+	Object[] args = { id };
+
 	try {
-	    // Generate query
-	    String query = "DELETE FROM computer WHERE id = " + id;
-	    // Generate preparedStatement
-	    stm = connection.prepareStatement(query);
-	    // Execute preparedStatement
-	    nDelete = stm.executeUpdate();
+	    nDelete = jdbcTemplate.update(query, args);
 	}
-	catch (SQLException e) {
+	catch (DataAccessException e) {
 	    logger.error("Failed to delete {}", id, e);
 	    throw new DAOException("Failed to delete computer");
-	}
-	finally {
-	    ConnectionUtil.close(stm);
 	}
 
 	logger.debug("End delete {}", id);
@@ -162,45 +121,21 @@ public class ComputerDAO {
 
     public Computer find(long id) throws DAOException {
 	logger.debug("Start find {}", id);
-	Connection connection = DataSourceUtils.getConnection(dataSource);
-	PreparedStatement stm = null;
-	ResultSet res = null;
+	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-	Computer computer;
+	Computer computer = null;
+	// Generate query
+	String query = "SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName "
+		+ "FROM computer cr LEFT JOIN company cy ON cy.id = cr.company_id "
+		+ "WHERE cr.id = ?";
+	// Generate Args
+	Object[] args = { id };
 	try {
-	    computer = new Computer();
-	    // Generate query
-	    String query = "SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName FROM computer cr LEFT JOIN company cy ON cy.id = cr.company_id WHERE cr.id = ?";
-	    // Generate preparedStatement
-	    stm = connection.prepareStatement(query);
-	    stm.setLong(1, id);
-	    // Execute preparedStatement
-	    res = stm.executeQuery();
-	    if (res.next()) {
-		// Construct Result
-		computer.setId(res.getLong("computerId"));
-		computer.setName(res.getString("computerName"));
-		Date introduced = res.getDate("introduced");
-		if (introduced != null) {
-		    computer.setIntroducedDate(new DateTime(introduced));
-		}
-		Date discontinued = res.getDate("discontinued");
-		if (discontinued != null) {
-		    computer.setDiscontinuedDate(new DateTime(discontinued));
-		}
-		Company company = new Company();
-		company.setId(res.getLong("company_id"));
-		company.setName(res.getString("companyName"));
-		computer.setCompany(company);
-	    }
+	    computer = jdbcTemplate.queryForObject(query, args, new ComputerRowMapper());
 	}
-	catch (SQLException e) {
-	    computer = null;
+	catch (DataAccessException e) {
 	    logger.error("Failed to find", e);
 	    throw new DAOException("Failed to find computer");
-	}
-	finally {
-	    ConnectionUtil.close(res, stm);
 	}
 
 	logger.debug("End find {}", id);
@@ -209,148 +144,152 @@ public class ComputerDAO {
 
     public List<Computer> find(Page page) throws DAOException {
 	logger.debug("Start find {}", page);
-	Connection connection = DataSourceUtils.getConnection(dataSource);
-	PreparedStatement stm = null;
-	ResultSet res = null;
+	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
-	List<Computer> computersList = new ArrayList<Computer>();
+	List<Computer> computersList = null;
+	// Generate query from page
+	String query = generateFindQuery(page);
+	// Generate Args from page
+	Object[] args = generateFindArgs(page);
 	try {
-	    // Generate preparedStatement
-	    stm = generateFindPrepareStatement(page, connection);
-	    // Execute preparedStatement
-	    res = stm.executeQuery();
-	    while (res.next()) {
-		// Construct Result
-		Computer computer = new Computer();
-		computer.setId(res.getLong("computerId"));
-		computer.setName(res.getString("computerName"));
-		Date introduced = res.getDate("introduced");
-		if (introduced != null) {
-		    computer.setIntroducedDate(new DateTime(introduced));
-		}
-		Date discontinued = res.getDate("discontinued");
-		if (discontinued != null) {
-		    computer.setDiscontinuedDate(new DateTime(discontinued));
-		}
-		Company company = new Company();
-		company.setId(res.getLong("company_id"));
-		company.setName(res.getString("companyName"));
-		computer.setCompany(company);
-		computersList.add(computer);
-	    }
+	    computersList = jdbcTemplate.query(query, args, new ComputerRowMapper());
 	}
-	catch (SQLException e) {
+	catch (DataAccessException e) {
 	    logger.error("Failed to find", e);
 	    throw new DAOException("Failed to find computers");
 	}
-	finally {
-	    ConnectionUtil.close(res, stm);
-	}
 
-	logger.debug("Start find {}", page);
+	logger.debug("End find {}", page);
 	return computersList;
     }
 
     public void update(Computer computer) throws DAOException {
 	logger.debug("Start update {}", computer);
-	Connection connection = DataSourceUtils.getConnection(dataSource);
-	PreparedStatement stm = null;
-	ResultSet res = null;
+	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
+	// Generate query
+	String query = "UPDATE computer SET name = ?, introduced = ? , discontinued = ?, company_id = ? WHERE id = ?";
+	// Generate Args
+	Object[] args = generateUpdateArgs(computer);
 	try {
-	    // Generate query
-	    String query = "UPDATE computer SET name = ?, introduced = FROM_UNIXTIME(?) , discontinued = FROM_UNIXTIME(?), company_id = ? WHERE id = ?";
-	    // Generate preparedStatement
-	    stm = connection.prepareStatement(query);
-	    stm.setString(1, computer.getName());
-	    if (computer.getIntroducedDate() != null) {
-		stm.setLong(2, computer.getIntroducedDate().getMillis() / 1000);
-	    }
-	    else
-		stm.setNull(2, Types.NULL);
-
-	    if (computer.getDiscontinuedDate() != null) {
-		stm.setLong(3, computer.getDiscontinuedDate().getMillis() / 1000);
-	    }
-	    else
-		stm.setNull(3, Types.NULL);
-
-	    if (computer.getCompany() != null)
-		stm.setLong(4, computer.getCompany().getId());
-	    else
-		stm.setNull(4, Types.NULL);
-	    stm.setLong(5, computer.getId());
-	    // Execute preparedStatement
-	    stm.executeUpdate();
+	    jdbcTemplate.update(query, args);
 	}
-	catch (SQLException e) {
+	catch (DataAccessException e) {
 	    logger.error("Failed to update {}", computer, e);
 	    throw new DAOException("Failed to update computer");
-	}
-	finally {
-	    ConnectionUtil.close(res, stm);
 	}
 
 	logger.debug("End update {}", computer);
     }
 
-    private PreparedStatement generateInsertPrepareStatement(Computer computer,
-	    Connection connection) throws SQLException {
-	// Generate query
-	String query = "INSERT INTO computer ( name , introduced , discontinued , company_id ) "
-		+ "VALUES (? , FROM_UNIXTIME(?) , FROM_UNIXTIME(?) , ?)";
-	// Generate preparedStatement
-	PreparedStatement stm = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-
-	stm.setString(1, computer.getName());
-
-	if (computer.getIntroducedDate() != null) {
-	    stm.setLong(2, computer.getIntroducedDate().getMillis() / 1000);
-	}
+    public Object[] generateCountArgs(String nameFilter) {
+	Object[] args = new Object[2];
+	String filter;
+	if (nameFilter == null)
+	    filter = "";
 	else
-	    stm.setNull(2, Types.NULL);
+	    filter = "%" + nameFilter + "%";
 
-	if (computer.getDiscontinuedDate() != null) {
-	    stm.setLong(3, computer.getDiscontinuedDate().getMillis() / 1000);
-	}
-	else
-	    stm.setNull(3, Types.NULL);
-
-	if (computer.getCompany() != null)
-	    stm.setLong(4, computer.getCompany().getId());
-	else
-	    stm.setNull(4, Types.NULL);
-	return stm;
+	args[0] = args[1] = filter;
+	return args;
     }
 
-    private PreparedStatement generateFindPrepareStatement(Page page, Connection connection)
-	    throws SQLException {
-	// Generate query
-	String query = generateFindQuery(page);
+    private Object[] generateUpdateArgs(Computer computer) {
+	Object[] args = new Object[5];
+
+	// Name
+	args[0] = computer.getName();
+
+	// Introduced date
+	if (computer.getIntroducedDate() != null) {
+	    args[1] = computer.getIntroducedDate().toDate();
+	}
+	else
+	    args[1] = null;
+
+	// Discontinued date
+	if (computer.getDiscontinuedDate() != null) {
+	    args[2] = computer.getDiscontinuedDate().toDate();
+	}
+	else
+	    args[2] = null;
+
+	// Company ID
+	Company company = computer.getCompany();
+	if (company != null)
+	    args[3] = company.getId();
+	else
+	    args[3] = null;
+
+	// Computer ID
+	args[4] = computer.getId();
+
+	// Return args
+	return args;
+    }
+
+    private Map<String, Object> generateInsertArgs(Computer computer) {
+	Map<String, Object> args = new HashMap<String, Object>();
+
+	// Name
+	args.put("name", computer.getName());
+
+	// Introduced date
+	if (computer.getIntroducedDate() != null) {
+	    args.put("introduced", computer.getIntroducedDate().toDate());
+	}
+	else
+	    args.put("introduced", null);
+
+	// Discontinued date
+	if (computer.getDiscontinuedDate() != null) {
+	    args.put("discontinued", computer.getDiscontinuedDate().toDate());
+	}
+	else
+	    args.put("discontinued", null);
+
+	// Company
+	Company company = computer.getCompany();
+	if (company != null)
+	    args.put("company_id", company.getId());
+	else
+	    args.put("company_id", null);
+
+	// Return args
+	return args;
+    }
+
+    private Object[] generateFindArgs(Page page) {
 	// Generate preparedStatement
-	int indexParam = 1;
-	PreparedStatement stm = connection.prepareStatement(query);
+	int indexArg = 0;
+	// Min args = 2 for nameFilter
+	int maxArgs = 2;
+	int limit = page.getComputerPerPage();
+	// If limit > 0 limit is an arg
+	if (limit > 0)
+	    ++maxArgs;
+	int offset = page.computeOffset();
+	// If offset >= 0 offset is an arg
+	if (offset >= 0)
+	    ++maxArgs;
+	Object[] args = new Object[maxArgs];
 
 	// NAME FILTER
 	String nameFilter = page.getNameFilter();
 	if (nameFilter == null) {
 	    nameFilter = "";
 	}
-	// FILTER ON COMPUTER NAME
-	stm.setString(indexParam++, "%" + nameFilter + "%");
-	// FILTER ON COMPANY NAME
-	stm.setString(indexParam++, "%" + nameFilter + "%");
+	// FILTER ON COMPUTER NAME + FILTER ON COMPANY NAME
+	args[indexArg++] = args[indexArg++] = "%" + nameFilter + "%";
 	// LIMIT
-	int limit = page.getComputerPerPage();
 	if (limit > 0) {
-	    stm.setInt(indexParam++, limit);
+	    args[indexArg++] = limit;
 	}
 	// OFFSET
-	int offset = page.computeOffset();
 	if (offset >= 0) {
-	    stm.setInt(indexParam++, offset);
+	    args[indexArg++] = offset;
 	}
-	return stm;
+	return args;
     }
 
     private String generateFindQuery(Page page) {
