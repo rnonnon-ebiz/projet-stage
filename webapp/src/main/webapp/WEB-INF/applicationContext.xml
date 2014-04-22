@@ -10,7 +10,7 @@ http://www.springframework.org/schema/context/spring-context-4.0.xsd">
 	<import resource="classpath:bindingContext.xml"/>
 	
 	<context:annotation-config />
-	
+		
 	<bean id="localeResolver"
 		class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
 		<property name="defaultLocale" value="en" />

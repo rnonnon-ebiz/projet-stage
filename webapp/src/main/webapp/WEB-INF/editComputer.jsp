@@ -26,12 +26,14 @@
 					code="label.name" /></label>
 			<div class="col-sm-10">
 				<div class="col-xs-2">
-					<form:input class="form-control computerName" path="name"
-						placeholder="${placeholderName}" />
+					<form:input class="form-control name"
+						placeholder="${placeholderName}" path="name" name="name" />
 				</div>
 				<span class="help-block"><spring:message
 						code="help-block.name" /></span>
-				<form:errors path="name" cssClass="has-error" />
+				<div class="col-xs-2">
+					<strong><form:errors path="name" cssClass="control-label has-error" /></strong>
+				</div>
 			</div>
 		</div>
 
@@ -42,11 +44,15 @@
 			<div class="col-sm-10">
 				<div class="col-xs-2">
 					<form:input class="form-control col-xs-2 datepicker"
-						placeholder="${placeholderDate}" path="introducedDate" />
+						placeholder="${placeholderDate}" path="introducedDate"
+						name="introducedDate" />
 				</div>
 				<span class="help-block"><spring:message
 						code="help-block.date" /></span>
-				<form:errors path="introducedDate" cssClass="has-error"></form:errors>
+				<div class="col-xs-2">
+					<strong><form:errors path="introducedDate"
+						cssClass="control-label has-error"></form:errors></strong>
+				</div>
 			</div>
 		</div>
 
@@ -57,11 +63,15 @@
 			<div class="col-sm-10">
 				<div class="col-xs-2">
 					<form:input class="form-control datepicker"
-						placeholder="${placeholderDate}" path="discontinuedDate" />
+						placeholder="${placeholderDate}" path="discontinuedDate"
+						name="discontinuedDate" />
 				</div>
 				<span class="help-block"><spring:message
 						code="help-block.date" /></span>
-				<form:errors path="discontinuedDate" cssClass="has-error"></form:errors>
+				<div class="col-xs-2">
+					<strong><form:errors path="discontinuedDate"
+						cssClass="control-label has-error"></form:errors></strong>
+				</div>
 			</div>
 		</div>
 
@@ -71,7 +81,7 @@
 					code="label.companyName" /></label>
 			<div class="col-sm-10">
 				<div class="col-xs-2">
-					<form:select class="form-control" path="company">
+					<form:select class="form-control" path="company" name="company">
 						<c:choose>
 							<c:when test="${computer.company == 'null'}">
 								<option value="null" selected="selected">--</option>
@@ -91,13 +101,15 @@
 							</c:choose>
 						</c:forEach>
 					</form:select>
-					<form:errors path="company" cssClass="has-error"></form:errors>
+					<div class="col-xs-2">
+						<strong><form:errors path="company" cssClass="control-label has-error"></form:errors></strong>
+					</div>
 				</div>
 			</div>
 		</div>
-		
+
 		<!-- Form foot -->
-		
+
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-sm-10">
 				<div class="col-xs-2">
@@ -109,8 +121,8 @@
 
 					<spring:message code="button.or" />
 
-					<a href="<spring:url value="/dashboard"/>" class="btn btn-danger"> <span
-						class="glyphicon glyphicon-remove"></span> <spring:message
+					<a href="<spring:url value="/dashboard"/>" class="btn btn-danger">
+						<span class="glyphicon glyphicon-remove"></span> <spring:message
 							code="button.cancel" />
 					</a>
 
@@ -127,26 +139,28 @@
 		$("#editComputerForm")
 				.validate(
 						{
+							errorClass: 'control-label has-error',
 							rules : {
 								name : {
 									required : true,
 									minlength : 1,
 									regex : /(^\w|^\w(\w|\s)*\w)$/,
 								},
-								introduced : {
+								introducedDate : {
 									regex : /^((19|20)\d\d+)-(0[1-9]|1[012]+)-(0[1-9]|[12][0-9]|3[01])$/,
 								},
-								discontinued : {
+								discontinuedDate : {
 									regex : /^((19|20)\d\d+)-(0[1-9]|1[012]+)-(0[1-9]|[12][0-9]|3[01])$/,
 								},
 							},
 							messages : {
-								computerName : {
-									required : "Please specify a name",
-									minlength : "Insert at least 1 char or digit shouldn't begin/end with whitespace",
+								name : {
+									required : "<spring:message code="computer.add.name.invalid"/>",
+									minlength : "<spring:message code="computer.add.name.invalid"/>",
+									regex : "<spring:message code="computer.add.name.invalid"/>",
 								},
-								introduced : "Please respect Date format",
-								discontinued : "Please respect Date format",
+								introducedDate : "<spring:message code="computer.add.introducedDate.invalid"/>",
+								discontinuedDate : "<spring:message code="computer.add.discontinuedDate.invalid"/>",
 							},
 							highlight : function(element) {
 								$(element).closest('.form-group').removeClass(

@@ -9,9 +9,7 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<groupId>fr.stage</groupId>
 	<artifactId>persistence</artifactId>
-	<version>1.0-SNAPSHOT</version>
 	<name>persistence</name>
 	<packaging>jar</packaging>
 	<url>http://maven.apache.org</url>

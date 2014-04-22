@@ -9,8 +9,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.jolbox.bonecp.BoneCPDataSource;
-
 import fr.stage.domain.Company;
 import fr.stage.exception.DAOException;
 import fr.stage.rowmapper.CompanyRowMapper;
@@ -21,7 +19,7 @@ public class CompanyDAO {
     public static final String FIND_ALL_QUERY = "SELECT id, name  FROM company";
 
     @Autowired
-    private BoneCPDataSource dataSource;
+    private JdbcTemplate jdbcTemplate;
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -30,7 +28,6 @@ public class CompanyDAO {
 
     public boolean exist(long id) throws DAOException {
 	logger.debug("Start existence check {}", id);
-	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 	boolean companyExistence = false;
 	// Generate query
@@ -55,7 +52,6 @@ public class CompanyDAO {
 
     public Company find(long id) throws DAOException {
 	logger.debug("Start find {}", id);
-	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 	Company company = null;
 	// Generate query
@@ -76,7 +72,6 @@ public class CompanyDAO {
 
     public List<Company> findAll() throws DAOException {
 	logger.debug("Start Find All");
-	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 	List<Company> companyList = null;
 	// Generate query

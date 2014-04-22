@@ -24,7 +24,13 @@ import fr.stage.rowmapper.ComputerRowMapper;
 public class ComputerDAO {
 
     @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    // Datasource used for simpleJdbcTemplate
+    @Autowired
     private BoneCPDataSource dataSource;
+
+    private SimpleJdbcInsert simpleJdbcInsert;
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -33,7 +39,6 @@ public class ComputerDAO {
 
     public boolean exist(long id) throws DAOException {
 	logger.debug("Start existence check {}", id);
-	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 	boolean computerExistence = false;
 	// Generate query
@@ -58,7 +63,6 @@ public class ComputerDAO {
 
     public int count(String nameFilter) throws DAOException {
 	logger.debug("Start count {}", nameFilter);
-	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 	int total = 0;
 	// Generate query
@@ -82,14 +86,12 @@ public class ComputerDAO {
 
     public void create(Computer computer) throws DAOException {
 	logger.debug("Start create {}", computer);
-
-	SimpleJdbcInsert insertComputer = new SimpleJdbcInsert(dataSource)
-		.withTableName("computer").usingGeneratedKeyColumns("id");
-
+	simpleJdbcInsert = new SimpleJdbcInsert(dataSource).withTableName("computer")
+		.usingGeneratedKeyColumns("id");
 	// Generate Insert Args
 	Map<String, Object> args = generateInsertArgs(computer);
 	// Execute and get generated id
-	long id = (Long) insertComputer.executeAndReturnKey(args);
+	long id = (Long) simpleJdbcInsert.executeAndReturnKey(args);
 	// Set computer id
 	computer.setId(id);
 
@@ -99,7 +101,6 @@ public class ComputerDAO {
 
     public boolean delete(Long id) throws DAOException {
 	logger.debug("Start delete {}", id);
-	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 	int nDelete = 0;
 	// Generate Query
@@ -121,7 +122,6 @@ public class ComputerDAO {
 
     public Computer find(long id) throws DAOException {
 	logger.debug("Start find {}", id);
-	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 	Computer computer = null;
 	// Generate query
@@ -144,7 +144,6 @@ public class ComputerDAO {
 
     public List<Computer> find(Page page) throws DAOException {
 	logger.debug("Start find {}", page);
-	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 	List<Computer> computersList = null;
 	// Generate query from page
@@ -165,7 +164,6 @@ public class ComputerDAO {
 
     public void update(Computer computer) throws DAOException {
 	logger.debug("Start update {}", computer);
-	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 
 	// Generate query
 	String query = "UPDATE computer SET name = ?, introduced = ? , discontinued = ?, company_id = ? WHERE id = ?";
@@ -262,8 +260,13 @@ public class ComputerDAO {
     private Object[] generateFindArgs(Page page) {
 	// Generate preparedStatement
 	int indexArg = 0;
-	// Min args = 2 for nameFilter
-	int maxArgs = 2;
+	// ** Begin Compute max args **
+	int maxArgs = 0;
+	// If there is a search it use 2 args slots
+	String nameFilter = page.getNameFilter();
+	if (nameFilter != null && !nameFilter.isEmpty()) {
+	    maxArgs = 2;
+	}
 	int limit = page.getComputerPerPage();
 	// If limit > 0 limit is an arg
 	if (limit > 0)
@@ -272,15 +275,14 @@ public class ComputerDAO {
 	// If offset >= 0 offset is an arg
 	if (offset >= 0)
 	    ++maxArgs;
+	// **End Compute max args **
 	Object[] args = new Object[maxArgs];
 
 	// NAME FILTER
-	String nameFilter = page.getNameFilter();
-	if (nameFilter == null) {
-	    nameFilter = "";
+	if (nameFilter != null && !nameFilter.isEmpty()) {
+	    // FILTER ON COMPUTER NAME + FILTER ON COMPANY NAME
+	    args[indexArg++] = args[indexArg++] = "%" + nameFilter + "%";
 	}
-	// FILTER ON COMPUTER NAME + FILTER ON COMPANY NAME
-	args[indexArg++] = args[indexArg++] = "%" + nameFilter + "%";
 	// LIMIT
 	if (limit > 0) {
 	    args[indexArg++] = limit;
@@ -296,55 +298,59 @@ public class ComputerDAO {
 	StringBuilder query = new StringBuilder();
 	query.append("SELECT cr.id as computerId, cr.name as computerName, cr.introduced, cr.discontinued, cr.company_id, cy.name as companyName FROM ");
 	query.append("computer cr LEFT JOIN company cy");
-	query.append(" ON cy.id = cr.company_id");
+	query.append(" ON cy.id = cr.company_id ");
 	// Filter By Name
-	query.append(" WHERE cr.name like ?");
-	query.append(" OR cy.name like ? ");
+	String nameFilter = page.getNameFilter();
+	if (nameFilter != null && !nameFilter.isEmpty()) {
+	    query.append("WHERE cr.name like ? ");
+	    query.append("OR cy.name like ? ");
+	}
 	// ORDER BY
+	// Tuning => Enum
 	int orderBy = page.getOrderBy();
 	switch (orderBy) {
 	case 0:// Name
 	       // ASC
-	    query.append("ORDER BY computerName ASC");
+	    query.append("ORDER BY computerName ASC ");
 	    break;
 	case 1:// Name
 	       // DESC
-	    query.append("ORDER BY computerName DESC");
+	    query.append("ORDER BY computerName DESC ");
 	    break;
 	case 2:// Introduced
 	       // ASC
-	    query.append("ORDER BY cr.introduced ASC");
+	    query.append("ORDER BY cr.introduced ASC ");
 	    break;
 	case 3:// Introduced
 	       // DESC
-	    query.append("ORDER BY cr.introduced DESC");
+	    query.append("ORDER BY cr.introduced DESC ");
 	    break;
 	case 4:// discontinued
 	       // ASC
-	    query.append("ORDER BY cr.discontinued ASC");
+	    query.append("ORDER BY cr.discontinued ASC ");
 	    break;
 	case 5:// discontinued
 	       // DESC
-	    query.append("ORDER BY cr.discontinued DESC");
+	    query.append("ORDER BY cr.discontinued DESC ");
 	    break;
 	case 6:// companyName
 	       // ASC
-	    query.append("ORDER BY companyName ASC");
+	    query.append("ORDER BY companyName ASC ");
 	    break;
 	case 7:// companyName
 	       // DESC
-	    query.append("ORDER BY companyName DESC");
+	    query.append("ORDER BY companyName DESC ");
 	    break;
 	}
 	// LIMIT
 	int limit = page.getComputerPerPage();
 	if (limit > 0) {
-	    query.append(" LIMIT ?");
+	    query.append("LIMIT ? ");
 	}
 	// OFFSET
 	int offset = page.computeOffset();
 	if (offset >= 0) {
-	    query.append(" OFFSET ?");
+	    query.append("OFFSET ? ");
 	}
 	return query.toString();
     }

@@ -31,13 +31,13 @@ public class ComputerMapper {
 	    computer.setName(computerDTO.getName());
 	    // Fill Introduced Date
 	    String introducedString = computerDTO.getIntroducedDate();
-	    if (introducedString != null && !"".equals(introducedString)) {
+	    if (introducedString != null && !introducedString.isEmpty()) {
 		DateTime introduced = DateUtil.stringToDate(introducedString, DATE_PATTERN_EN);
 		computer.setIntroducedDate(introduced);
 	    }
 	    // Fill Discontinued Date
 	    String discontinuedString = computerDTO.getDiscontinuedDate();
-	    if (introducedString != null && !"".equals(discontinuedString)) {
+	    if (introducedString != null && !discontinuedString.isEmpty()) {
 		DateTime discontinued = DateUtil.stringToDate(discontinuedString, DATE_PATTERN_EN);
 		computer.setDiscontinuedDate(discontinued);
 	    }

@@ -6,8 +6,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.jolbox.bonecp.BoneCPDataSource;
-
 import fr.stage.exception.DAOException;
 import fr.stage.util.LogType;
 
@@ -15,7 +13,7 @@ import fr.stage.util.LogType;
 public class LogDAO {
 
     @Autowired
-    private BoneCPDataSource dataSource;
+    private JdbcTemplate jdbcTemplate;
 
     public static String logQuery = "INSERT INTO LOGS (date, logger, level, message) VALUES (?, ?, ?, ?)";
 
@@ -56,7 +54,6 @@ public class LogDAO {
     }
 
     private void log(LogType type, String message) throws DAOException {
-	JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 	// Generate args
 	Object[] args = generateInsertArgs(type, message);
 	try {

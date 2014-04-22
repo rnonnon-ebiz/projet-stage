@@ -26,17 +26,38 @@
 		<service.version>1.0-SNAPSHOT</service.version>
 		<binding.version>1.0-SNAPSHOT</binding.version>
 		<webapp.version>1.0-SNAPSHOT</webapp.version>
+		<hibernate-entitymanager.version>4.3.5.Final</hibernate-entitymanager.version>
+		<jcl-over-slf4j.version>1.7.7</jcl-over-slf4j.version>
+		<log4j-over-slf4j.version>1.7.7</log4j-over-slf4j.version>
 	</properties>
 
 	<!-- Unmanaged dependencies : -->
-	<!-- SL4J to Log -->
 	<dependencies>
+		<!-- LOG path with bridge : JCL -> SLF4J -> LOG4J -->
+		<!-- Log4J for logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j-log4j12.version}</version>
+			<scope>compile</scope>
+			<!-- Exclusion for bridge use -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- SLF4J Bridge -->
+		<!-- JCL -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${jcl-over-slf4j.version}</version>
+			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
+
 
 	<!-- Managed dependencies : -->
 	<dependencyManagement>
@@ -46,6 +67,12 @@
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-webmvc</artifactId>
 				<version>${spring.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<!-- Spring Transaction -->
@@ -60,6 +87,19 @@
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-jdbc</artifactId>
 				<version>${spring.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<!-- Hibernate JPA -->
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-entitymanager</artifactId>
+				<version>${hibernate-entitymanager.version}</version>
 			</dependency>
 
 			<!-- Hibernate Validator -->
@@ -70,11 +110,13 @@
 			</dependency>
 
 			<!-- Joda-Time to manage dates -->
+			<!-- From back -->
 			<dependency>
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time</artifactId>
 				<version>${joda-time.version}</version>
 			</dependency>
+			<!-- From front -->
 			<dependency>
 				<groupId>joda-time</groupId>
 				<artifactId>joda-time-jsptags</artifactId>
@@ -86,6 +128,12 @@
 				<groupId>com.jolbox</groupId>
 				<artifactId>bonecp</artifactId>
 				<version>${bonecp.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-api</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<!-- MySql for Database connection -->
@@ -132,7 +180,7 @@
 	</dependencyManagement>
 
 	<build>
-<!-- 		<finalName>projet-stageWebApp</finalName> -->
+		<!-- <finalName>projet-stageWebApp</finalName> -->
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

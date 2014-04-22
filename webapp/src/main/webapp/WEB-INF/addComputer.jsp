@@ -21,11 +21,13 @@
 			<label class="col-sm-2 control-label" for="name"><spring:message code="label.name"/></label>
 			<div class="col-sm-10">
 				<div class="col-xs-2">
-					<form:input class="form-control computerName" path="name"
-						placeholder="${placeholderName}" />
+					<form:input class="form-control" 
+						placeholder="${placeholderName}" path="name" name="name"/>
 				</div>
 				<span class="help-block"><spring:message code="help-block.name"/></span>
-				<form:errors path="name" cssClass="has-error"/>
+				<div class="col-xs-2">
+					<strong><form:errors path="name" cssClass="control-label has-error"/></strong>
+				</div>
 			</div>
 		</div>
 		
@@ -34,11 +36,13 @@
 			<label class="col-sm-2 control-label" for="introduced"><spring:message code="label.introduced"/></label>
 			<div class="col-sm-10">
 				<div class="col-xs-2">
-					<form:input class="form-control col-xs-2 datepicker"
-						placeholder="${placeholderDate}" path="introducedDate" />
+					<form:input class="form-control datepicker"
+						placeholder="${placeholderDate}" path="introducedDate" name="introducedDate" />
 				</div>
 				<span class="help-block"><spring:message code="help-block.date"/></span>
-				<form:errors path="introducedDate" cssClass="has-error"></form:errors>
+				<div class="col-xs-2">
+					<strong><form:errors path="introducedDate" cssClass="control-label has-error"></form:errors></strong>
+				</div>
 			</div>
 		</div>
 		
@@ -48,10 +52,12 @@
 			<div class="col-sm-10">
 				<div class="col-xs-2">
 					<form:input class="form-control datepicker"
-						placeholder="${placeholderDate}" path="discontinuedDate" />
+						placeholder="${placeholderDate}" path="discontinuedDate" name="discontinuedDate"/>
 				</div>
 				<span class="help-block"><spring:message code="help-block.date"/></span>
-				<form:errors path="discontinuedDate" cssClass="has-error"></form:errors>
+				<div class="col-xs-2">
+					<strong><form:errors path="discontinuedDate" cssClass="control-label has-error"></form:errors></strong>
+				</div>
 			</div>
 		</div>
 		
@@ -60,7 +66,7 @@
 			<label class="col-sm-2 control-label" for="company"><spring:message code="label.companyName"/></label>
 			<div class="col-sm-10">
 				<div class="col-xs-2">
-					<form:select class="form-control" path="company">
+					<form:select class="form-control" path="company" name="company">
 						<c:choose>
 							<c:when test="${computer.company == 'null'}">
 								<option value="null" selected="selected">--</option>
@@ -80,7 +86,9 @@
 							</c:choose>
 						</c:forEach>
 					</form:select>
-					<form:errors path="company" cssClass="has-error"></form:errors>
+					<div class="col-xs-2">
+						<strong><form:errors path="company" cssClass="control-label has-error"></form:errors></strong>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -111,6 +119,7 @@
 		$("#addComputerForm")
 				.validate(
 						{
+							errorClass: 'control-label has-error',
 							rules : {
 								name : {
 									required : true,
@@ -126,11 +135,12 @@
 							},
 							messages : {
 								name : {
-									required : "Please specify a name",
-									minlength : "Insert at least 1 char or digit shouldn't begin/end with whitespace",
+									required : "<spring:message code="computer.add.name.invalid"/>",
+									minlength : "<spring:message code="computer.add.name.invalid"/>",
+									regex : "<spring:message code="computer.add.name.invalid"/>",
 								},
-								introducedDate : "Please respect Date format",
-								discontinuedDate : "Please respect Date format",
+								introducedDate : "<spring:message code="computer.add.introducedDate.invalid"/>",
+								discontinuedDate : "<spring:message code="computer.add.discontinuedDate.invalid"/>",
 							},
 							highlight : function(element) {
 								$(element).closest('.form-group').removeClass(

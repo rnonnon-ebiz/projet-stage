@@ -50,53 +50,6 @@ public class ComputerCreationValidator implements Validator {
 	}
     }
 
-    /*
-     * Error Code : 
-     *  1 : ComputerDTO is null
-     *  2 : Name is null or empty
-     *  4 : Introduced incorrectly formatted or doesn't exist
-     *  8 : Discontinued incorrectly formatted or doesn't exist
-     *  16 : Company doesn't exist
-     *  32 : Computer doesn't exist (id error)
-     */
-    // @Override
-    // public void validate(Object target, Errors errors) {
-    // if (computerDTO != null) {
-    // // Valid Name
-    // if (!validName(computerDTO.getName())) {
-    //
-    // }
-    // // Valid Introduced Date
-    // if (!validDate(computerDTO.getIntroducedDate())) {
-    //
-    // }
-    // // Valid Discontinued Date
-    // if (!validDate(computerDTO.getDiscontinuedDate())) {
-    //
-    // }
-    // // Valid Company
-    // if (!validCompany(computerDTO.getCompany())) {
-    //
-    // }
-    // // Valid Id
-    // if (!existId(computerDTO.getId())) {
-    //
-    // }
-    // }
-    // }
-
-    // public boolean existId(String idString) {
-    // boolean exist = false;
-    // String regex = "^\\d\\d*$";
-    // // It should be match the regexp to be valid
-    // if (idString != null && idString.matches(regex)) {
-    // long id = Long.parseLong(idString);
-    // // And Should exist in DB
-    // exist = computerService.exist(id);
-    // }
-    // return exist;
-    // }
-
     public static boolean validName(String name) {
 	boolean valid = false;
 	// Name should be at least 1 char or digit end should start/end with
@@ -129,7 +82,7 @@ public class ComputerCreationValidator implements Validator {
      */
     public static boolean validDate(String date) {
 	boolean valid = false;
-	if (date == null || "".equals(date)) {
+	if (date == null || date.isEmpty()) {
 	    valid = true;
 	}
 	else {

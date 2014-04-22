@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -67,7 +67,7 @@ public class EditComputer {
 
     // To access Messages_locale.properties
     @Autowired
-    ReloadableResourceBundleMessageSource messageSource;
+    ResourceBundleMessageSource messageSource;
 
     // To manipulate the cookie to get the locale
     @Autowired
