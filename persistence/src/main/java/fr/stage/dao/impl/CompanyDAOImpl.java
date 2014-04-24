@@ -1,89 +1,72 @@
 package fr.stage.dao.impl;
 
+import java.util.Iterator;
 import java.util.List;
 
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import fr.stage.dao.CompanyDAO;
 import fr.stage.domain.Company;
 import fr.stage.exception.DAOException;
-import fr.stage.rowmapper.CompanyRowMapper;
 
 @Repository
 public class CompanyDAOImpl implements CompanyDAO {
 
-    public static final String FIND_ALL_QUERY = "SELECT id, name  FROM company";
-
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    SessionFactory sessionFactory;
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public CompanyDAOImpl() {
     }
 
+    @Override
     public boolean exist(long id) throws DAOException {
 	logger.debug("Start existence check {}", id);
 
 	boolean companyExistence = false;
 	// Generate query
-	String query = "SELECT id  FROM company WHERE id = ?";
-	// Generate args
-	Object[] args = { id };
+	String query = "SELECT id FROM Company WHERE id = :id";
 
-	try {
-	    Long idFound = jdbcTemplate.queryForObject(query, Long.class, args);
-	    if (idFound != null) {
-		companyExistence = true;
-	    }
-	}
-	catch (DataAccessException e) {
-	    logger.error("Failed to check existence", e);
-	    throw new DAOException("Failed to check existence");
+	Iterator iterator = sessionFactory.getCurrentSession().createQuery(query).setLong("id", id).iterate();
+	if(iterator.hasNext()){
+	    companyExistence = true;
 	}
 
 	logger.debug("End existence check {}", id);
 	return companyExistence;
     }
 
+    @Override
     public Company find(long id) throws DAOException {
 	logger.debug("Start find {}", id);
 
 	Company company = null;
 	// Generate query
-	String query = "SELECT id, name  FROM company WHERE id = ?";
-	// Generate args
-	Object[] args = { id };
-	try {
-	    company = jdbcTemplate.queryForObject(query, args, new CompanyRowMapper());
-	}
-	catch (DataAccessException e) {
-	    logger.error("Failed to find", e);
-	    throw new DAOException("Failed to find company");
+	String query = "FROM Company WHERE id = :id";
+
+	Iterator<Company> iterator = sessionFactory.getCurrentSession().createQuery(query).setLong("id", id).iterate();
+	if(iterator.hasNext()) {
+	    company = iterator.next();
 	}
 
 	logger.debug("End find {}", id);
 	return company;
     }
 
+    @Override
     public List<Company> findAll() throws DAOException {
 	logger.debug("Start Find All");
 
 	List<Company> companyList = null;
 	// Generate query
-	String query = "SELECT id, name  FROM company";
-	try {
-	    companyList = jdbcTemplate.query(query, new CompanyRowMapper());
-	}
-	catch (DataAccessException e) {
-	    logger.error("Failed to findAll", e);
-	    throw new DAOException("Failed to find Companies");
-	}
+	String query = "FROM Company";
+
+	companyList = sessionFactory.getCurrentSession().createQuery(query).list();
 
 	logger.debug("End Find All");
 	return companyList;

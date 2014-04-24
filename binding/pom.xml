@@ -57,6 +57,17 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>fr.stage</groupId>
+			<artifactId>persistence</artifactId>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<!-- END Compile Scope : -->
 		
 		<!-- START Runtime Scope : -->

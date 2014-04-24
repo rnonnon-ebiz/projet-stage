@@ -1,17 +1,45 @@
 package fr.stage.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+@Entity
+@Table(name = "computer")
+//@NamedQueries({ 
+//    @NamedQuery(name="computer.countFilter", query="SELECT COUNT(*) FROM computer cr LEFT JOIN company cy ON cy.id = cr.company_id "
+//	    + "WHERE cr.name like :nameFilter OR cy.name like :nameFilter "),
+//	    @NamedQuery(name="computer.countAll", query="SELECT COUNT(*) FROM computer cr LEFT JOIN company cy ON cy.id = cr.company_id"),
+//})
 public class Computer {
 
+    @Id
+    @GeneratedValue(generator="increment")
+    @GenericGenerator(name="increment", strategy = "increment")
     private Long id;
 
+    @Column(name = "name", nullable=false)
     private String name;
 
+    @Column(name = "introduced", nullable=true)
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime introducedDate;
 
+    @Column(name = "discontinued", nullable=true)
+    @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime discontinuedDate;
 
+    @ManyToOne(fetch=FetchType.EAGER) 
+    @JoinColumn(name = "company_id", nullable=true)
     private Company company;
 
     public Computer() {
@@ -88,46 +116,58 @@ public class Computer {
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj)
+	if (this == obj) {
 	    return true;
-	if (obj == null)
+	}
+	if (obj == null) {
 	    return false;
-	if (getClass() != obj.getClass())
+	}
+	if (getClass() != obj.getClass()) {
 	    return false;
+	}
 	Computer other = (Computer) obj;
 	if (company == null) {
-	    if (other.company != null)
+	    if (other.company != null) {
 		return false;
+	    }
 	}
-	else if (!company.equals(other.company))
+	else if (!company.equals(other.company)) {
 	    return false;
+	}
 	if (discontinuedDate == null) {
-	    if (other.discontinuedDate != null)
+	    if (other.discontinuedDate != null) {
 		return false;
+	    }
 	}
-	else if (!discontinuedDate.equals(other.discontinuedDate))
+	else if (!discontinuedDate.equals(other.discontinuedDate)) {
 	    return false;
-	if (id != other.id)
+	}
+	if (id != other.id) {
 	    return false;
+	}
 	if (introducedDate == null) {
-	    if (other.introducedDate != null)
+	    if (other.introducedDate != null) {
 		return false;
+	    }
 	}
-	else if (!introducedDate.equals(other.introducedDate))
+	else if (!introducedDate.equals(other.introducedDate)) {
 	    return false;
+	}
 	if (name == null) {
-	    if (other.name != null)
+	    if (other.name != null) {
 		return false;
+	    }
 	}
-	else if (!name.equals(other.name))
+	else if (!name.equals(other.name)) {
 	    return false;
+	}
 	return true;
     }
 
     @Override
     public String toString() {
 	return "Computer [id=" + id + ", name=" + name + ", introducedDate=" + introducedDate
-		+ ", discontinuedDate=" + discontinuedDate + ", company=" + company + "]";
+		+ ", discontinuedDate=" + discontinuedDate + ", company="  + "]";
     }
 
 }

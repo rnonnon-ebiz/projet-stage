@@ -26,16 +26,5 @@
     	<name>pagination</name>
     	<path>/WEB-INF/tags/pagination.tag</path>
     </tag-file>
-    
-    <function>
-    	 <name>byteAnd</name>
-    	 <function-class>fr.stage.util.BitOperator</function-class>
-    	 <function-signature>byte byteAnd(byte,byte)</function-signature>
-    </function>
-    <function>
-    	 <name>byteEquals</name>
-    	 <function-class>fr.stage.util.BitOperator</function-class>
-    	 <function-signature>byte byteEquals(byte,byte)</function-signature>
-    </function>
-    
+       
 </taglib>

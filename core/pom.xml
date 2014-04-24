@@ -24,6 +24,21 @@
 			<artifactId>joda-time</artifactId>
 			<scope>compile</scope>
 		</dependency>
+
+		<!-- Hibernate Core -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- Jadira for DateType to persist with hibernate -->
+		<dependency>
+			<groupId>org.jadira.usertype</groupId>
+			<artifactId>usertype.core</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		
 		<!-- END Compile Scope : -->
 	</dependencies>
 </project>

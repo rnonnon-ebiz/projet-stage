@@ -27,7 +27,7 @@ public class ComputerServiceImpl implements ComputerService {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Transactional(readOnly = true)
+    @Override
     public int count(String nameFilter) throws DAOException {
 	logger.debug("Start count");
 
@@ -38,6 +38,7 @@ public class ComputerServiceImpl implements ComputerService {
 	return total;
     }
 
+    @Override
     @Transactional(readOnly = false)
     public void create(Computer computer) throws DAOException {
 	logger.debug("Start Create Transaction");
@@ -51,7 +52,7 @@ public class ComputerServiceImpl implements ComputerService {
     }
 
     // Find By ID
-    @Transactional(readOnly = true)
+    @Override
     public Computer find(long id) throws DAOException {
 	logger.debug("Start find by id");
 
@@ -63,7 +64,7 @@ public class ComputerServiceImpl implements ComputerService {
     }
 
     // Find By Page Parameters
-    @Transactional(readOnly = true)
+    @Override
     public List<Computer> find(Page page) throws DAOException {
 	logger.debug("Start find by Page");
 
@@ -74,6 +75,7 @@ public class ComputerServiceImpl implements ComputerService {
 	return res;
     }
 
+    @Override
     @Transactional(readOnly = false)
     public void update(Computer computer) throws DAOException {
 	logger.debug("Start Update Transaction");
@@ -86,6 +88,7 @@ public class ComputerServiceImpl implements ComputerService {
 	logger.debug("End Update Transaction");
     }
 
+    @Override
     @Transactional(readOnly = false)
     public boolean delete(Long id) throws DAOException {
 	logger.debug("Start Delete Transaction");

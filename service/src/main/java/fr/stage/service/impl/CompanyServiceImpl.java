@@ -2,9 +2,11 @@ package fr.stage.service.impl;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import fr.stage.dao.impl.CompanyDAOImpl;
 import fr.stage.domain.Company;
@@ -18,20 +20,23 @@ public class CompanyServiceImpl implements CompanyService {
     @Autowired
     CompanyDAOImpl companyDAO;
 
+    @Autowired
+    SessionFactory sessionFactory;
+
     // Check if company exists
-    @Transactional(readOnly = true)
+    @Override
     public boolean exist(long id) throws DAOException {
 	return companyDAO.exist(id);
     }
 
     // Find company by id
-    @Transactional(readOnly = true)
+    @Override
     public Company find(long id) throws DAOException {
 	return companyDAO.find(id);
     }
 
     // Find all companies in DB
-    @Transactional(readOnly = true)
+    @Override
     public List<Company> findAll() throws DAOException {
 	return companyDAO.findAll();
     }

@@ -32,7 +32,8 @@
 				<span class="help-block"><spring:message
 						code="help-block.name" /></span>
 				<div class="col-xs-2">
-					<strong><form:errors path="name" cssClass="control-label has-error" /></strong>
+					<strong><form:errors path="name"
+							cssClass="control-label has-error" /></strong>
 				</div>
 			</div>
 		</div>
@@ -51,7 +52,7 @@
 						code="help-block.date" /></span>
 				<div class="col-xs-2">
 					<strong><form:errors path="introducedDate"
-						cssClass="control-label has-error"></form:errors></strong>
+							cssClass="control-label has-error"></form:errors></strong>
 				</div>
 			</div>
 		</div>
@@ -70,7 +71,7 @@
 						code="help-block.date" /></span>
 				<div class="col-xs-2">
 					<strong><form:errors path="discontinuedDate"
-						cssClass="control-label has-error"></form:errors></strong>
+							cssClass="control-label has-error"></form:errors></strong>
 				</div>
 			</div>
 		</div>
@@ -102,7 +103,8 @@
 						</c:forEach>
 					</form:select>
 					<div class="col-xs-2">
-						<strong><form:errors path="company" cssClass="control-label has-error"></form:errors></strong>
+						<strong><form:errors path="company"
+								cssClass="control-label has-error"></form:errors></strong>
 					</div>
 				</div>
 			</div>
@@ -131,46 +133,46 @@
 		</div>
 	</form:form>
 	<script>
-		$.validator.addMethod("regex", function(value, element, regexp) {
-			var re = new RegExp(regexp);
-			return this.optional(element) || re.test(value);
-		}, "Please respect format");
+	$.validator.addMethod("regex", function(value, element, regexp) {
+	    var re = new RegExp(regexp);
+	    return this.optional(element) || re.test(value);
+	}, "Please respect format");
 
-		$("#editComputerForm")
-				.validate(
-						{
-							errorClass: 'control-label has-error',
-							rules : {
-								name : {
-									required : true,
-									minlength : 1,
-									regex : /(^\w|^\w(\w|\s)*\w)$/,
-								},
-								introducedDate : {
-									regex : /^((19|20)\d\d+)-(0[1-9]|1[012]+)-(0[1-9]|[12][0-9]|3[01])$/,
-								},
-								discontinuedDate : {
-									regex : /^((19|20)\d\d+)-(0[1-9]|1[012]+)-(0[1-9]|[12][0-9]|3[01])$/,
-								},
-							},
-							messages : {
-								name : {
-									required : "<spring:message code="computer.add.name.invalid"/>",
-									minlength : "<spring:message code="computer.add.name.invalid"/>",
-									regex : "<spring:message code="computer.add.name.invalid"/>",
-								},
-								introducedDate : "<spring:message code="computer.add.introducedDate.invalid"/>",
-								discontinuedDate : "<spring:message code="computer.add.discontinuedDate.invalid"/>",
-							},
-							highlight : function(element) {
-								$(element).closest('.form-group').removeClass(
-										'has-success').addClass('has-error');
-							},
-							unhighlight : function(element) {
-								$(element).closest('.form-group').removeClass(
-										'has-error').addClass('has-success');
-							}
-						});
-	</script>
+	$("#editComputerForm")
+		.validate(
+			{
+			    errorClass : 'control-label has-error',
+			    rules : {
+				name : {
+				    required : true,
+				    minlength : 1,
+				    regex : /(^\w|^\w(\w|\s)*\w)$/,
+				},
+				introducedDate : {
+				    regex : /^((19|20)\d\d+)-(0[1-9]|1[012]+)-(0[1-9]|[12][0-9]|3[01])$/,
+				},
+				discontinuedDate : {
+				    regex : /^((19|20)\d\d+)-(0[1-9]|1[012]+)-(0[1-9]|[12][0-9]|3[01])$/,
+				},
+			    },
+			    messages : {
+				name : {
+				    required : "<spring:message code="computer.add.name.invalid"/>",
+				    minlength : "<spring:message code="computer.add.name.invalid"/>",
+				    regex : "<spring:message code="computer.add.name.invalid"/>",
+				},
+				introducedDate : "<spring:message code="computer.add.introducedDate.invalid"/>",
+				discontinuedDate : "<spring:message code="computer.add.discontinuedDate.invalid"/>",
+			    },
+			    highlight : function(element) {
+				$(element).closest('.form-group').removeClass(
+					'has-success').addClass('has-error');
+			    },
+			    unhighlight : function(element) {
+				$(element).closest('.form-group').removeClass(
+					'has-error').addClass('has-success');
+			    }
+			});
+    </script>
 </section>
 <jsp:include page="include/footer.jsp" />

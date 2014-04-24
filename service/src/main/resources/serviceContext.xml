@@ -13,12 +13,6 @@ http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
 
 	<context:annotation-config />
 
-	<!-- Transaction Config -->
-	<bean id="txManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource" />
-	</bean>
-
 	<tx:annotation-driven transaction-manager="txManager" />
 
 	<!-- Scan -->

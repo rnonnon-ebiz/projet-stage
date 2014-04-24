@@ -1,9 +1,15 @@
 package fr.stage.dao.impl;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.hibernate.SessionFactory;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import fr.stage.dao.LogDAO;
@@ -12,11 +18,84 @@ import fr.stage.util.LogType;
 
 @Repository
 public class LogDAOImpl implements LogDAO {
+    @Entity
+    @Table(name = "LOGS")
+    private class Log{
+	@Id
+	@GeneratedValue(generator="increment")
+	@GenericGenerator(name="increment", strategy = "increment")
+	private Long id;
+
+	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+	private DateTime date;
+
+	private String logger;
+
+	private String level;
+
+	private String message;
+
+	public Log(){
+	    date = new DateTime();
+	}
+
+	public Log(DateTime date, String logger, String level, String message ){
+	    this.date = date;
+	    this.logger = logger;
+	    this.level = level;
+	    this.message = message;
+	}
+
+	public Log(String logger, String level, String message ){
+	    this.date = new DateTime();
+	    this.logger = logger;
+	    this.level = level;
+	    this.message = message;
+	}
+
+
+	public DateTime getDate() {
+	    return date;
+	}
+
+
+	public void setDate(DateTime date) {
+	    this.date = date;
+	}
+
+
+	public String getLogger() {
+	    return logger;
+	}
+
+
+	public void setLogger(String logger) {
+	    this.logger = logger;
+	}
+
+
+	public String getLevel() {
+	    return level;
+	}
+
+
+	public void setLevel(String level) {
+	    this.level = level;
+	}
+
+
+	public String getMessage() {
+	    return message;
+	}
+
+
+	public void setMessage(String message) {
+	    this.message = message;
+	}
+    }
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    public static String logQuery = "INSERT INTO LOGS (date, logger, level, message) VALUES (?, ?, ?, ?)";
+    SessionFactory sessionFactory;
 
     public LogDAOImpl() {
     }
@@ -38,44 +117,27 @@ public class LogDAOImpl implements LogDAO {
 	return name;
     }
 
+    @Override
     public void logError(String message) throws DAOException {
 	log(LogType.ERROR, message);
     }
 
+    @Override
     public void logInfo(String message) throws DAOException {
 	log(LogType.INFO, message);
     }
 
+    @Override
     public void logWarning(String message) throws DAOException {
 	log(LogType.WARN, message);
     }
 
+    @Override
     public void logFatal(String message) throws DAOException {
 	log(LogType.FATAL, message);
     }
 
     private void log(LogType type, String message) throws DAOException {
-	// Generate args
-	Object[] args = generateInsertArgs(type, message);
-	try {
-	    jdbcTemplate.update(logQuery, args);
-	}
-	catch (DataAccessException e) {
-	    throw new DAOException("Failed to log");
-	}
-    }
-
-    private Object[] generateInsertArgs(LogType type, String message) {
-	Object[] args = new Object[4];
-	// Set Date
-	args[0] = new DateTime().toDate();
-	// Set Caller class
-	String caller = getCallerClassName();
-	args[1] = caller;
-	// Set Error Type
-	args[2] = type.toString();
-	// Set Message
-	args[3] = message;
-	return args;
+	sessionFactory.getCurrentSession().persist(new Log(getCallerClassName(), type.toString(), message));
     }
 }
