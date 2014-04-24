@@ -129,7 +129,7 @@ public class ComputerDAOImpl implements ComputerDAO {
     public List<Computer> find(Page page) throws DAOException {
 	logger.debug("Start find {}", page);
 
-	List<Computer> computersList = null;
+	List<Computer> computersList;
 	// Generate query from page
 	String query = generateFindQuery(page);
 	Query queryObject;
