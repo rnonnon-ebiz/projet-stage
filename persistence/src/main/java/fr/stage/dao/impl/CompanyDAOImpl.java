@@ -1,9 +1,10 @@
 package fr.stage.dao.impl;
 
-import java.util.Iterator;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +31,12 @@ public class CompanyDAOImpl implements CompanyDAO {
 
 	boolean companyExistence = false;
 	// Generate query
-	String query = "SELECT id FROM Company WHERE id = :id";
 
-	Iterator iterator = sessionFactory.getCurrentSession().createQuery(query).setLong("id", id).iterate();
-	if(iterator.hasNext()){
+	Criteria critQuery = sessionFactory.getCurrentSession().createCriteria(Company.class);
+	critQuery.add(Restrictions.eq("id",id));
+
+	Company company = (Company)critQuery.uniqueResult();
+	if(company != null){
 	    companyExistence = true;
 	}
 
@@ -47,12 +50,10 @@ public class CompanyDAOImpl implements CompanyDAO {
 
 	Company company = null;
 	// Generate query
-	String query = "FROM Company WHERE id = :id";
+	Criteria critQuery = sessionFactory.getCurrentSession().createCriteria(Company.class);
+	critQuery.add(Restrictions.eq("id",id));
 
-	Iterator<Company> iterator = sessionFactory.getCurrentSession().createQuery(query).setLong("id", id).iterate();
-	if(iterator.hasNext()) {
-	    company = iterator.next();
-	}
+	company = (Company) critQuery.uniqueResult();
 
 	logger.debug("End find {}", id);
 	return company;
@@ -64,9 +65,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 
 	List<Company> companyList = null;
 	// Generate query
-	String query = "FROM Company";
-
-	companyList = sessionFactory.getCurrentSession().createQuery(query).list();
+	companyList = sessionFactory.getCurrentSession().createCriteria(Company.class).list();
 
 	logger.debug("End Find All");
 	return companyList;

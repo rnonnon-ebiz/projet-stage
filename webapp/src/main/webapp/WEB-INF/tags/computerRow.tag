@@ -22,7 +22,7 @@
 		<form method="get" action="editComputer" style="display: inline;">
 			<input type="hidden" name="id" value="${computer.id}" />
 			<button type="submit" class="btn btn-info"
-				onclick="return edit(${computer.id})">
+				onclick="setCookie(); return edit(${computer.id})">
 				<span class="glyphicon glyphicon-pencil"></span>
 				<spring:message code="button.edit" />
 			</button>
@@ -32,7 +32,7 @@
 			<input type="hidden" name="id" value="${computer.id}" />
 
 			<button type="submit" type="button" class="btn btn-danger"
-				onClick="return confirm('<spring:message code="confirm.delete"/>') ">
+				onClick="setCookie(); return confirm('<spring:message code="confirm.delete"/>') ">
 
 				<span class="glyphicon glyphicon-remove"></span>
 				<spring:message code="button.delete" />

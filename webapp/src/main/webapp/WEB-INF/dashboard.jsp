@@ -32,7 +32,7 @@
 			<input type="search" id="searchbox" name="search"
 				value="<c:out value="${page.nameFilter}"/>"
 				placeholder="<spring:message code="searchName"/>" />
-			<button type="submit" id="searchsubmit" class="btn btn-default">
+			<button type="submit" id="searchsubmit" class="btn btn-default" onclick="setCookie()">
 				<span class="glyphicon glyphicon-search"></span>
 				<spring:message code="filterByName" />
 			</button>

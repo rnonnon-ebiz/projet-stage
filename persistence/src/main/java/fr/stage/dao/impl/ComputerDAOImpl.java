@@ -1,10 +1,13 @@
 package fr.stage.dao.impl;
 
-import java.util.Iterator;
 import java.util.List;
 
-import org.hibernate.Query;
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,23 +22,18 @@ import fr.stage.exception.DAOException;
 public class ComputerDAOImpl implements ComputerDAO {
     //Enum used for ordering instead of a big switch
     private enum OrderEnum{
-	crNameASC("cr.name ASC "),crNameDESC("cr.name DESC "),introASC("cr.introducedDate ASC "),introDESC("cr.introducedDate DESC "),
-	discASC("cr.discontinuedDate ASC "),discDESC("cr.discontinuedDate DESC "),cyNameASC("cy.name ASC "),cyNameDESC("cy.name DESC ");
+	crNameASC(Order.asc("cr.name")),crNameDESC(Order.desc("cr.name")),introASC(Order.asc("cr.introducedDate")),introDESC(Order.desc("cr.introducedDate")),
+	discASC(Order.asc("cr.discontinuedDate")),discDESC(Order.desc("cr.discontinuedDate")),cyNameASC(Order.asc("cy.name")),cyNameDESC(Order.desc("cy.name"));
 
-	private String text;
+	private Order order;
 
-	private OrderEnum(String text){
-	    this.setText(text);
+	private OrderEnum(Order order){
+	    this.order = order;
 	}
 
-	public String getText() {
-	    return text;
+	public Order getOrder() {
+	    return order;
 	}
-
-	public void setText(String text) {
-	    this.text = text;
-	}
-
     }
     @Autowired
     SessionFactory sessionFactory;
@@ -51,10 +49,11 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 	boolean computerExistence = false;
 	// Generate query
-	String query = "SELECT id FROM Computer WHERE id = :id";
+	Criteria critQuery = sessionFactory.getCurrentSession().createCriteria(Computer.class);
+	critQuery.add(Restrictions.eq("id",id));
 
-	Iterator iterator = sessionFactory.getCurrentSession().createQuery(query).setLong("id", id).iterate();
-	if(iterator.hasNext()){
+	Computer computer = (Computer)critQuery.uniqueResult();
+	if(computer != null){
 	    computerExistence = true;
 	}
 
@@ -66,18 +65,23 @@ public class ComputerDAOImpl implements ComputerDAO {
     public int count(String nameFilter) throws DAOException {
 	logger.debug("Start count {}", nameFilter);
 
+	long total = 0L;
 	// Generate query
-	StringBuilder query = new StringBuilder("SELECT COUNT(*) FROM Computer cr LEFT JOIN cr.company cy ");
-	Query queryObject;
+	Criteria critQuery = sessionFactory.getCurrentSession().createCriteria(Computer.class, "cr");
+	critQuery.createAlias("company", "cy", JoinType.LEFT_OUTER_JOIN);
 	// Condition
 	if(nameFilter != null && !nameFilter.isEmpty()) {
-	    query.append("WHERE cr.name like :nameFilter OR cy.name like :nameFilter ");
-	    queryObject = sessionFactory.getCurrentSession().createQuery(query.toString()).setString("nameFilter", "%"+nameFilter+"%");
+	    String restrictionName = "%"+nameFilter+"%";
+	    critQuery.add(Restrictions.or(
+		    Restrictions.like("cr.name", restrictionName),
+		    Restrictions.like("cy.name", restrictionName))
+		    );
 	}
-	else{
-	    queryObject = sessionFactory.getCurrentSession().createQuery(query.toString());
+	critQuery.setProjection(Projections.rowCount());
+	List computers = critQuery.list();
+	if(computers != null){
+	    total = (long)(computers.get(0));
 	}
-	long total = (long) queryObject.list().get(0);
 
 	logger.debug("End count {}", nameFilter);
 	return (int)total;
@@ -88,7 +92,6 @@ public class ComputerDAOImpl implements ComputerDAO {
     public void create(Computer computer) throws DAOException {
 	logger.debug("Start create {}", computer);
 
-	System.out.println(computer);
 	sessionFactory.getCurrentSession().persist(computer);
 
 	logger.info("Computer created : " + computer.toString());
@@ -102,7 +105,12 @@ public class ComputerDAOImpl implements ComputerDAO {
 	int nDelete = 0;
 	// Generate Query
 	String query = "DELETE Computer WHERE id = :id ";
+
 	nDelete = sessionFactory.getCurrentSession().createQuery(query).setLong("id", id).executeUpdate();
+
+	//	Computer comp = new Computer();
+	//	comp.setId(id);
+	//	sessionFactory.getCurrentSession().delete(comp);
 
 	logger.debug("End delete {}", id);
 	return (nDelete == 1);
@@ -114,12 +122,10 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 	Computer computer = null;
 	// Generate query
-	String query = "SELECT cr FROM Computer cr LEFT JOIN cr.company cy WHERE cr.id = :id";
+	Criteria critQuery = sessionFactory.getCurrentSession().createCriteria(Computer.class);
+	critQuery.add(Restrictions.eq("id",id));
 
-	Iterator<Computer> iterator = sessionFactory.getCurrentSession().createQuery(query).setLong("id", id).iterate();
-	if(iterator.hasNext()) {
-	    computer = iterator.next();
-	}
+	computer = (Computer) critQuery.uniqueResult();
 
 	logger.debug("End find {}", id);
 	return computer;
@@ -131,30 +137,10 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 	List<Computer> computersList;
 	// Generate query from page
-	String query = generateFindQuery(page);
-	Query queryObject;
+	Criteria critQuery = generateFindQuery(page);
 
-	// Conditions
-	// Name
-	String nameFilter = page.getNameFilter();
-	if(nameFilter != null && !nameFilter.isEmpty()) {
-	    // FILTER ON COMPUTER NAME + FILTER ON COMPANY NAME
-	    queryObject = sessionFactory.getCurrentSession().createQuery(query.toString()).setString("nameFilter", "%"+nameFilter+"%");
-	}
-	else{
-	    queryObject = sessionFactory.getCurrentSession().createQuery(query.toString());
-	}
-	// LIMIT
-	int limit = page.getComputerPerPage();
-	if (limit > 0) {
-	    queryObject.setMaxResults(limit);
-	}
-	// OFFSET
-	int offset = page.computeOffset();
-	if (offset >= 0) {
-	    queryObject.setFirstResult(offset);
-	}
-	computersList = queryObject.list();
+
+	computersList = (List<Computer>)(critQuery.list());
 
 	logger.debug("End find {}", page);
 	return computersList;
@@ -169,19 +155,32 @@ public class ComputerDAOImpl implements ComputerDAO {
 	logger.debug("End update {}", computer);
     }
 
-    private String generateFindQuery(Page page) {
-	StringBuilder query = new StringBuilder();
-	query.append("SELECT cr FROM Computer cr LEFT JOIN cr.company cy ");
+    private Criteria generateFindQuery(Page page) {
+	Criteria critQuery = sessionFactory.getCurrentSession().createCriteria(Computer.class, "cr");
+	critQuery.createAlias("cr.company", "cy", JoinType.LEFT_OUTER_JOIN);
 	// Filter By Name
 	String nameFilter = page.getNameFilter();
 	if (nameFilter != null && !nameFilter.isEmpty()) {
-	    query.append("WHERE cr.name like :nameFilter ");
-	    query.append("OR cy.name like :nameFilter ");
+	    String restrictionName = "%"+nameFilter+"%";
+	    critQuery.add(Restrictions.or(
+		    Restrictions.like("cr.name", restrictionName),
+		    Restrictions.like("cy.name", restrictionName))
+		    );
+	}
+
+	// LIMIT
+	int limit = page.getComputerPerPage();
+	if (limit > 0) {
+	    critQuery.setMaxResults(limit);
+	}
+	// OFFSET
+	int offset = page.computeOffset();
+	if (offset >= 0) {
+	    critQuery.setFirstResult(offset);
 	}
 	// ORDER BY
-	query.append("ORDER BY ");
-	query.append(OrderEnum.values()[page.getOrderBy()].getText());
+	critQuery.addOrder(OrderEnum.values()[page.getOrderBy()].getOrder());
 
-	return query.toString();
+	return critQuery;
     }
 }
