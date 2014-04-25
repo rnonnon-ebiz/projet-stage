@@ -92,11 +92,14 @@
 		var rowId = "#slide" + id;
 		if (id != currentSlided) {
 			$(rowId).slideDown(0, function() {
+			    $("#"+id).addClass('active');
 				var last = "#slide" + currentSlided;
+				$("#"+currentSlided).removeClass('active');
 				$(last).slideUp(0);
 				currentSlided = id;
 			});
 		} else {
+		    $("#"+id).removeClass('active');
 			$(rowId).slideUp(0);
 			currentSlided = -1;
 		}
