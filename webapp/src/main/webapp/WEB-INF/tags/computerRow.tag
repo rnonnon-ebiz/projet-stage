@@ -27,16 +27,13 @@
 				<spring:message code="button.edit" />
 			</button>
 		</form>
+		
 		<form method="post" action="deleteComputer" style="display: inline;">
-
 			<input type="hidden" name="id" value="${computer.id}" />
-
 			<button type="submit" type="button" class="btn btn-danger"
 				onClick="setCookie(); return confirm('<spring:message code="confirm.delete"/>') ">
-
 				<span class="glyphicon glyphicon-remove"></span>
 				<spring:message code="button.delete" />
-
 			</button>
 		</form>
 	</td>

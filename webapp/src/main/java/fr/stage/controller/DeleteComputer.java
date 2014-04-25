@@ -2,12 +2,11 @@ package fr.stage.controller;
 
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,9 +35,10 @@ public class DeleteComputer {
 
     @RequestMapping(method = RequestMethod.POST)
     protected ModelAndView doPost(@RequestParam(value = "id", required = true) long id,
-	    HttpServletRequest request) {
+	    @CookieValue(value="goTo", required = false) Integer cookGoTo,
+	    @CookieValue(value="search", required = false) String cookSearch,
+	    @CookieValue(value="orderBy", required = false) Byte cookOrderBy) {
 	ModelAndView mod = new ModelAndView("redirect:dashboard");
-	// redirectAttributes.addFlashAttribute("page", p);
 	// Search for computer with that id
 	if (computerService.delete(id)) {
 	    // If 1 row has been deleted
@@ -47,6 +47,9 @@ public class DeleteComputer {
 	    Locale loc = LocaleContextHolder.getLocale();
 	    mod.addObject("successMessage",
 		    messageSource.getMessage("successMessage.deleted", null, loc));
+	    mod.addObject("goTo",cookGoTo);
+	    mod.addObject("search",cookSearch);
+	    mod.addObject("orderBy",cookOrderBy);
 	}
 	return mod;
     }

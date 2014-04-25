@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -103,8 +104,12 @@ public class EditComputer {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    protected ModelAndView doPost(@ModelAttribute("computer") @Valid ComputerDTO computerDTO,
-	    BindingResult result) {
+    protected ModelAndView doPost(@ModelAttribute("computer") @Valid ComputerDTO computerDTO,  
+	    BindingResult result,
+	    @CookieValue(value="goTo", required = false) Integer cookGoTo,
+	    @CookieValue(value="search", required = false) String cookSearch,
+	    @CookieValue(value="orderBy", required = false) Byte cookOrderBy) {
+
 	if (result.hasGlobalErrors()) {
 	    throw new RuntimeException();
 	}
@@ -117,8 +122,13 @@ public class EditComputer {
 	    ModelAndView mod = new ModelAndView("redirect:dashboard");
 	    // Get locale to obtain the message in desired language
 	    Locale loc = LocaleContextHolder.getLocale();
+
 	    mod.addObject("successMessage",
 		    messageSource.getMessage("successMessage.edited", null, loc));
+	    mod.addObject("goTo",cookGoTo);
+	    mod.addObject("search",cookSearch);
+	    mod.addObject("orderBy",cookOrderBy);
+
 	    return mod;
 	}
 	// Error but not fatal

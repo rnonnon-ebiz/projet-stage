@@ -41,9 +41,12 @@
 			class="glyphicon glyphicon-plus"></span> <spring:message
 				code="addComputer" /></a>
 	</div>
-
-	<perso:pagination page="${page}" />
-
+	
+	<div class="text-center">
+		<perso:pagination page="${page}" />
+		<p>Page ${page.getFrontCurrentPage()}/${page.maxPages}</p>
+	</div>
+	
 	<div class="row">
 		<table class="computers table table-bordered table-hover">
 			<thead>
@@ -66,6 +69,12 @@
 			</tbody>
 		</table>
 	</div>
+	
+	<div class="text-center">
+		<p>Page ${page.getFrontCurrentPage()}/${page.maxPages}</p>
+		<perso:pagination page="${page}" />
+	</div>
+	
 </section>
 
 <script>
@@ -92,6 +101,12 @@
 			currentSlided = -1;
 		}
 	});
+
+	function setCookie(){
+	    document.cookie = "goTo=${page.getFrontCurrentPage()}";
+	    document.cookie = "search=${page.nameFilter}";
+	    document.cookie = "orderBy=${page.orderBy}";
+	}
 </script>
 
 <jsp:include page="include/footer.jsp" />
