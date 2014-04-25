@@ -2,36 +2,37 @@ package fr.stage.dao.impl;
 
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.mysema.query.jpa.hibernate.HibernateDeleteClause;
+import com.mysema.query.jpa.hibernate.HibernateQuery;
+import com.mysema.query.types.OrderSpecifier;
+
 import fr.stage.dao.ComputerDAO;
 import fr.stage.domain.Computer;
 import fr.stage.domain.Page;
+import fr.stage.domain.QCompany;
+import fr.stage.domain.QComputer;
 import fr.stage.exception.DAOException;
 
 @Repository
 public class ComputerDAOImpl implements ComputerDAO {
     //Enum used for ordering instead of a big switch
     private enum OrderEnum{
-	crNameASC(Order.asc("cr.name")),crNameDESC(Order.desc("cr.name")),introASC(Order.asc("cr.introducedDate")),introDESC(Order.desc("cr.introducedDate")),
-	discASC(Order.asc("cr.discontinuedDate")),discDESC(Order.desc("cr.discontinuedDate")),cyNameASC(Order.asc("cy.name")),cyNameDESC(Order.desc("cy.name"));
+	crNameASC(QComputer.computer.name.asc()),crNameDESC(QComputer.computer.name.desc()),introASC(QComputer.computer.introducedDate.asc()),introDESC(QComputer.computer.introducedDate.desc()),
+	discASC(QComputer.computer.discontinuedDate.asc()),discDESC(QComputer.computer.discontinuedDate.desc()),cyNameASC(QCompany.company.name.asc()),cyNameDESC(QCompany.company.name.desc());
 
-	private Order order;
+	private OrderSpecifier order;
 
-	private OrderEnum(Order order){
+	private OrderEnum(OrderSpecifier order){
 	    this.order = order;
 	}
 
-	public Order getOrder() {
+	public OrderSpecifier getOrder() {
 	    return order;
 	}
     }
@@ -49,11 +50,13 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 	boolean computerExistence = false;
 	// Generate query
-	Criteria critQuery = sessionFactory.getCurrentSession().createCriteria(Computer.class);
-	critQuery.add(Restrictions.eq("id",id));
+	QComputer computer =  QComputer.computer;
+	HibernateQuery query = new HibernateQuery(sessionFactory.getCurrentSession());
+	Computer compRes = query.from(computer)
+		.where(computer.id.eq(id))
+		.uniqueResult(computer);
 
-	Computer computer = (Computer)critQuery.uniqueResult();
-	if(computer != null){
+	if(compRes != null){
 	    computerExistence = true;
 	}
 
@@ -67,21 +70,16 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 	long total = 0L;
 	// Generate query
-	Criteria critQuery = sessionFactory.getCurrentSession().createCriteria(Computer.class, "cr");
-	critQuery.createAlias("company", "cy", JoinType.LEFT_OUTER_JOIN);
+	QComputer computer =  QComputer.computer;
+	QCompany company = QCompany.company;
+	HibernateQuery query = new HibernateQuery(sessionFactory.getCurrentSession());
+	query.from(computer).leftJoin(computer.company, company);
 	// Condition
 	if(nameFilter != null && !nameFilter.isEmpty()) {
 	    String restrictionName = "%"+nameFilter+"%";
-	    critQuery.add(Restrictions.or(
-		    Restrictions.like("cr.name", restrictionName),
-		    Restrictions.like("cy.name", restrictionName))
-		    );
+	    query.where(computer.name.like(restrictionName).or(company.name.like(restrictionName)));
 	}
-	critQuery.setProjection(Projections.rowCount());
-	List computers = critQuery.list();
-	if(computers != null){
-	    total = (long)(computers.get(0));
-	}
+	total = query.count();
 
 	logger.debug("End count {}", nameFilter);
 	return (int)total;
@@ -102,18 +100,14 @@ public class ComputerDAOImpl implements ComputerDAO {
     public boolean delete(Long id) throws DAOException {
 	logger.debug("Start delete {}", id);
 
-	int nDelete = 0;
+	long nDelete = 0;
 	// Generate Query
-	String query = "DELETE Computer WHERE id = :id ";
-
-	nDelete = sessionFactory.getCurrentSession().createQuery(query).setLong("id", id).executeUpdate();
-
-	//	Computer comp = new Computer();
-	//	comp.setId(id);
-	//	sessionFactory.getCurrentSession().delete(comp);
+	QComputer computer =  QComputer.computer;
+	HibernateDeleteClause query = new HibernateDeleteClause(sessionFactory.getCurrentSession(), computer).where(computer.id.eq(id));
+	nDelete = query.execute();
 
 	logger.debug("End delete {}", id);
-	return (nDelete == 1);
+	return (nDelete == 1L);
     }
 
     @Override
@@ -122,10 +116,11 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 	Computer computer = null;
 	// Generate query
-	Criteria critQuery = sessionFactory.getCurrentSession().createCriteria(Computer.class);
-	critQuery.add(Restrictions.eq("id",id));
+	QComputer qComputer =  QComputer.computer;
+	HibernateQuery query = new HibernateQuery(sessionFactory.getCurrentSession());
+	query.from(qComputer).where(qComputer.id.eq(id));
 
-	computer = (Computer) critQuery.uniqueResult();
+	computer = (Computer) query.uniqueResult(qComputer);
 
 	logger.debug("End find {}", id);
 	return computer;
@@ -137,10 +132,11 @@ public class ComputerDAOImpl implements ComputerDAO {
 
 	List<Computer> computersList;
 	// Generate query from page
-	Criteria critQuery = generateFindQuery(page);
+	QComputer qComputer =  QComputer.computer;
+	HibernateQuery query = generateFindQuery(page);
 
 
-	computersList = (List<Computer>)(critQuery.list());
+	computersList = (List<Computer>)(query.list(qComputer));
 
 	logger.debug("End find {}", page);
 	return computersList;
@@ -155,32 +151,33 @@ public class ComputerDAOImpl implements ComputerDAO {
 	logger.debug("End update {}", computer);
     }
 
-    private Criteria generateFindQuery(Page page) {
-	Criteria critQuery = sessionFactory.getCurrentSession().createCriteria(Computer.class, "cr");
-	critQuery.createAlias("cr.company", "cy", JoinType.LEFT_OUTER_JOIN);
+    private HibernateQuery generateFindQuery(Page page) {
+	QComputer computer =  QComputer.computer;
+	QCompany company = QCompany.company;
+	HibernateQuery query = new HibernateQuery(sessionFactory.getCurrentSession());
+	query.from(computer).leftJoin(computer.company, company);
 	// Filter By Name
 	String nameFilter = page.getNameFilter();
 	if (nameFilter != null && !nameFilter.isEmpty()) {
 	    String restrictionName = "%"+nameFilter+"%";
-	    critQuery.add(Restrictions.or(
-		    Restrictions.like("cr.name", restrictionName),
-		    Restrictions.like("cy.name", restrictionName))
-		    );
+	    query.where(
+		    computer.name.like(restrictionName)
+		    .or(company.name.like(restrictionName)));
 	}
 
 	// LIMIT
 	int limit = page.getComputerPerPage();
 	if (limit > 0) {
-	    critQuery.setMaxResults(limit);
+	    query.limit(limit);
 	}
 	// OFFSET
 	int offset = page.computeOffset();
 	if (offset >= 0) {
-	    critQuery.setFirstResult(offset);
+	    query.offset(offset);
 	}
 	// ORDER BY
-	critQuery.addOrder(OrderEnum.values()[page.getOrderBy()].getOrder());
+	query.orderBy(OrderEnum.values()[page.getOrderBy()].getOrder());
 
-	return critQuery;
+	return query;
     }
 }

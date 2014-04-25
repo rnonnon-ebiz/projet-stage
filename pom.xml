@@ -30,6 +30,8 @@
 		<jcl-over-slf4j.version>1.7.7</jcl-over-slf4j.version>
 		<log4j-over-slf4j.version>1.7.7</log4j-over-slf4j.version>
 		<jadira.usertype.core.version>3.1.0.GA</jadira.usertype.core.version>
+		<querydsl-apt.version>3.3.2</querydsl-apt.version>
+		<querydsl-jpa.version>3.3.2</querydsl-jpa.version>
 	</properties>
 
 	<!-- Unmanaged dependencies : -->
@@ -136,6 +138,17 @@
 				<version>${jadira.usertype.core.version}</version>
 			</dependency>
 
+			<dependency>
+				<groupId>com.mysema.querydsl</groupId>
+				<artifactId>querydsl-apt</artifactId>
+				<version>${querydsl-apt.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.mysema.querydsl</groupId>
+				<artifactId>querydsl-jpa</artifactId>
+				<version>${querydsl-jpa.version}</version>
+			</dependency>
 			<!-- Joda-Time to manage dates -->
 			<!-- From back -->
 			<dependency>
@@ -218,6 +231,8 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+
+			<!-- Tomcat plugin -->
 			<plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
 				<artifactId>tomcat7-maven-plugin</artifactId>

@@ -25,7 +25,7 @@
 			<artifactId>joda-time</artifactId>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<!-- Spring MVC -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -39,14 +39,14 @@
 			<artifactId>spring-orm</artifactId>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<!-- Spring JDBC -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<scope>compile</scope>
 		</dependency>
-		
+
 		<!-- Hibernate Core -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -54,11 +54,16 @@
 			<scope>compile</scope>
 		</dependency>
 		
-		<!-- Jadira for DateType to persist with hibernate -->
 		<dependency>
-			<groupId>org.jadira.usertype</groupId>
-			<artifactId>usertype.core</artifactId>
-			<scope>runtime</scope>
+			<groupId>com.mysema.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.mysema.querydsl</groupId>
+			<artifactId>querydsl-jpa</artifactId>
+			<scope>compile</scope>
 		</dependency>
 		
 		<!-- Project modules -->
@@ -87,6 +92,13 @@
 		<dependency>
 			<groupId>com.jolbox</groupId>
 			<artifactId>bonecp</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Jadira for DateType to persist with hibernate -->
+		<dependency>
+			<groupId>org.jadira.usertype</groupId>
+			<artifactId>usertype.core</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<!-- END Runtime Scope : -->
