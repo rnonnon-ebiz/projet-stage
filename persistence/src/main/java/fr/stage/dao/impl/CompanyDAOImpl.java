@@ -2,16 +2,17 @@ package fr.stage.dao.impl;
 
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.mysema.query.jpa.hibernate.HibernateQuery;
+
 import fr.stage.dao.CompanyDAO;
 import fr.stage.domain.Company;
+import fr.stage.domain.QCompany;
 import fr.stage.exception.DAOException;
 
 @Repository
@@ -31,11 +32,10 @@ public class CompanyDAOImpl implements CompanyDAO {
 
 	boolean companyExistence = false;
 	// Generate query
+	QCompany qCompany = QCompany.company;
+	HibernateQuery query = new HibernateQuery(sessionFactory.getCurrentSession());
+	Company company = query.from(qCompany).where(qCompany.id.eq(id)).uniqueResult(qCompany);
 
-	Criteria critQuery = sessionFactory.getCurrentSession().createCriteria(Company.class);
-	critQuery.add(Restrictions.eq("id",id));
-
-	Company company = (Company)critQuery.uniqueResult();
 	if(company != null){
 	    companyExistence = true;
 	}
@@ -50,10 +50,9 @@ public class CompanyDAOImpl implements CompanyDAO {
 
 	Company company = null;
 	// Generate query
-	Criteria critQuery = sessionFactory.getCurrentSession().createCriteria(Company.class);
-	critQuery.add(Restrictions.eq("id",id));
-
-	company = (Company) critQuery.uniqueResult();
+	QCompany qCompany = QCompany.company;
+	HibernateQuery query = new HibernateQuery(sessionFactory.getCurrentSession());
+	company = query.from(qCompany).where(qCompany.id.eq(id)).uniqueResult(qCompany);
 
 	logger.debug("End find {}", id);
 	return company;
@@ -65,7 +64,9 @@ public class CompanyDAOImpl implements CompanyDAO {
 
 	List<Company> companyList = null;
 	// Generate query
-	companyList = sessionFactory.getCurrentSession().createCriteria(Company.class).list();
+	QCompany qCompany = QCompany.company;
+	HibernateQuery query = new HibernateQuery(sessionFactory.getCurrentSession());
+	companyList = query.from(qCompany).list(qCompany);
 
 	logger.debug("End Find All");
 	return companyList;

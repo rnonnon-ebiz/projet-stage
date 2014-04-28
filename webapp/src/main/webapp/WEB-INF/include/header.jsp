@@ -13,6 +13,7 @@
 	<link href="<spring:url value="/resources/css/bootstrap.min.css"/>" rel="stylesheet" media="screen"/>
 	<link href="<spring:url value="/resources/css/main.css"/>" rel="stylesheet" media="screen"/>
 	<link href="<spring:url value="/resources/css/dark-hive/jquery-ui-1.10.4.custom.css"/>" rel="stylesheet">
+	<link href="<spring:url value="/resources/css/anim.css"/>" rel="stylesheet">
 	<script src="<spring:url value="/resources/js/jquery-1.10.2.js"/>"></script>
 	<script src="<spring:url value="/resources/js/jquery-ui-1.10.4.custom.min.js"/>"></script>
 	<script src="<spring:url value="/resources/js/jquery.validate.min.js"/>"></script>

@@ -15,50 +15,51 @@
 		</h1>
 	</div>
 
-	<form:form class="form-horizontal " id="addComputerForm"
-		action="addComputer" method="POST" commandName="computer">
-
-		<div
-			class="form-group <spring:hasBindErrors name="computer" > ${errors != null ? (errors.hasFieldErrors('name') ? 'has-error' : 'has-success') : ''}</spring:hasBindErrors>">
-			<label class="col-sm-2 control-label" for="name"><spring:message
-					code="label.name" /></label>
+	<form:form class="form-horizontal " id="addComputerForm" action="addComputer" method="POST" commandName="computer">
+		<div class="form-group <spring:hasBindErrors name="computer" > ${errors != null ? (errors.hasFieldErrors('name') ? 'has-error' : 'has-success') : ''}</spring:hasBindErrors>">
+			<label class="col-sm-2 control-label" for="name">
+				<spring:message code="label.name" />
+			</label>
 			<div class="col-sm-10">
 				<div class="col-xs-2">
-					<form:input class="form-control" placeholder="${placeholderName}"
-						path="name" name="name" />
+					<form:input class="form-control" placeholder="${placeholderName}" path="name" name="name" autofocus/>
 				</div>
-				<span class="help-block"><spring:message
-						code="help-block.name" /></span>
+				<span class="help-block">
+					<spring:message code="help-block.name" />
+				</span>
 				<div class="col-xs-2">
-					<strong><form:errors path="name"
-							cssClass="control-label has-error" /></strong>
+					<strong>
+						<form:errors path="name" cssClass="control-label has-error" />
+					</strong>
 				</div>
 			</div>
 		</div>
 
 		<div
 			class="form-group <spring:hasBindErrors name="computer" > ${errors != null ? (errors.hasFieldErrors('introducedDate') ? 'has-error' : 'has-success') : ''}</spring:hasBindErrors>">
-			<label class="col-sm-2 control-label" for="introduced"><spring:message
-					code="label.introduced" /></label>
+			<label class="col-sm-2 control-label" for="introduced">
+				<spring:message code="label.introduced" />
+			</label>
 			<div class="col-sm-10">
 				<div class="col-xs-2">
-					<form:input class="form-control datepicker"
-						placeholder="${placeholderDate}" path="introducedDate"
-						name="introducedDate" />
+					<form:input class="form-control datepicker" placeholder="${placeholderDate}" path="introducedDate" name="introducedDate" />
 				</div>
-				<span class="help-block"><spring:message
-						code="help-block.date" /></span>
+				<span class="help-block">
+					<spring:message code="help-block.date" />
+				</span>
 				<div class="col-xs-2">
-					<strong><form:errors path="introducedDate"
-							cssClass="control-label has-error"></form:errors></strong>
+					<strong>
+						<form:errors path="introducedDate" cssClass="control-label has-error"></form:errors>
+					</strong>
 				</div>
 			</div>
 		</div>
 
 		<div
 			class="form-group <spring:hasBindErrors name="computer" > ${errors != null ? (errors.hasFieldErrors('discontinuedDate') ? 'has-error' : 'has-success') : ''}</spring:hasBindErrors>">
-			<label class="col-sm-2 control-label" for="discontinued"><spring:message
-					code="label.discontinued" /></label>
+			<label class="col-sm-2 control-label" for="discontinued">
+				<spring:message code="label.discontinued" />
+			</label>
 			<div class="col-sm-10">
 				<div class="col-xs-2">
 					<form:input class="form-control datepicker"
@@ -74,10 +75,10 @@
 			</div>
 		</div>
 
-		<div
-			class="form-group <spring:hasBindErrors name="computer" > ${errors != null ? (errors.hasFieldErrors('company') ? 'has-error' : 'has-success') : ''}</spring:hasBindErrors>">
-			<label class="col-sm-2 control-label" for="company"><spring:message
-					code="label.companyName" /></label>
+		<div class="form-group <spring:hasBindErrors name="computer" > ${errors != null ? (errors.hasFieldErrors('company') ? 'has-error' : 'has-success') : ''}</spring:hasBindErrors>">
+			<label class="col-sm-2 control-label" for="company">
+				<spring:message code="label.companyName" />
+			</label>
 			<div class="col-sm-10">
 				<div class="col-xs-2">
 					<form:select class="form-control" path="company" name="company">
@@ -111,13 +112,16 @@
 		<div class="form-group">
 			<div class="col-sm-offset-2 col-sm-10">
 				<div class="col-xs-2">
+					<!-- Add -->
 					<button type="submit" class="btn btn-success">
 						<span class="glyphicon glyphicon-ok"></span>
 						<spring:message code="button.add" />
 					</button>
-
+					
+					<!-- OR -->
 					<spring:message code="button.or" />
-
+					
+					<!-- Cancel -->
 					<a href="<spring:url value="/dashboard"/>" class="btn btn-danger">
 						<span class="glyphicon glyphicon-remove"></span> <spring:message
 							code="button.cancel" />

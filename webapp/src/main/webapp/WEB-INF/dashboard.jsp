@@ -11,16 +11,21 @@
 
 <section id="main">
 
+	<!-- Computers FOUND -->
 	<div class="page-header">
-		<h1 id="homeTitle">${page.totalRes}
-			<spring:message code="computersFound" />
-		</h1>
+		<div>
+			<h1 class="${((not page.nameFilter) && page.currentPage == 0) ? 'comptersFound' : ''}">${page.totalRes}</h1>
+			<h1 id="homeTitle">
+				<spring:message code="computersFound" />
+			</h1>
+		</div>
 		<h2 id="subtitle" style="display: none">
 			<spring:message code="welcome" />
 			:)
 		</h2>
 	</div>
-
+	
+	<!-- Success Message -->
 	<div style="max-height: 30px; min-height: 30px;">
 		<p class="bg-success status">
 			<c:out value="${successMessage}" />
@@ -28,15 +33,20 @@
 	</div>
 
 	<div id="actions">
+	
+		<!-- Search form -->
 		<form action="dashboard" method="GET">
 			<input type="search" id="searchbox" name="search"
 				value="<c:out value="${page.nameFilter}"/>"
 				placeholder="<spring:message code="searchName"/>" />
+				
 			<button type="submit" id="searchsubmit" class="btn btn-default" onclick="setCookie()">
 				<span class="glyphicon glyphicon-search"></span>
 				<spring:message code="filterByName" />
 			</button>
 		</form>
+		
+		<!-- Add Computer Link-->
 		<a href="<spring:url value="/addComputer"/>" class="btn btn-success"><span
 			class="glyphicon glyphicon-plus"></span> <spring:message
 				code="addComputer" /></a>

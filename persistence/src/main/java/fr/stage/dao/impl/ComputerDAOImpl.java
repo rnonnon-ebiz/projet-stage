@@ -26,13 +26,13 @@ public class ComputerDAOImpl implements ComputerDAO {
 	crNameASC(QComputer.computer.name.asc()),crNameDESC(QComputer.computer.name.desc()),introASC(QComputer.computer.introducedDate.asc()),introDESC(QComputer.computer.introducedDate.desc()),
 	discASC(QComputer.computer.discontinuedDate.asc()),discDESC(QComputer.computer.discontinuedDate.desc()),cyNameASC(QCompany.company.name.asc()),cyNameDESC(QCompany.company.name.desc());
 
-	private OrderSpecifier order;
+	private OrderSpecifier<?> order;
 
-	private OrderEnum(OrderSpecifier order){
+	private OrderEnum(OrderSpecifier<?> order){
 	    this.order = order;
 	}
 
-	public OrderSpecifier getOrder() {
+	public OrderSpecifier<?> getOrder() {
 	    return order;
 	}
     }
