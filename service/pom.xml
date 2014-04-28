@@ -46,13 +46,27 @@
 			<scope>compile</scope>
 		</dependency>
 		
+		<!-- spring-data-jpa -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		
 		<!-- Hibernate Core -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<scope>compile</scope>
 		</dependency>
-
+		
+		<!-- Joda -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		
 		<!-- Project modules -->
 		<dependency>
 			<groupId>fr.stage</groupId>

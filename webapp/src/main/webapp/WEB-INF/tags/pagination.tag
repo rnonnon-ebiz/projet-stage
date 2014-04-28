@@ -1,52 +1,86 @@
 <%@ tag language="java" pageEncoding="UTF-8"%>
-
+<!-- taglibs -->
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="perso" uri="/WEB-INF/tags/taglib.tld"%>
 
-<%@ attribute name="page" required="true" type="fr.stage.domain.Page"%>
+<!-- Attributes -->
+<%@ attribute name="page" required="true" type="org.springframework.data.domain.Page"%>
+<%@ attribute name="nameFilter" required="true"%>
+<%@ attribute name="orderBy" required="true"%>
 
+<!-- Local Vars -->
+<c:set var="totalPages" value="${page.getTotalPages()}"/>
+
+<c:set var="currentPage" value="${page.getNumber() + 1 }"/>
+<c:set var="previousPage" value="${page.getNumber()}"/>
+<c:set var="nextPage" value="${page.getNumber() + 2}"/>
+
+<!-- Start -->
 	<ul class="pagination text-center pager">
-		<!-- Previous -->
+	
+		<!-- go to First -->
 		<li>
-			<a href="?goTo=1&search=<c:out value="${page.nameFilter}"/>&orderBy=${page.orderBy}" class="glyphicon glyphicon-fast-backward"></a>
+			<perso:orderURI search="${nameFilter}" goTo="1" orderBy="${orderBy}">
+				<span class='glyphicon glyphicon-fast-backward'></span>
+			</perso:orderURI>
 		</li>
+		<!-- go to Previous -->
 		<li>
-			<a href="?goTo=${page.getFrontCurrentPage()-1}&search=<c:out value="${page.nameFilter}"/>&orderBy=${page.orderBy}" class="glyphicon glyphicon-step-backward"></a>
+			<perso:orderURI search="${nameFilter}" goTo="${previousPage}" orderBy="${orderBy}">
+				<span class='glyphicon glyphicon-step-backward'></span>
+			</perso:orderURI>
+<%-- 			<a href="?goTo=${previousPage}&search=<c:out value="${nameFilter}"/>&orderBy=${orderBy}"class="glyphicon glyphicon-step-backward" ></a> --%>
 		</li>
 		
-		<c:if test="${page.getFrontCurrentPage()-1 > 1 && page.maxPages > 4}">
+		<!-- Cute dots -->
+		<c:if test="${previousPage > 1 && totalPages > 4}">
 		      	<li>
 					<a>..</a>
 				</li>
 		</c:if>
 		
-		<!-- Pages Before -->
-		<c:forEach var="pageNumber" begin="${page.getFrontCurrentPage() < 3 ? 1 : (page.getFrontCurrentPage() > page.maxPages-3 ? (page.maxPages-3 >0 ? page.maxPages-3 : 1) : page.getFrontCurrentPage()-1) }" end="${page.getFrontCurrentPage()-1}">
-			<li>
-				<a href="?goTo=${pageNumber}&search=<c:out value="${page.nameFilter}"/>&orderBy=${page.orderBy}">${pageNumber}</a>
-			</li>
-		</c:forEach>
+		<!-- Before Pages -->
+		<c:if test="${previousPage > 0 && totalPages >= 1}">
+			<c:forEach var="pageNumber" begin="${currentPage < 3 ? 1 : (currentPage > totalPages-3 ? (totalPages-3 >0 ? totalPages-3 : 1) : previousPage) }" end="${previousPage}">
+				<li>
+					<perso:orderURI search="${nameFilter}" goTo="${pageNumber}" orderBy="${orderBy}">
+						${pageNumber}
+					</perso:orderURI>
+				</li>
+			</c:forEach>
+		</c:if>
 		
 		<!-- Current Page -->
-		<li class="active"><a>${page.getFrontCurrentPage()}<span class="sr-only">(current)</span></a></li>
+		<li class="active"><a>${currentPage}<span class="sr-only">(current)</span></a></li>
 		
-		<!-- Pages After -->
-		<c:forEach var="pageNumber" begin="${page.getFrontCurrentPage()+1}" end="${page.getFrontCurrentPage() < 3 ? (page.maxPages >= 4 ? 4 : page.maxPages) : (page.getFrontCurrentPage() >= page.maxPages-1 ? page.maxPages : page.getFrontCurrentPage()+1)}">
-			<li>
-				<a href="?goTo=${pageNumber}&search=<c:out value="${page.nameFilter}"/>&orderBy=${page.orderBy}">${pageNumber}</a>
-			</li>
-		</c:forEach>
+		<!-- Next Pages -->
+		<c:if test="${nextPage <= totalPages && totalPages > 1}">
+			<c:forEach var="pageNumber" begin="${nextPage}" end="${currentPage < 3 ? (totalPages >= 4 ? 4 : totalPages) : (currentPage >= totalPages-1 ? totalPages : nextPage)}">
+				<li>
+					<perso:orderURI search="${nextPage}" goTo="${pageNumber}" orderBy="${orderBy}">
+						${pageNumber}
+					</perso:orderURI>
+				</li>
+			</c:forEach>
+		</c:if>
 		
-		<c:if test="${page.getFrontCurrentPage()+1 < page.maxPages && page.maxPages > 4 }">
+		<!-- Cute dots -->
+		<c:if test="${nextPage < totalPages && totalPages > 4 }">
 		      	<li>
 					<a>..</a>
 				</li>
 		</c:if>
-		<!-- Next -->
+		
+		<!-- go to Next -->
 		<li>
-			<a href="?goTo=${page.getFrontCurrentPage()+1}&search=<c:out value="${page.nameFilter}"/>&orderBy=${page.orderBy}" class="glyphicon glyphicon-step-forward"></a>
+			<perso:orderURI search="${nameFilter}" goTo="${nextPage}" orderBy="${orderBy}">
+				<span class='glyphicon glyphicon-step-forward'></span>
+			</perso:orderURI>
 		</li>
+		<!-- go to Last -->
 		<li>
-			<a href="?goTo=${page.maxPages}&search=<c:out value="${page.nameFilter}"/>&orderBy=${page.orderBy}" class="glyphicon glyphicon-fast-forward"></a>
+			<perso:orderURI search="${nameFilter}" goTo="${totalPages}" orderBy="${orderBy}">
+				<span class='glyphicon glyphicon-fast-forward'></span>
+			</perso:orderURI>
 		</li>
 	</ul>
-

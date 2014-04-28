@@ -4,7 +4,6 @@
 <%@ attribute name="goTo" required="true"%>
 <%@ attribute name="orderBy" required="true" %>
 <%@ attribute name="search" required="true" %>
-<%@ attribute name="body" required="true" %>
 
 <c:url var="urlOrder" value="dashboard">
 	<c:param name="goTo" value="${goTo}"/>
@@ -12,4 +11,4 @@
 	<c:param name="orderBy" value="${orderBy}"/>
 </c:url>
 
-<a href="${urlOrder}">${body}</a>
+<a href="${urlOrder}"><jsp:doBody /></a>

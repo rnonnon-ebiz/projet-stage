@@ -1,38 +1,58 @@
 package fr.stage.service.impl;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import fr.stage.dao.impl.ComputerDAOImpl;
-import fr.stage.dao.impl.LogDAOImpl;
 import fr.stage.domain.Computer;
-import fr.stage.domain.Page;
+import fr.stage.domain.InputPage;
 import fr.stage.exception.DAOException;
+import fr.stage.repository.ComputerRepo;
 import fr.stage.service.ComputerService;
 
 @Service
 @Transactional
 public class ComputerServiceImpl implements ComputerService {
+    private enum OrderEnum{
+	crNameASC(Sort.Direction.ASC,"name"),crNameDESC(Sort.Direction.DESC,"name"),introASC(Sort.Direction.ASC,"introducedDate"),introDESC(Sort.Direction.DESC,"introducedDate"),
+	discASC(Sort.Direction.ASC,"discontinuedDate"),discDESC(Sort.Direction.DESC,"discontinuedDate"),cyNameASC(Sort.Direction.ASC,"company.name"),cyNameDESC(Sort.Direction.DESC,"company.name");
+
+	private Sort sort;
+
+	private OrderEnum(Sort.Direction direction,String properties){
+	    this.sort = new Sort(direction, properties);
+	}
+
+	public Sort getSort() {
+	    return sort;
+	}
+    }
+    @Autowired
+    ComputerRepo computerRepo;
 
     @Autowired
-    LogDAOImpl logDao;
-
-    @Autowired
-    ComputerDAOImpl computerDAO;
+    LogServiceImpl logService;
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
+    @Transactional(readOnly = true)
     public int count(String nameFilter) throws DAOException {
 	logger.debug("Start count");
 
 	// WORK
-	int total = computerDAO.count(nameFilter);
+	int total;
+	if(nameFilter == null || nameFilter.isEmpty()) {
+	    total = (int) computerRepo.count();
+	}
+	else {
+	    total = (int) computerRepo.countByNameLikeOrCompanyNameLike("%"+nameFilter+"%","%"+nameFilter+"%");
+	}
 
 	logger.debug("End count");
 	return total;
@@ -44,20 +64,21 @@ public class ComputerServiceImpl implements ComputerService {
 	logger.debug("Start Create Transaction");
 
 	// WORK
-	computerDAO.create(computer);
+	computerRepo.save(computer);
 	// LOG
-	logDao.logInfo("INSERT " + computer.toString());
+	logService.logInfo("INSERT " + computer.toString());
 
 	logger.debug("End Create Transaction");
     }
 
     // Find By ID
     @Override
-    public Computer find(long id) throws DAOException {
+    @Transactional(readOnly = true)
+    public Computer find(Long id) throws DAOException {
 	logger.debug("Start find by id");
 
 	// WORK
-	Computer res = computerDAO.find(id);
+	Computer res = computerRepo.findOne(id);
 
 	logger.debug("End find by id");
 	return res;
@@ -65,14 +86,24 @@ public class ComputerServiceImpl implements ComputerService {
 
     // Find By Page Parameters
     @Override
-    public List<Computer> find(Page page) throws DAOException {
-	logger.debug("Start find by Page");
+    @Transactional(readOnly = true)
+    public Page<Computer> find(InputPage inPage) throws DAOException {
+	logger.debug("Start find by Page");	
+
+	//Get Sort in byte and translate it to Sort Type thx to OrderEnum
+	Sort sort = OrderEnum.values()[inPage.getOrderBy()].getSort();
+	//Set request Page
+	PageRequest p = new PageRequest(inPage.getGoTo(),inPage.getLimit(), sort);
 
 	// WORK
-	List<Computer> res = computerDAO.find(page);
-
+	String nameFilter = inPage.getNameFilter();
+	Page<Computer> outPage = computerRepo.findAllByNameLikeOrCompanyNameLike("%"+nameFilter+"%","%"+nameFilter+"%", p);
+	if(outPage.getTotalPages() > 0 && outPage.getNumber() >= outPage.getTotalPages()){
+	    p = new PageRequest(outPage.getTotalPages()-1,inPage.getLimit(), sort);
+	    outPage = computerRepo.findAllByNameLikeOrCompanyNameLike("%"+nameFilter+"%","%"+nameFilter+"%", p);
+	}
 	logger.debug("End find by Page");
-	return res;
+	return outPage;
     }
 
     @Override
@@ -81,9 +112,9 @@ public class ComputerServiceImpl implements ComputerService {
 	logger.debug("Start Update Transaction");
 
 	// WORK
-	computerDAO.update(computer);
+	computerRepo.save(computer);
 	// LOG
-	logDao.logInfo("UPDATE  " + computer.toString());
+	logService.logInfo("UPDATE  " + computer.toString());
 
 	logger.debug("End Update Transaction");
     }
@@ -94,11 +125,11 @@ public class ComputerServiceImpl implements ComputerService {
 	logger.debug("Start Delete Transaction");
 
 	// WORK
-	boolean deleteSuccess = computerDAO.delete(id);
+	computerRepo.delete(id);
 	// LOG
-	logDao.logInfo("DELETE " + id);
+	logService.logInfo("DELETE " + id);
 
 	logger.debug("End Delete Transaction");
-	return deleteSuccess;
+	return true;
     }
 }

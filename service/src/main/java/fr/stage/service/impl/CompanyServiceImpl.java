@@ -2,15 +2,13 @@ package fr.stage.service.impl;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
-
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import fr.stage.dao.impl.CompanyDAOImpl;
 import fr.stage.domain.Company;
 import fr.stage.exception.DAOException;
+import fr.stage.repository.CompanyRepo;
 import fr.stage.service.CompanyService;
 
 @Service
@@ -18,26 +16,26 @@ import fr.stage.service.CompanyService;
 public class CompanyServiceImpl implements CompanyService {
 
     @Autowired
-    CompanyDAOImpl companyDAO;
-
-    @Autowired
-    SessionFactory sessionFactory;
+    CompanyRepo companyRepo;
 
     // Check if company exists
     @Override
-    public boolean exist(long id) throws DAOException {
-	return companyDAO.exist(id);
+    @Transactional(readOnly = true)
+    public boolean exist(Long id) throws DAOException {
+	return companyRepo.exists(id);
     }
 
     // Find company by id
     @Override
-    public Company find(long id) throws DAOException {
-	return companyDAO.find(id);
+    @Transactional(readOnly = true)
+    public Company find(Long id) throws DAOException {
+	return companyRepo.findOne(id);
     }
 
     // Find all companies in DB
     @Override
+    @Transactional(readOnly = true)
     public List<Company> findAll() throws DAOException {
-	return companyDAO.findAll();
+	return (List<Company>) companyRepo.findAll();
     }
 }

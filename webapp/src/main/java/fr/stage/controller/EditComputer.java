@@ -139,4 +139,15 @@ public class EditComputer {
 	    return mod;
 	}
     }
+    @RequestMapping(method = RequestMethod.POST,value="/cancel")
+    protected ModelAndView cancelEdit(@CookieValue(value="goTo", required = false) Integer cookGoTo,
+	    @CookieValue(value="search", required = false) String cookSearch,
+	    @CookieValue(value="orderBy", required = false) Byte cookOrderBy){
+
+	ModelAndView mod = new ModelAndView("redirect:/dashboard");
+	mod.addObject("goTo",cookGoTo);
+	mod.addObject("search",cookSearch);
+	mod.addObject("orderBy",cookOrderBy);
+	return mod;
+    }
 }

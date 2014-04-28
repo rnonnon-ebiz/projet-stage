@@ -4,17 +4,23 @@
 <%@ taglib prefix="perso" uri="/WEB-INF/tags/taglib.tld"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
+<!-- TableHeaders -->
 <spring:message code="computerName" var="col1" />
 <spring:message code="introducedDate" var="col2" />
 <spring:message code="discontinuedDate" var="col3" />
 <spring:message code="company" var="col4" />
+
+<!-- page numbers -->
+<c:set var="currentPage" value="${page.getNumber() + 1}"/>
+<c:set var="totalPages" value="${page.getTotalPages()}"/>
+<c:set var="numberOfElements" value="${page.getTotalElements()}"/>
 
 <section id="main">
 
 	<!-- Computers FOUND -->
 	<div class="page-header">
 		<div>
-			<h1 class="${((not page.nameFilter) && page.currentPage == 0) ? 'comptersFound' : ''}">${page.totalRes}</h1>
+			<h1 class="${currentPage == 1 ? 'computersFound' : ''}">${numberOfElements}</h1>
 			<h1 id="homeTitle">
 				<spring:message code="computersFound" />
 			</h1>
@@ -37,7 +43,7 @@
 		<!-- Search form -->
 		<form action="dashboard" method="GET">
 			<input type="search" id="searchbox" name="search"
-				value="<c:out value="${page.nameFilter}"/>"
+				value="<c:out value="${search}"/>"
 				placeholder="<spring:message code="searchName"/>" />
 				
 			<button type="submit" id="searchsubmit" class="btn btn-default" onclick="setCookie()">
@@ -51,39 +57,15 @@
 			class="glyphicon glyphicon-plus"></span> <spring:message
 				code="addComputer" /></a>
 	</div>
+	<c:choose>
+		<c:when test="${numberOfElements > 0}">
+			<jsp:include page="include/dashboardTable.jsp"/>
+		</c:when>
+		<c:otherwise>
+			<strong><spring:message code="noResult"/></strong>
+		</c:otherwise>
+	</c:choose>
 	
-	<div class="text-center">
-		<perso:pagination page="${page}" />
-		<p>Page ${page.getFrontCurrentPage()}/${page.maxPages}</p>
-	</div>
-	
-	<div class="row">
-		<table class="computers table table-bordered table-hover">
-			<thead>
-				<tr>
-					<!-- Variable declarations for passing labels as parameters -->
-					<!-- Table header for Computer Name -->
-					<perso:headColumnOrder page="${page}" orderByASC="0"
-						orderByDESC="1" width="5" columnTitle="${col1}"></perso:headColumnOrder>
-					<perso:headColumnOrder page="${page}" orderByASC="2"
-						orderByDESC="3" width="2" columnTitle="${col2}"></perso:headColumnOrder>
-					<perso:headColumnOrder page="${page}" orderByASC="4"
-						orderByDESC="5" width="2" columnTitle="${col3}"></perso:headColumnOrder>
-					<perso:headColumnOrder page="${page}" orderByASC="6"
-						orderByDESC="7" width="2" columnTitle="${col4}"></perso:headColumnOrder>
-			</thead>
-			<tbody>
-				<c:forEach var="computer" items="${page.computersList}">
-					<perso:computerRow computer="${computer}" lang="${lang}"></perso:computerRow>
-				</c:forEach>
-			</tbody>
-		</table>
-	</div>
-	
-	<div class="text-center">
-		<p>Page ${page.getFrontCurrentPage()}/${page.maxPages}</p>
-		<perso:pagination page="${page}" />
-	</div>
 	
 </section>
 
@@ -116,9 +98,9 @@
 	});
 
 	function setCookie(){
-	    document.cookie = "goTo=${page.getFrontCurrentPage()}";
-	    document.cookie = "search=${page.nameFilter}";
-	    document.cookie = "orderBy=${page.orderBy}";
+	    document.cookie = "goTo=${currentPage}";
+	    document.cookie = "search=${search}";
+	    document.cookie = "orderBy=${orderBy}";
 	}
 </script>
 

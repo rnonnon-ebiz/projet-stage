@@ -116,17 +116,21 @@
 			<div class="col-sm-offset-2 col-sm-10">
 				<div class="col-xs-2">
 
-					<button type="submit" class="btn btn-success">
+					<button type="submit"  class="btn btn-success">
 						<span class="glyphicon glyphicon-ok"></span>
 						<spring:message code="button.edit" />
 					</button>
 
 					<spring:message code="button.or" />
-
-					<a href="<spring:url value="/dashboard"/>" class="btn btn-danger">
-						<span class="glyphicon glyphicon-remove"></span> <spring:message
-							code="button.cancel" />
-					</a>
+  
+  					<button type="submit" formaction="editComputer/cancel" class="btn btn-danger">
+						<span class="glyphicon glyphicon-remove"></span>
+						<spring:message code="button.cancel" />
+					</button>
+<%-- 					<a href="<spring:url value="/dashboard"/>" class="btn btn-danger"> --%>
+<!-- 						<span class="glyphicon glyphicon-remove"></span>  -->
+<%-- 						<spring:message	code="button.cancel" /> --%>
+<!-- 					</a> -->
 
 				</div>
 			</div>

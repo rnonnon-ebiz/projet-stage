@@ -1,6 +1,6 @@
-.comptersFound{
-	animation : rotateNumbers 2s;
+.computersFound{
+	animation : rotateNumbers 1s;
 }
 @keyframes rotateNumbers{
 	100% {transform: rotateX(360deg);}
-} 
+}

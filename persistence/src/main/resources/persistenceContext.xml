@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
 http://www.springframework.org/schema/context
-http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+http://www.springframework.org/schema/context/spring-context-4.0.xsd
+http://www.springframework.org/schema/data/jpa
+http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 
 	<context:annotation-config />
 
@@ -21,33 +24,27 @@ http://www.springframework.org/schema/context/spring-context-4.0.xsd">
 		<property name="partitionCount" value="1" />
 	</bean>
 
-	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+	<bean id="entityFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="dataSource" />
+		<property name="jpaVendorAdapter" ref="hibernateVendor"/>
+		<property name="packagesToScan" value="fr.stage.domain"/>
 	</bean>
 
+	<!-- VendorAdapter -->
+	<bean id="hibernateVendor"
+		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+		<property name="showSql" value="true" />
+	</bean>
+	
 	<!-- Scan -->
+	<jpa:repositories base-package="fr.stage.repository" />
 	<context:component-scan base-package="fr.stage.dao" />
 
-	<bean id="sessionFactory"
-		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-		<property name="dataSource" ref="dataSource" />
-		<property name="packagesToScan">
-			<list>
-				<value>fr.stage.domain</value>
-				<value>fr.stage.dao.impl</value>
-			</list>
-		</property>
-		<property name="hibernateProperties">
-			<value>
-				hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
-				hibernate.show_sql=true
-			</value>
-		</property>
-	</bean>
-
 	<!-- Transaction Config -->
-	<bean id="txManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
-		<property name="sessionFactory" ref="sessionFactory"/>
+	<bean id="transactionManager"
+		class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityFactory" />
 	</bean>
 
 

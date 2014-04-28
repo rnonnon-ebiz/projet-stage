@@ -22,7 +22,7 @@
 			</label>
 			<div class="col-sm-10">
 				<div class="col-xs-2">
-					<form:input class="form-control" placeholder="${placeholderName}" path="name" name="name" autofocus/>
+					<form:input class="form-control" placeholder="${placeholderName}" path="name" name="name"/>
 				</div>
 				<span class="help-block">
 					<spring:message code="help-block.name" />
