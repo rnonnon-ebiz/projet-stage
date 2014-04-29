@@ -1,4 +1,5 @@
 <jsp:include page="include/header.jsp" />
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="perso" uri="/WEB-INF/tags/taglib.tld"%>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -15,7 +16,7 @@
 		</h1>
 	</div>
 
-	<form:form class="form-horizontal " id="addComputerForm" action="addComputer" method="POST" commandName="computer">
+	<form:form class="form-horizontal" id="addComputerForm" action="addComputer" method="POST" commandName="computer">
 		<div class="form-group <spring:hasBindErrors name="computer" > ${errors != null ? (errors.hasFieldErrors('name') ? 'has-error' : 'has-success') : ''}</spring:hasBindErrors>">
 			<label class="col-sm-2 control-label" for="name">
 				<spring:message code="label.name" />

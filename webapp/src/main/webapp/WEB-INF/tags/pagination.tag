@@ -57,7 +57,7 @@
 		<c:if test="${nextPage <= totalPages && totalPages > 1}">
 			<c:forEach var="pageNumber" begin="${nextPage}" end="${currentPage < 3 ? (totalPages >= 4 ? 4 : totalPages) : (currentPage >= totalPages-1 ? totalPages : nextPage)}">
 				<li>
-					<perso:orderURI search="${nextPage}" goTo="${pageNumber}" orderBy="${orderBy}">
+					<perso:orderURI search="${nameFilter}" goTo="${pageNumber}" orderBy="${orderBy}">
 						${pageNumber}
 					</perso:orderURI>
 				</li>

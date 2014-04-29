@@ -7,7 +7,7 @@ http://www.springframework.org/schema/context
 http://www.springframework.org/schema/context/spring-context-4.0.xsd">
 
 	<import resource="classpath:bindingContext.xml" />
-
+		
 	<context:annotation-config />
 
 	<bean id="localeResolver"

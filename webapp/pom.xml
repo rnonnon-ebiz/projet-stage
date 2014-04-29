@@ -45,6 +45,13 @@
 			<scope>compile</scope>
 		</dependency>
 		
+		<!-- Spring security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-taglibs</artifactId>
+			<scope>compile</scope>
+		</dependency>
+            
 		<!-- Project modules -->
 		<dependency>
 			<groupId>fr.stage</groupId>
@@ -61,12 +68,12 @@
 			<groupId>fr.stage</groupId>
 			<artifactId>persistence</artifactId>
 			<scope>compile</scope>
-<!-- 			<exclusions> -->
-<!-- 				<exclusion> -->
-<!-- 					<groupId>*</groupId> -->
-<!-- 					<artifactId>*</artifactId> -->
-<!-- 				</exclusion> -->
-<!-- 			</exclusions> -->
+			<!-- <exclusions> -->
+			<!-- <exclusion> -->
+			<!-- <groupId>*</groupId> -->
+			<!-- <artifactId>*</artifactId> -->
+			<!-- </exclusion> -->
+			<!-- </exclusions> -->
 		</dependency>
 		<dependency>
 			<groupId>fr.stage</groupId>
@@ -98,6 +105,30 @@
 			<groupId>jstl</groupId>
 			<artifactId>jstl</artifactId>
 			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Spring Security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- END Runtime Scope : -->
 	</dependencies>

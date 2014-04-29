@@ -1,7 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"  %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE html>
 <html>
@@ -32,8 +34,7 @@
 	
 </head>
 <body>
-
-	<nav class="navbar navbar-inverse">
+	<nav class="navbar navbar-inverse" role="navigation">
 	<div class="container-fluid">
 		<div class="navbar-header">
 	      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -44,7 +45,20 @@
 	      </button>
 	      <a class="navbar-brand" href="<spring:url value="/dashboard"/>">Application - Computer Database</a>
 	    </div>
-	    <div class="collapse navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
+	    
+		<!-- SignIn -->
+		<div class="nav navbar-left" id="connectNav">
+		  <security:authorize access="isAuthenticated()"> 
+		  	<a href="<c:url value="j_spring_security_logout"/>" class="btn btn-primary navbar-btn"><span class="glyphicon glyphicon-off"></span> <spring:message code="button.logout"/></a>
+		  </security:authorize>
+		  
+		  <security:authorize access="isAnonymous()"> 
+		  	<a href="<spring:url value="/login"/>" class="btn btn-info navbar-btn"><span class="glyphicon glyphicon-off"></span> <spring:message code="button.connect"/></a>
+		  </security:authorize>
+		</div>
+		
+		<!-- Lang -->
+	    <div class="nav navbar-right" id="langNav">
 			<ul class="nav navbar-nav">
 	       	 	<li><a href="langSwitch?lang=fr"><span class="label label-default">FR</span><img src="<spring:url value="/resources/images/flag_fr.png"/>"/></a></li>
 	       	 	<li><a href="langSwitch?lang=en"><span class="label label-default">EN</span><img src="<spring:url value="/resources/images/flag_en.png"/>"/></a></li>

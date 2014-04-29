@@ -20,7 +20,9 @@
 	<!-- Computers FOUND -->
 	<div class="page-header">
 		<div>
-			<h1 class="${currentPage == 1 ? 'computersFound' : ''}">${numberOfElements}</h1>
+			<h1 class="${currentPage == 1 ? 'computersFound' : ''}">
+				${numberOfElements}
+			</h1>
 			<h1 id="homeTitle">
 				<spring:message code="computersFound" />
 			</h1>
@@ -37,7 +39,7 @@
 			<c:out value="${successMessage}" />
 		</p>
 	</div>
-
+	
 	<div id="actions">
 	
 		<!-- Search form -->
@@ -70,6 +72,7 @@
 </section>
 
 <script>
+	
 	$(".page-header").click(function() {
 		if ($("#subtitle").is(":hidden")) {
 			$("#subtitle").slideDown("slow");
