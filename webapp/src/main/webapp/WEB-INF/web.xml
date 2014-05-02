@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
-  
   	<display-name>computer-database</display-name>
   
 	<welcome-file-list>
@@ -12,6 +11,14 @@
              org.springframework.web.context.ContextLoaderListener
         </listener-class>
 	</listener>
+	    
+    <!-- Loads Spring Security config file -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			/WEB-INF/applicationContext.xml, /WEB-INF/spring-security.xml
+		</param-value>
+	</context-param>
 	
 	<servlet>
 		<servlet-name>computer-database-dispatcher</servlet-name>
@@ -27,12 +34,12 @@
 	<!-- ERROR PAGES -->
 	<error-page>
 	  <error-code>404</error-code>
-	  <location>/WEB-INF/error/notfound.jsp</location>
+	  <location>/WEB-INF/pages/error/notfound.jsp</location>
 	</error-page>
 	
 	<error-page>
 		<exception-type>fr.stage.exception.DAOException</exception-type>
-		<location>/WEB-INF/error/daoexcept.jsp</location>
+		<location>/WEB-INF/pages/error/daoexcept.jsp</location>
 	</error-page>
 	
 	<!-- Filter to force encoding to UTF-8 -->
@@ -47,7 +54,6 @@
             <param-name>forceEncoding</param-name>
             <param-value>true</param-value>
         </init-param>
-
     </filter>
 
     <filter-mapping>
@@ -55,14 +61,6 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     
-    <!-- Loads Spring Security config file -->
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>
-			/WEB-INF/applicationContext.xml, /WEB-INF/spring-security.xml
-		</param-value>
-	</context-param>
-
 	<!-- Spring Security -->
 	<!-- FilterChainProxy lets us add a single entry to web.xml and deal entirely with the application context file for managing our web security beans -->
 	<filter>

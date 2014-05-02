@@ -5,34 +5,20 @@
 	version="2.5">
 	<display-name>webservice</display-name>
 
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>WEB-INF/applicationContext.xml</param-value>
-	</context-param>
-
 	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+		<listener-class>
+             org.springframework.web.context.ContextLoaderListener
+        </listener-class>
 	</listener>
-
-	<!-- JAX WS -->
+	
 	<servlet>
-		<servlet-name>jaxws-servlet</servlet-name>
-		<servlet-class>com.sun.xml.ws.transport.http.servlet.WSSpringServlet</servlet-class>
+	    <servlet-name>cxf-servlet</servlet-name>
+	    <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+	    <load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>jaxws-servlet</servlet-name>
-		<url-pattern>/</url-pattern>
+	    <servlet-name>cxf-servlet</servlet-name>
+	    <url-pattern>/*</url-pattern>
 	</servlet-mapping>
-
-	<!-- <servlet> -->
-	<!-- <servlet-name>cxf</servlet-name> -->
-	<!-- <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class> -->
-	<!-- <load-on-startup>1</load-on-startup> -->
-	<!-- </servlet> -->
-
-	<!-- <servlet-mapping> -->
-	<!-- <servlet-name>cxf</servlet-name> -->
-	<!-- <url-pattern>/services/*</url-pattern> -->
-	<!-- </servlet-mapping> -->
-
+	
 </web-app>

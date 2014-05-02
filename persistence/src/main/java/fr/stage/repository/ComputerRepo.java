@@ -9,8 +9,8 @@ import fr.stage.exception.DAOException;
 
 public interface ComputerRepo extends CrudRepository<Computer, Long>{
 
-    public long countByNameLikeOrCompanyNameLike(String name, String companyName) throws DAOException;
+    public long countByNameContainingOrCompanyNameContaining(String name, String companyName) throws DAOException;
 
-    public Page<Computer> findAllByNameLikeOrCompanyNameLike(String computerName,String companyName,Pageable page) throws DAOException;
+    public Page<Computer> findAllByNameContainingOrCompanyNameContaining(String computerName,String companyName,Pageable page) throws DAOException;
 
 }

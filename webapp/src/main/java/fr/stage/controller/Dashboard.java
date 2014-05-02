@@ -40,7 +40,7 @@ public class Dashboard {
 	// Search computers
 	Page<Computer> outputPage = computerService.find(page);
 	// Set Result
-	ModelAndView model = new ModelAndView("dashboard");
+	ModelAndView model = new ModelAndView("pages/dashboard");
 	model.addObject("page", outputPage);
 	model.addObject("lang", LocaleContextHolder.getLocale());
 	model.addObject("successMessage", successMessage);

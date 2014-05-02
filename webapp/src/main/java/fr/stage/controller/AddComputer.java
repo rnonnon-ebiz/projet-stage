@@ -80,7 +80,7 @@ public class AddComputer {
 	ComputerDTO computerDTO = new ComputerDTO();
 	model.addAttribute("computer", computerDTO);
 	model.addAttribute("companiesList", getCompanies());
-	return "addComputer";
+	return "pages/addComputer";
     }
 
     // @RequestMapping(method = RequestMethod.POST)
@@ -132,7 +132,7 @@ public class AddComputer {
 	}
 	// Error but not fatal
 	else {
-	    ModelAndView mod = new ModelAndView("addComputer");
+	    ModelAndView mod = new ModelAndView("pages/addComputer");
 	    mod.addObject("computer", computerDTO);
 	    mod.addObject("companiesList", getCompanies());
 	    return mod;

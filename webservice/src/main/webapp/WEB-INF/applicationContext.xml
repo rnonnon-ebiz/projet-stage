@@ -1,35 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:ws="http://jax-ws.dev.java.net/spring/core" xmlns:wss="http://jax-ws.dev.java.net/spring/servlet"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
-    http://jax-ws.dev.java.net/spring/core http://jax-ws.java.net/spring/core.xsd
-	http://jax-ws.dev.java.net/spring/servlet http://jax-ws.java.net/spring/servlet.xsd">
-	<!-- xmlns:jaxws="http://cxf.apache.org/jaxws" -->
-	<!-- http://www.cxf.apache.org/bindings/soap -->
-	<!-- http://www.cxf.apache.org/bindings/schemas/configuration/soap.xsd -->
-	<!-- http://cxf.apache.org/jaxws -->
-	<!-- http://cxf.apache.org/schemas/jaxws.xsd -->
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
 
 	<import resource="classpath:bindingContext.xml" />
+
+	<context:annotation-config />
 	
 	<!-- this bean implements web service methods -->
 	<bean id="computerService" class="fr.stage.webservice.ComputerWebService" />
-	
-	<wss:binding url="/">
-		<wss:service>
-			<ws:service bean="#computerService" />
-		</wss:service>
-	</wss:binding>
-	
-	<!-- <context:component-scan base-package="fr.stage.webservice" /> -->
 
-	<!-- <jaxws:server serviceClass="fr.stage.webservice.ComputerService" -->
-	<!-- address="/computer" serviceBean="computer"> -->
-	<!-- </jaxws:server> -->
-
-	<!-- <bean id="computer" class="fr.stage.webservice.ComputerServiceImpl" 
-		/> -->
-
+	<jaxrs:server id="sampleSerivceREST" address="/">
+		<jaxrs:serviceBeans>
+			<ref bean="computerService" />
+		</jaxrs:serviceBeans>
+	</jaxrs:server>
 </beans>

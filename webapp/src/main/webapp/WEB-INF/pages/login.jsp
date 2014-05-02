@@ -1,4 +1,4 @@
-<jsp:include page="include/header.jsp" />
+<jsp:include page="/WEB-INF/include/header.jsp" />
 
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -44,4 +44,4 @@
 	</form>
 </section>
 
-<jsp:include page="include/footer.jsp" />
+<jsp:include page="/WEB-INF/include/footer.jsp" />

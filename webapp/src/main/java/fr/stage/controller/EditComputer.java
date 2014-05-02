@@ -41,10 +41,6 @@ import fr.stage.validator.ComputerCreationValidator;
 @RequestMapping("/editComputer")
 public class EditComputer {
 
-    private static final long serialVersionUID = 1L;
-
-    private List<CompanyDTO> companiesList;
-
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -100,7 +96,7 @@ public class EditComputer {
 	}
 	model.addAttribute("computer", computerDTO);
 	model.addAttribute("companiesList", getCompanies());
-	return "editComputer";
+	return "pages/editComputer";
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -133,7 +129,7 @@ public class EditComputer {
 	}
 	// Error but not fatal
 	else {
-	    ModelAndView mod = new ModelAndView("editComputer");
+	    ModelAndView mod = new ModelAndView("pages/editComputer");
 	    mod.addObject("computer", computerDTO);
 	    mod.addObject("companiesList", getCompanies());
 	    return mod;
@@ -144,7 +140,7 @@ public class EditComputer {
 	    @CookieValue(value="search", required = false) String cookSearch,
 	    @CookieValue(value="orderBy", required = false) Byte cookOrderBy){
 
-	ModelAndView mod = new ModelAndView("redirect:/dashboard");
+	ModelAndView mod = new ModelAndView("redirect:dashboard");
 	mod.addObject("goTo",cookGoTo);
 	mod.addObject("search",cookSearch);
 	mod.addObject("orderBy",cookOrderBy);

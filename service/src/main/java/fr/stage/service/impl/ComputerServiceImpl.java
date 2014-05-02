@@ -51,7 +51,7 @@ public class ComputerServiceImpl implements ComputerService {
 	    total = (int) computerRepo.count();
 	}
 	else {
-	    total = (int) computerRepo.countByNameLikeOrCompanyNameLike("%"+nameFilter+"%","%"+nameFilter+"%");
+	    total = (int) computerRepo.countByNameContainingOrCompanyNameContaining(nameFilter,nameFilter);
 	}
 
 	logger.debug("End count");
@@ -97,10 +97,10 @@ public class ComputerServiceImpl implements ComputerService {
 
 	// WORK
 	String nameFilter = inPage.getNameFilter();
-	Page<Computer> outPage = computerRepo.findAllByNameLikeOrCompanyNameLike("%"+nameFilter+"%","%"+nameFilter+"%", p);
+	Page<Computer> outPage = computerRepo.findAllByNameContainingOrCompanyNameContaining(nameFilter,nameFilter, p);
 	if(outPage.getTotalPages() > 0 && outPage.getNumber() >= outPage.getTotalPages()){
 	    p = new PageRequest(outPage.getTotalPages()-1,inPage.getLimit(), sort);
-	    outPage = computerRepo.findAllByNameLikeOrCompanyNameLike("%"+nameFilter+"%","%"+nameFilter+"%", p);
+	    outPage = computerRepo.findAllByNameContainingOrCompanyNameContaining(nameFilter,nameFilter, p);
 	}
 	logger.debug("End find by Page");
 	return outPage;
@@ -121,7 +121,7 @@ public class ComputerServiceImpl implements ComputerService {
 
     @Override
     @Transactional(readOnly = false)
-    public boolean delete(Long id) throws DAOException {
+    public void delete(Long id) throws DAOException {
 	logger.debug("Start Delete Transaction");
 
 	// WORK
@@ -130,6 +130,5 @@ public class ComputerServiceImpl implements ComputerService {
 	logService.logInfo("DELETE " + id);
 
 	logger.debug("End Delete Transaction");
-	return true;
     }
 }

@@ -40,17 +40,14 @@ public class DeleteComputer {
 	    @CookieValue(value="orderBy", required = false) Byte cookOrderBy) {
 	ModelAndView mod = new ModelAndView("redirect:dashboard");
 	// Search for computer with that id
-	if (computerService.delete(id)) {
-	    // If 1 row has been deleted
-
-	    // Get locale to obtain the message in desired language
-	    Locale loc = LocaleContextHolder.getLocale();
-	    mod.addObject("successMessage",
-		    messageSource.getMessage("successMessage.deleted", null, loc));
-	    mod.addObject("goTo",cookGoTo);
-	    mod.addObject("search",cookSearch);
-	    mod.addObject("orderBy",cookOrderBy);
-	}
+	computerService.delete(id);
+	// Get locale to obtain the message in desired language
+	Locale loc = LocaleContextHolder.getLocale();
+	mod.addObject("successMessage",
+		messageSource.getMessage("successMessage.deleted", null, loc));
+	mod.addObject("goTo",cookGoTo);
+	mod.addObject("search",cookSearch);
+	mod.addObject("orderBy",cookOrderBy);
 	return mod;
     }
 

@@ -18,5 +18,5 @@ public interface ComputerService {
 
     public void update(Computer computer) throws DAOException;
 
-    public boolean delete(Long id) throws DAOException;
+    public void delete(Long id) throws DAOException;
 }

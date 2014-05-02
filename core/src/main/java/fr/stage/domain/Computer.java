@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -15,11 +16,7 @@ import org.joda.time.DateTime;
 
 @Entity
 @Table(name = "computer")
-//@NamedQueries({ 
-//    @NamedQuery(name="computer.countFilter", query="SELECT COUNT(*) FROM computer cr LEFT JOIN company cy ON cy.id = cr.company_id "
-//	    + "WHERE cr.name like :nameFilter OR cy.name like :nameFilter "),
-//	    @NamedQuery(name="computer.countAll", query="SELECT COUNT(*) FROM computer cr LEFT JOIN company cy ON cy.id = cr.company_id"),
-//})
+@XmlRootElement(name = "computer")
 public class Computer {
 
     @Id

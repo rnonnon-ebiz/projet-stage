@@ -1,4 +1,4 @@
-<jsp:include page="include/header.jsp" />
+<jsp:include page="/WEB-INF/include/header.jsp" />
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="perso" uri="/WEB-INF/tags/taglib.tld"%>
@@ -59,9 +59,11 @@
 			class="glyphicon glyphicon-plus"></span> <spring:message
 				code="addComputer" /></a>
 	</div>
+	
+	<!-- Result -->
 	<c:choose>
 		<c:when test="${numberOfElements > 0}">
-			<jsp:include page="include/dashboardTable.jsp"/>
+			<jsp:include page="/WEB-INF/include/dashboardTable.jsp"/>
 		</c:when>
 		<c:otherwise>
 			<strong><spring:message code="noResult"/></strong>
@@ -106,5 +108,4 @@
 	    document.cookie = "orderBy=${orderBy}";
 	}
 </script>
-
-<jsp:include page="include/footer.jsp" />
+<jsp:include page="/WEB-INF/include/footer.jsp" />

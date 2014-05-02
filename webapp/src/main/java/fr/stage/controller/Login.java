@@ -10,7 +10,7 @@ public class Login {
 
     @RequestMapping(method = RequestMethod.GET)
     public String login() {
-	return "login";
+	return "pages/login";
 
     }
 }
